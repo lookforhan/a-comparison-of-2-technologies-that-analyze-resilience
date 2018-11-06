@@ -101,7 +101,7 @@ ANYTOWN example
 ;-------------------------------------------------------------------
   78	40	20      HEAD 2	PATTERN 2	0.12
   79	40	20      HEAD 2	PATTERN 3	0.12
-  80	40	20      HEAD 2	PATTERN 2	0.12
+  80	40	20      HEAD 2	PATTERN 4	0.12
 
 [ENERGY]
  PUMP		78  	EFFIC E1

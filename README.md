@@ -12,10 +12,12 @@
 
 ### [材料](.\materials\)
 
+[材料](.\materials\)
+
 - **EPANETx64PDD.dll**
 - **toolkit.h**
 - **MATLAB**
-- **anytown.inp**
+- **[anytown.inp](https://emps.exeter.ac.uk/media/universityofexeter/emps/research/cws/downloads/anytown.inp)**
 
 本项目所采用的工具为**EPANETx64PDD.dll**、**toolkit.h**[@morley2008pressure]进行水力分析和pdd模型的水力计算。
 
@@ -30,3 +32,29 @@
 
 
 ### 理论
+
+1. 管网震后破坏模型
+
+2. 管网震后功能分析方法
+
+3. 管网震后管道修复次序
+
+
+
+## 案例分析
+
+### 案例描述
+
+从网上下载下来的anytown.inp在epanet中运行，会显示报错。并且为了满足项目需求，需要对原始anytown.inp进行修改。修改内容如下：
+
+1. 修改管网管道、节点单位。原始anytown.inp文件采用单位为GPM，并非国际单位，因此，首先将其转为为作者更为熟悉的LPS单位。
+2. 删除文件中的tank
+3. 删除文件中的pump，修改源点总水头。
+4. 节点需水量模式均为1，因此不用修改。
+5. 模式1中节点需水量最高为1.3，最低为0.6，提取该数值作为静态（单时刻）模拟的依据。
+
+### 结果
+
+## 讨论
+
+## 结论
