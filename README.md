@@ -51,6 +51,9 @@
 4. 节点需水量模式均为1，因此不用修改。
 具体修改过程见[create_new_inp.m](.\featrue_create_new_inp\create_new_inp.m)
 5. 模式1中节点需水量最高为1.3，最低为0.6，提取该数值作为静态（单时刻）模拟的依据。
+另存为anytown_05_highest.inp将需水量参数均改为1.3
+另存为anytown_05_lowest.inp将需水量参数均改为0.6
+另存为anytown_05_mean.inp将需水量参数均改为1.0
 
 ### 结果
 
