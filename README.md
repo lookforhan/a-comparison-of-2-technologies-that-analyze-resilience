@@ -12,11 +12,9 @@
 
 ### [材料](.\materials\)
 
-[材料](.\materials\)
-
-- **EPANETx64PDD.dll**
+- **[EPANETx64PDD.dll](.\materials\EPANETx64PDD.dll)**
 - **toolkit.h**
-- **MATLAB**
+- **MATLAB 2017a**
 - **[anytown.inp](https://emps.exeter.ac.uk/media/universityofexeter/emps/research/cws/downloads/anytown.inp)**
 
 本项目所采用的工具为**EPANETx64PDD.dll**、**toolkit.h**[@morley2008pressure]进行水力分析和pdd模型的水力计算。
@@ -51,6 +49,7 @@
 2. 删除文件中的tank
 3. 删除文件中的pump，修改源点总水头。
 4. 节点需水量模式均为1，因此不用修改。
+具体修改过程见[create_new_inp.m](.\featrue_create_new_inp\create_new_inp.m)
 5. 模式1中节点需水量最高为1.3，最低为0.6，提取该数值作为静态（单时刻）模拟的依据。
 
 ### 结果
