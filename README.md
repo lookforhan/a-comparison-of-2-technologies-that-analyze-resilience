@@ -58,7 +58,14 @@
 另存为anytown_06_highest.inp
 另存为anytown_06_lowest.inp
 另存为anytown_06_mean.inp
-
+7. 修改为合适EPANETx64PDD.dll进行pdd运算的格式。设置最低水压0m，需求水压10m。即在[EMMITERS]部分增加各个节点的最低水压和需求水压。
+- anytown_05.inp -> anytown_07_normal_eps.inp
+- anytown_05_highest.inp -> anytown_07_highest_eps.inp
+- anytown_05_lowest.inp -> anytown_07_lowest_eps.inp
+- anytown_05_mean.inp -> anytown_07_mean_eps.inp
+- anytown_06_highest.inp -> anytown_07_highest_single.inp
+- anytown_06_lowest.inp -> anytown_07_lowest_single.inp
+- anytown_06_mean.inp -> anytown_07_mean_single.inp
 ### 结果
 
 ## 讨论
