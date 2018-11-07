@@ -15,8 +15,8 @@ t = libisloaded('epanet2');
 if t == 0
     loadlibrary('epanet2.dll','epanet2.h');
 end
-calllib('epanet2','ENopen',in_file,'t.rpt','t.out');
-calllib('epanet2','ENsaveinpfile','new.inp');
+calllib('epanet2','ENopen',in_file,'tem_t.rpt','t.out');
+calllib('epanet2','ENsaveinpfile','tem_new.inp');
 flag=0;
 [~,flag] = calllib('epanet2','ENgetflowunits',flag);
 calllib('epanet2','ENclose');
@@ -30,7 +30,7 @@ end
 fid = fopen('EPA_format2.txt','r');
 EPA_format = textscan(fid,'%q%q%q','delimiter',';');
 fclose(fid);
-[~,net_data]=Read_File_dll_inp4('new.inp',EPA_format);%读取水力模型inp文件的数据；
+[~,net_data]=Read_File_dll_inp4('tem_new.inp',EPA_format);%读取水力模型inp文件的数据；
 out_data = net_data;
 % 节点高程转换（ft）->(m)
 node_elevation_in = cell2mat(net_data{2,2}(:,2));
