@@ -54,6 +54,10 @@
 另存为anytown_05_highest.inp将需水量参数均改为1.3
 另存为anytown_05_lowest.inp将需水量参数均改为0.6
 另存为anytown_05_mean.inp将需水量参数均改为1.0
+6. 创建单时刻模拟的案例，将模拟持续时间改为0
+另存为anytown_06_highest.inp
+另存为anytown_06_lowest.inp
+另存为anytown_06_mean.inp
 
 ### 结果
 
