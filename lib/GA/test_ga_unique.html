@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="generator" content="MATLAB R2016a"><meta http-equiv="X-UA-Compatible" content="IE=edge,IE=9,chrome=1"><title>Untitled</title><style type="text/css">
+* {margin: 0; padding: 0;}
+body {text-align: start; line-height: 17.2339992523193px; min-height: 0px; white-space: normal; color: rgb(0, 0, 0); font-family: Consolas, Inconsolata, Menlo, monospace; font-style: normal; font-size: 14px; font-weight: normal; text-decoration: none; white-space: normal; }
+h1, h2 {font-weight: normal;}
+.content { padding: 30px; }
+
+.S0 { margin-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;  }
+.S1 { margin-left: 3px; margin-top: 4px; margin-bottom: 4px; margin-right: 3px;  }
+.S2 { line-height: 15.5926666259766px; min-height: 18px; white-space: nowrap; font-size: 12.6666669845581px; white-space: nowrap; margin-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;  }
+.S3 { line-height: 15.5926675796509px; min-height: 0px; white-space: pre; color: rgb(34, 139, 34); font-size: 12.6666679382324px; white-space: pre; margin-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-right: 45px;  }
+.S4 { line-height: 15.5926675796509px; min-height: 0px; white-space: pre; font-size: 12.6666679382324px; white-space: pre; margin-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-right: 45px;  }
+.S5 { line-height: 15.5926675796509px; min-height: 0px; white-space: pre; color: rgb(0, 0, 255); font-size: 12.6666679382324px; white-space: pre; margin-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;  }
+.S6 { line-height: 15.5926675796509px; min-height: 0px; white-space: pre; font-size: 12.6666679382324px; white-space: pre; margin-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;  }
+.S7 { line-height: 15.5926675796509px; min-height: 0px; white-space: pre; color: rgb(0, 0, 255); font-size: 12.6666679382324px; white-space: pre; margin-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-right: 45px;  }
+.S8 { line-height: 15.5926675796509px; min-height: 0px; white-space: pre; color: rgb(160, 32, 240); font-size: 12.6666679382324px; white-space: pre; margin-left: 0px; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;  }
+
+.LineNodeBlock {margin: 10px 0 10px 0; background-color: #F7F7F7;}
+.LineNodeBlock+.paragraphNode {margin-top: 10px;}
+.lineNode {padding-left: 10px; border-left: 1px solid #E9E9E9; border-right: 1px solid #E9E9E9;}
+.inlineWrapper:first-child .lineNode,.inlineWrapper.outputs+.inlineWrapper .lineNode {padding-top: 5px; border-top: 1px solid #E9E9E9;}
+.inlineWrapper:last-child .lineNode,.inlineWrapper.outputs .lineNode {padding-bottom: 5px; border-bottom: 1px solid #E9E9E9;}
+.lineNode .textBox {white-space: pre;}
+</style></head><body><div class = "content"><div class = 'SectionBlock containment'><div class = 'LineNodeBlock contiguous'><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S3">% pre-process</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S4">clc;clear;</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S4">popsize = 10;pm=0.9;pc =0.1;</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S4">BreakPipe_order = {1;18;28;39};</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S4">[pop_init]=initpop(popsize,BreakPipe_order);</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S4">individual_mat = [];</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S5">for </span><span class = "S4">i = 1:popsize</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S6">    </span><span class = "S6">individual_mat</span><span class = "S4"> = [individual_mat,cell2mat(pop_init{i})];</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S7">end</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S6">[c1,ia1,ic1] = unique(individual_mat',</span><span class = "S8">'rows'</span><span class = "S4">);</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S4">pop_uniq = pop_init(ia1);</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S6">pop_record = pop_uniq;</span><span class = "S3">%记录个体</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S4">individual_record_mat=individual_mat';</span></div></div></div></div><div class = "S0"></div><div class = 'SectionBlock containment'><div class = 'LineNodeBlock contiguous'><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S4">rng(5)</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S4">generation_i=1;</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S5">for </span><span class = "S4">i = 1:popsize</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S6">    </span><span class = "S6">Fit_uniq</span><span class = "S4">{i,1} = rand(1,1);</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S7">end</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S5">if </span><span class = "S4">generation_i==1</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S4">    Fit_init = Fit_uniq(ic1);</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S4">    Fit_record = Fit_uniq(ic1);</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S7">else</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S6">    </span><span class = "S3">%         Fit_init(~isa) = Fit_uniq;</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S6">    </span><span class = "S3">%         Fit_init(ia) = Fit_record(ic);</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S6">    </span><span class = "S3">%         Fit_record = [Fit_record;Fit_uniq];</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S7">end</span></div></div></div></div><div class = "S0"></div><div class = 'SectionBlock containment active'><div class = 'LineNodeBlock contiguous'><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S3"></span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S3">% % ga 操作</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S4">[ newPop ] = ga_process( pop_init,Fit_init,pm,pc );</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S6">[ pop_uniq,new_individual_record_mat,uniq_loc_in_pop_logic,uniq_loc_in_pop,not_uniq_loc_in_pop,not_uniq_locin_record  ]</span><span class = "S7">...</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S4">    = ga_unique_individual( newPop,individual_record_mat );</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S4">individual_record_mat=new_individual_record_mat;</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S4">pop_init = newPop;</span></div></div></div></div><div class = "S0"></div><div class = 'SectionBlock containment'><div class = 'LineNodeBlock contiguous'><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S5">for </span><span class = "S4">i = 1:numel(pop_uniq)</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S4">    Fit_uniq{i,1} = rand(1,1);</span></div></div><div class = 'inlineWrapper'><div class = "S2 lineNode"><span class = "S7">end</span></div></div></div></div></div>
+<!-- 
+##### SOURCE BEGIN #####
+% pre-process
+clc;clear;
+popsize = 10;pm=0.9;pc =0.1;
+BreakPipe_order = {1;18;28;39};
+[pop_init]=initpop(popsize,BreakPipe_order);
+individual_mat = [];
+for i = 1:popsize
+    individual_mat = [individual_mat,cell2mat(pop_init{i})];
+end
+[c1,ia1,ic1] = unique(individual_mat','rows');
+pop_uniq = pop_init(ia1);
+pop_record = pop_uniq;%记录个体
+individual_record_mat=individual_mat';
+%%
+rng(5)
+generation_i=1;
+for i = 1:popsize
+    Fit_uniq{i,1} = rand(1,1);
+end
+if generation_i==1
+    Fit_init = Fit_uniq(ic1);
+    Fit_record = Fit_uniq(ic1);
+else
+    %         Fit_init(~isa) = Fit_uniq;
+    %         Fit_init(ia) = Fit_record(ic);
+    %         Fit_record = [Fit_record;Fit_uniq];
+end
+%%
+
+% % ga 操作
+[ newPop ] = ga_process( pop_init,Fit_init,pm,pc );
+[ pop_uniq,new_individual_record_mat,uniq_loc_in_pop_logic,uniq_loc_in_pop,not_uniq_loc_in_pop,not_uniq_locin_record  ]...
+    = ga_unique_individual( newPop,individual_record_mat );
+individual_record_mat=new_individual_record_mat;
+pop_init = newPop;
+%%
+for i = 1:numel(pop_uniq)
+    Fit_uniq{i,1} = rand(1,1);
+end
+##### SOURCE END #####
+--></body></html>
