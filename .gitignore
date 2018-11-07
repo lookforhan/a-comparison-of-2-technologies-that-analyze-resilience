@@ -1,6 +1,7 @@
 *.swp
 *.[1~9]
 *.asv
+*.rpt
 epanet2.dll
 epanet2.h
 tem_*
