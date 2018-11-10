@@ -39,7 +39,9 @@
 ## 案例分析
 
 ### 案例描述
+MOD.inp是标准EPANET的inp文件，为了使用EPANETx64PDD.dll中的PDD计算，必须在inp文件中[EMITTERS]部分中增加节点编号、最低水压0m、需求水压20m。 -> MOD_2.inp
 
+增加节点需水量曲线。从anytown.inp中复制其中的1号曲线。 -> MOD_3.inp
 
 ### 结果
 
