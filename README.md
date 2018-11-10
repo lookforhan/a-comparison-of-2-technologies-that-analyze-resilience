@@ -43,6 +43,7 @@ MOD.inp是标准EPANET的inp文件，为了使用EPANETx64PDD.dll中的PDD计算
 
 增加节点需水量曲线。从anytown.inp中复制其中的1号曲线。增加模拟时长为24小时。 -> MOD_3.inp
 
+初步验证成功，详见test.m
 ### 结果
 
 ## 讨论
