@@ -11,8 +11,9 @@ clear;clc;close all;tic;
 lib_name = 'EPANETx64PDD';
 h_name = 'toolkit.h';
 net_file = '..\materials\MOD_3.inp';
-damage_file = 'damage_1.txt';
-damage_net = '.\results\damage_net.inp'
+% damage_file = '..\materials\damage01.txt';
+damage_file = '..\materials\damage02.txt';
+damage_net = '.\results\damage_net.inp';
 out_dir = '.\results\';
 fid = 1;
 % process
@@ -21,116 +22,179 @@ loadlibrary(['..\materials\',lib_name],['..\materials\',h_name]);
 try
     load  EPA_F
 catch
-    path('..\lib\toolkit',path);
-    path('..\lib\readNet',path);% è¯»å–inpæ–‡ä»¶
-    path('..\lib\damageNet',path);% ç®¡é“ç ´å
-    path('..\lib\EPS',path);% å»¶æ—¶æ¨¡æ‹Ÿ
-    path('..\lib\getValue',path);% è·å¾—å‚æ•°å€¼
-    path('..\lib\eventTime',path);% äº‹ä»¶å‘ç”Ÿæ—¶é—´å‘ç”Ÿå™¨
-    path('..\lib\random',path);% 
-    path('..\lib\random_singleTime',path);% å•ç‚¹æ¨¡æ‹Ÿæ‰€éœ€çš„å‡½æ•°ã€‚
-    load  EPA_F2
+    %     path('..\lib\toolkit',path);
+    path('..\lib\readNet',path);%
+    path('..\lib\damageNet',path);%
+    %     path('..\lib\EPS',path);%
+    %     path('..\lib\getValue',path);%
+    %     path('..\lib\eventTime',path);% ?
+    %     path('..\lib\random',path);%
+    %     path('..\lib\random_singleTime',path);%
+    load  EPA_F
 end
 % process_2 the defintion of parameters
 % process_3 read data from file
-[t1,net_data] = read_net(net_file,EPA_format);% from 'readNet\'
+[t1,net_data] = read_net2_EPANETx64PDD(net_file,EPA_format);% from 'readNet\'
 if t1
     keyboard
-    else
-
+else
+    
 end
-[t2,damage_pipe_info] = ND_Execut_deterministic(net_data,damage_file);% from 'damageNet\'
+[ t2,damage_data ] = read_damage_info( damage_file );% from 'damageNet\'
+[t2,damage_pipe_info] = ND_Execut_deterministic1(net_data,damage_data);% from 'damageNet\'
 if t2
     keyboard
-    else
-
+else
+    
 end
 
 % process_4 generate damage_net
 [t3,pipe_relative] = damageNetInp2_GIRAFFE2(net_data,damage_pipe_info,EPA_format,damage_net);% from 'damageNet\'
 if t3
     keyboard
-    else
-
+else
 end
-% process_5 eps simulation
+% process_5 generate recovery event and  priority
+BreakPipe_order=num2cell(damage_pipe_info{1});% ĞŞ¸´ÓÅÏÈ´ÎĞò
+[ Dp_Inspect_mat,Dp_Repair_mat ,Dp_Travel_mat1] = event_time2( damage_pipe_info,net_data);
+Dp_Travel_mat=Dp_Travel_mat1*0;% ²»¿¼ÂÇĞŞ¸´¶ÓÎéÒÆ¶¯Ê±¼äµÄÓ°Ïì¡£
+BreakPipePriority = BreakPipe_order;% ĞŞ¸´´ÎĞò
+RepairCrew = {'a'};
+output_result_dir = out_dir;
+[BreakPipe_result,RepairCrew_result]=priorityList2schedule6(BreakPipePriority,RepairCrew,BreakPipe_order,...
+    Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,output_result_dir);%¸ù¾İĞŞ¸´´ÎĞòÉú³ÉÊ±¼ä±í
+[PipeStatus2,PipeStatusChange]=schedule2pipestatus3(BreakPipe_result);%¸ù¾İÊ±¼ä±íÉú³É¹ÜµÀ×´Ì¬¾ØÕó
+PipeStatus = PipeStatus2;
+duration_one = numel(PipeStatus(1,:));
+
+% process_6 eps simulation
 errcode1 = calllib(lib_name,'ENopen',damage_net,[out_dir,'damage.rpt'],'');% from 'EPANETx64PDD.dll'
+if errcode1~=0
+    keyboard
+end
+durationSet = (duration_one-1)*3600;%(s)
+% durationSet = 24*7*3600;%(s)
+calllib(lib_name,'ENsettimeparam',0,durationSet);
+calllib(lib_name,'ENsetoption',0,500);
 errcode2 = calllib(lib_name,'ENopenH');
 errcode3 = calllib(lib_name,'ENinitH',0);
 temp_t = 0;
 temp_tstep = 1;
 time_step_n =0;
-PipeStatus = [pipeStatus];
-[newPipeStatus,temeStepChosen] = (PipeStatus);
+% PipeStatus = [pipeStatus];
+% [newPipeStatus,temeStepChosen] = pipeStatusChange(PipeStatus);
+[newPipeStatus ,timeStepChose]= pipeStatusChange(PipeStatus);
+[newPipeStatusChange ,timeStepChangeChose]= pipeStatusChange(PipeStatusChange);
+errcode4 = 0;
 while (temp_tstep && ~errcode4)
     time_step_n = time_step_n+1;
     [errcode4,temp_t] = calllib(lib_name,'ENrunH',temp_t);
+    
     if errcode4
         keyboard
     end
+     n_j =0;
+    n_r=0;
+    [c1,n_j] = calllib(lib_name,'ENgetcount',0,n_j);
+    [c2,n_r] = calllib(lib_name,'ENgetcount',1,n_r);
+    junction_num =n_j -n_r;
+    [~,based_demand]=Get_EPANETx64PDD(lib_name,junction_num,1);%»ù´¡ĞèË®Á¿
+    [~,real_demand]=Get_EPANETx64PDD(lib_name,junction_num,9);%Êµ¼ÊĞèË®Á¿
+    [~,real_pre]=Get_EPANETx64PDD(lib_name,junction_num,11);%Ë®Ñ¹
+    node_id = net_data{2,2}(:,1);
+    [~,real_demand_chosen,cal_demand_chosen]=Get_chosen_node_value_EPANETx64PDD(lib_name,node_id);
+    
+    %
     disp(num2str(temp_t))
     disp(num2str(time_step_n))
-    [lia,loc] = ismember(time_step_n,timeStepChosen);% æ¯”è¾ƒæ˜¯å¦åˆ°ä¿®æ”¹çš„æ—¶é—´æ­¥
+    [lia,loc] = ismember(time_step_n,timeStepChose);% 
     if lia
-        fprintf(fid,'%s\r\n','å¼€å§‹ä¿®æ”¹ç®¡é“çŠ¶æ€');
-        
-        mid_status = newPipeStatus(:,loc);
+        fprintf(fid,'%s\r\n','¿ªÊ¼ĞŞ¸Ä¹ÜµÀ×´Ì¬');
+        str1 = '';
+        str2 = '';
+        str3 = '';
+        mid_status = newPipeStatusChange(:,loc);
         for i = 1:numel(mid_status)
             pipe_status = mid_status(i);
             switch  pipe_status
-                case 2
-                    continue %è¯¥ç®¡é“æ²¡æœ‰ä¿®å¤
+                case 0
+                    continue %
                 case 1
-                    %ç®¡é“éš”ç¦»
-                    for j =1:numel(pipe_relative{i,2})% éš”ç¦»çš„ç®¡é“ä¸ºå½“å‰ç®¡é“ç›¸å…³è”çš„ç ´åç®¡é“ã€‚
+                    % isolation
+                    str2 = [str2,'¸ôÀë¹ÜµÀ',pipe_relative{i,1},';'];
+                    for j =1:numel(pipe_relative{i,2})% ¸ôÀëµÄ¹ÜµÀÎªµ±Ç°¹ÜµÀÏà¹ØÁªµÄÆÆ»µ¹ÜµÀ¡£
                         id = libpointer('cstring',pipe_relative{i,2}{1,j});
-                        fprintf(fid,'éš”ç¦»ç®¡é“:%s\r\n',pipe_relative{i,2}{1,j} );
+                        fprintf(fid,'¸ôÀë¹ÜµÀ:%s\r\n',pipe_relative{i,2}{1,j} );
                         index =libpointer('int32Ptr',0);
-                        [code,id,index]=calllib('epanet2','ENgetlinkindex',id,index);
+                        [code,id,index]=calllib(lib_name,'ENgetlinkindex',id,index);
                         if code
                             disp(nem2str(code));
                             keyboard
                         end
-                        code=calllib('epanet2','ENsetlinkvalue',index,11,0);%ç®¡é“idçŠ¶æ€ä¸ºå…³é—­
+                        code=calllib(lib_name,'ENsetlinkvalue',index,11,0);%¹ÜµÀid×´Ì¬Îª¹Ø±Õ
                         if code
                             disp(nem2str(code));
-                            fprintf(fid,'éš”ç¦»ç®¡é“:%så‡ºé”™,ä»£ç %s\r\n',id,num2str(code) );
+                            fprintf(fid,'¸ôÀë¹ÜµÀ:%s³ö´í,´úÂë%s\r\n',id,num2str(code) );
                             keyboard
                         end
                     end
-                case 0
-                    %reopen ç®¡é“ï¼Œè¯´æ˜è¯¥ç®¡é“ä¿®å¤
+                case 2
+                    %reopen 
+                   str3 = [str3,'ĞŞ¸´¹ÜµÀ',pipe_relative{i,1},';'];
                     id=libpointer('cstring',pipe_relative{i,1});
                     index =libpointer('int32Ptr',0);
-                    [code,id,index]=calllib('epanet2','ENgetlinkindex',id,index);
-                   
+                    [code,id,index]=calllib(lib_name,'ENgetlinkindex',id,index);
+                    
                     if code
                         disp(nem2str(code));
                         keyboard
                     end
-                    code= calllib('epanet2','ENsetlinkvalue',index,11,1);
-                     fprintf(fid,'reopenç®¡é“%s,\r\n',pipe_relative{i,1});
+                    code= calllib(lib_name,'ENsetlinkvalue',index,11,1);
+                    fprintf(fid,'reopen¹ÜµÀ%s,\r\n',pipe_relative{i,1});
                     if code
                         disp(nem2str(code));
-                        fprintf(fid,'reopenç®¡é“:%så‡ºé”™,ä»£ç %s\r\n',id,num2str(code) );
+                        fprintf(fid,'reopen¹ÜµÀ:%s³ö´í,´úÂë%s\r\n',id,num2str(code) );
                         keyboard
                     end
             end
         end
-        fprintf(fid,'%sæ—¶åˆ»,ç®¡é“çŠ¶æ€ä¿®æ”¹å®Œæ¯•\r\n',num2str(temp_t) );
+        str = [str1,str2,str3];
+        fprintf(fid,'%sÊ±¿Ì,¹ÜµÀ×´Ì¬ĞŞ¸ÄÍê±Ï\r\n',num2str(temp_t) );
     else
-        fprintf(fid,'%sæ—¶åˆ»,æ— éœ€ä¿®æ”¹ç®¡é“çŠ¶æ€\r\n',num2str(temp_t) );
+        str = 'ÎŞ¶¯×÷';
+        fprintf(fid,'%sÊ±¿Ì,¹ÜµÀ×´Ì¬ÎŞĞèĞŞ¸ÄÍê±Ï\r\n',num2str(temp_t) );
     end
     
-    [code,temp_tstep]=calllib('epanet2','ENnextH',temp_tstep);
-
-    end
+    Demand{time_step_n}=real_demand_chosen;
+    cal_Demand{time_step_n}=cal_demand_chosen;
+    system_serviceability_cell{time_step_n}= sum(cal_demand_chosen)/sum(real_demand_chosen);
+    activity_cell{time_step_n} = str;%¼ÇÂ¼Ã¿¸öÊ±¼ä²½µÄĞĞÎª
+    [code,temp_tstep]=calllib(lib_name,'ENnextH',temp_tstep);
 end
+
 
 % post-process
 calllib(lib_name,'ENcloseH');
-calllib(lib_name,'ENsaveH');%ä¿å­˜æ°´åŠ›æ–‡ä»¶
-calllib(func_name,'ENsetstatusreport',2);
-calllib(lib_name,'ENsetreport','NODES ALL'); % è®¾ç½®è¾“å‡ºæŠ¥å‘Šçš„æ ¼å¼
+calllib(lib_name,'ENsaveH');%
+calllib(lib_name,'ENsetstatusreport',2);
+calllib(lib_name,'ENsetreport','NODES ALL'); % 
 calllib(lib_name,'ENreport');
 calllib(lib_name,'ENclose');
+
+if false
+
+    n_node = numel(Pressure{1});
+    node_id = net_data{2,2}(:,1);
+    node_data = cell(n_node+3,1);
+    for i = 1:numel(Pressure)
+        p = [time_step_n_cell(i);TimeStep(i);{'Ñ¹Á¦'};num2cell(Pressure{i})];
+        d = [time_step_n_cell(i);TimeStep(i);{'ĞèË®Á¿'};num2cell(Demand{i})];
+        r = [time_step_n_cell(i);TimeStep(i);{'Ô­ĞèË®Á¿'};num2cell(real_demand_chosen_cell{i})];
+        node_data = [node_data,p,d,r];
+    end
+    node_data (:,1)=[];
+    node_data = [[{'Ê±¼ä²½'};{'Ê±¼ä'};{'½Úµãid'};node_id],node_data];
+    xlswrite([output_result_dir,'EPS_net2-1.xls'],node_data');
+end
+% fclose(fid);
+errcode =0;

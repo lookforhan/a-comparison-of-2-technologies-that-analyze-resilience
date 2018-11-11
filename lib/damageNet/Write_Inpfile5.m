@@ -74,7 +74,7 @@ else
         end
         j_data_index=find(list==1);%新建节点中类型为[JUNCTIONS]的节点
         j_data2=[outdata{3}(j_data_index,1),outdata{3}(j_data_index,4)];%新建节点[JUNCTIONS]的节点数据
-        e_data2=[outdata{3}(j_data_index,1),outdata{3}(j_data_index,10)];%新建节点[JUNCTIONS]的节点扩散系数数据
+        e_data2=[];%新建节点[JUNCTIONS]的节点扩散系数数据
         temp_mid = cell(length(outdata{3}(j_data_index,4)),1);
         d_data2=[outdata{3}(j_data_index,1),num2cell(zeros(length(outdata{3}(j_data_index,4)),1)),temp_mid];%需水量
         r_data_index=find(list==2);%新建节点中类型为[RESERVOIRS]的节点
@@ -107,6 +107,9 @@ else
 end
 %% 打开文件,写入数据
 fid=fopen(output_net_filename,'w');
+if fid < 0
+    keyboard
+end
 % fid = 1;
 fprintf(fid,'%s',net_data{1,1});
 fprintf(fid,'\r\n');
