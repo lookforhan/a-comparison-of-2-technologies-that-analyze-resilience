@@ -11,8 +11,8 @@ clear;clc;close all;tic;
 lib_name = 'EPANETx64PDD';
 h_name = 'toolkit.h';
 net_file = '..\materials\MOD_3.inp';
-% damage_file = '..\materials\damage01.txt';
-damage_file = '..\materials\damage02.txt';
+damage_file = '..\materials\damage01.txt';
+% damage_file = '..\materials\damage02.txt';
 damage_net = '.\results\damage_net.inp';
 out_dir = '.\results\';
 fid = 1;
@@ -26,9 +26,9 @@ catch
     path('..\lib\readNet',path);%
     path('..\lib\damageNet',path);%
     %     path('..\lib\EPS',path);%
-    %     path('..\lib\getValue',path);%
-    %     path('..\lib\eventTime',path);% ?
-    %     path('..\lib\random',path);%
+        path('..\lib\getValue',path);%
+        path('..\lib\eventTime',path);% ?
+        path('..\lib\random',path);%
     %     path('..\lib\random_singleTime',path);%
     load  EPA_F
 end
@@ -72,6 +72,22 @@ errcode1 = calllib(lib_name,'ENopen',damage_net,[out_dir,'damage.rpt'],'');% fro
 if errcode1~=0
     keyboard
 end
+node_id = net_data{2,2}(:,1);
+value=libpointer('doublePtr',0);%指针参数--值
+index = libpointer('int32Ptr',0);
+ for j_i = 1:numel(node_id)
+     [errcode,cstring,index]=calllib(lib_name,'ENgetnodeindex',node_id{j_i},index);
+     errcode = calllib(lib_name,'ENsetnodevalue',index,120,0);
+     errcode = calllib(lib_name,'ENsetnodevalue',index,121,20);
+ end
+     n_j =0;
+    n_r=0;
+    [c1,n_j] = calllib(lib_name,'ENgetcount',0,n_j);
+    [c2,n_r] = calllib(lib_name,'ENgetcount',1,n_r);
+ junction_num =n_j -n_r;
+
+    [~,based_demand]=Get_EPANETx64PDD(lib_name,junction_num,1);%基础需水量
+    [~,real_demand]=Get_EPANETx64PDD(lib_name,junction_num,9);%实际需水量
 durationSet = (duration_one-1)*3600;%(s)
 % durationSet = 24*7*3600;%(s)
 calllib(lib_name,'ENsettimeparam',0,durationSet);
@@ -93,15 +109,10 @@ while (temp_tstep && ~errcode4)
     if errcode4
         keyboard
     end
-     n_j =0;
-    n_r=0;
-    [c1,n_j] = calllib(lib_name,'ENgetcount',0,n_j);
-    [c2,n_r] = calllib(lib_name,'ENgetcount',1,n_r);
-    junction_num =n_j -n_r;
-    [~,based_demand]=Get_EPANETx64PDD(lib_name,junction_num,1);%基础需水量
-    [~,real_demand]=Get_EPANETx64PDD(lib_name,junction_num,9);%实际需水量
+
+   
     [~,real_pre]=Get_EPANETx64PDD(lib_name,junction_num,11);%水压
-    node_id = net_data{2,2}(:,1);
+    
     [~,real_demand_chosen,cal_demand_chosen]=Get_chosen_node_value_EPANETx64PDD(lib_name,node_id);
     
     %
@@ -177,7 +188,7 @@ end
 calllib(lib_name,'ENcloseH');
 calllib(lib_name,'ENsaveH');%
 calllib(lib_name,'ENsetstatusreport',2);
-calllib(lib_name,'ENsetreport','NODES ALL'); % 
+calllib(lib_name,'ENsetreport','NODE ALL'); % 
 calllib(lib_name,'ENreport');
 calllib(lib_name,'ENclose');
 
