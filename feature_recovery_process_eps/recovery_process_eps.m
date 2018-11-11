@@ -56,14 +56,14 @@ else
 end
 % process_5 generate recovery event and  priority
 BreakPipe_order=num2cell(damage_pipe_info{1});% 修复优先次序
-[ Dp_Inspect_mat,Dp_Repair_mat ,Dp_Travel_mat1] = event_time2( damage_pipe_info,net_data);
+[ Dp_Inspect_mat,Dp_Repair_mat ,Dp_Travel_mat1] = event_time2( damage_pipe_info,net_data);% from 'eventTime\'
 Dp_Travel_mat=Dp_Travel_mat1*0;% 不考虑修复队伍移动时间的影响。
 BreakPipePriority = BreakPipe_order;% 修复次序
 RepairCrew = {'a'};
 output_result_dir = out_dir;
 [BreakPipe_result,RepairCrew_result]=priorityList2schedule6(BreakPipePriority,RepairCrew,BreakPipe_order,...
-    Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,output_result_dir);%根据修复次序生成时间表
-[PipeStatus2,PipeStatusChange]=schedule2pipestatus3(BreakPipe_result);%根据时间表生成管道状态矩阵
+    Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,output_result_dir);%根据修复次序生成时间表 from 'random\'
+[PipeStatus2,PipeStatusChange]=schedule2pipestatus3(BreakPipe_result);%根据时间表生成管道状态矩阵 from 'random\'
 PipeStatus = PipeStatus2;
 duration_one = numel(PipeStatus(1,:));
 
