@@ -10,7 +10,7 @@
 clear;clc;close all;tic;
 lib_name = 'EPANETx64PDD';
 h_name = 'toolkit.h';
-net_file = '..\materials\MOD_5_lowest.inp';
+net_file = '..\materials\MOD.inp';
 damage_file = '..\materials\damage01.txt';
 % damage_file = '..\materials\damage02.txt';
 damage_net = '.\results\temp_damage_net.inp';
@@ -83,13 +83,7 @@ end
 node_id = pdd_data{1};
 Hcritical = pdd_data{2};
 Hminimum = pdd_data{3};
-value=libpointer('doublePtr',0);%指针参数--值
 index = libpointer('int32Ptr',0);
-for j_i = 1:numel(node_id)
-    [errcode6_1,cstring,index]=calllib(lib_name,'ENgetnodeindex',node_id{j_i},index);
-    errcode6_2 = calllib(lib_name,'ENsetnodevalue',index,120,Hminimum(j_i));
-    errcode6_3 = calllib(lib_name,'ENsetnodevalue',index,121,Hcritical(j_i));
-end
 errcode6_4 = calllib(lib_name,'ENsaveinpfile',temp_inp_file);
 errcode6_5 = calllib(lib_name,'ENclose');
 % process_7 single-period simulation

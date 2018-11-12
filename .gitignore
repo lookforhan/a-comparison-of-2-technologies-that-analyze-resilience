@@ -5,4 +5,4 @@
 temp_*
 epanet2.dll
 epanet2.h
-s[0~9]cg*
+s[0~9]*
