@@ -30,7 +30,7 @@ catch
     path('..\lib\getValue',path);%
     path('..\lib\eventTime',path);% ?
     path('..\lib\random',path);%
-    %     path('..\lib\random_singleTime',path);%
+    path('..\lib\random_singleTime',path);%
     load  EPA_F
 end
 % process_2 the defintion of parameters
@@ -108,17 +108,17 @@ for timeStep_i=1:timeStep_end
         errcode7_4 = calllib(lib_name,'ENsetnodevalue',index,120,Hminimum(j_i));
         errcode7_5 = calllib(lib_name,'ENsetnodevalue',index,121,Hcritical(j_i));
     end
-    errcode7_6 = calllib(lib_name,'ENsaveinpfile',output_net_pdd_file_n);-------------
+    errcode7_6 = calllib(lib_name,'ENsaveinpfile',output_net_pdd_file_n);
     errcode7_7 = calllib(lib_name,'ENsolveH');
-    calllib('epanet2','ENsaveH');%保存
-    calllib('epanet2','ENsetreport','NODES ALL'); % 设置输出报告的格式
+    calllib(lib_name,'ENsaveH');%保存
+    calllib(lib_name,'ENsetreport','NODES ALL'); % 设置输出报告的格式
     calllib(lib_name,'ENsetstatusreport',2);
-    calllib('epanet2','ENreport'); %输出计算报告
+    calllib(lib_name,'ENreport'); %输出计算报告
     [real_pre_chosen_node,cal_demand_chosen_node,req_demand_chosen_node]=Get_chosen_node_value_EPANETx64PDD(lib_name,node_id);
-    Pre{time_step_i} = real_pre_chosen_node;
-    Demand{time_step_i}=req_demand_chosen_node;
-    cal_Demand{time_step_i}=cal_demand_chosen_node;
-    system_serviceability_cell{time_step_i}= sum(cal_demand_chosen_node)/sum(req_demand_chosen_node);
+    Pre{timeStep_i} = real_pre_chosen_node;
+    Demand{timeStep_i}=req_demand_chosen_node;
+    cal_Demand{timeStep_i}=cal_demand_chosen_node;
+    system_serviceability_cell{timeStep_i}= sum(cal_demand_chosen_node)/sum(req_demand_chosen_node);
 end
 % post-process
 system_serviceability_cell{1}
