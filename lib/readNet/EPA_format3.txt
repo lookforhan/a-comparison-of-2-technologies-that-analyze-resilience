@@ -1,0 +1,28 @@
+[TITLE]|	%q	|%q
+[JUNCTIONS]|	%q%f|	%s \t %f
+[RESERVOIRS]|	%q%f|	%s \t %f
+[TANKS]|	%q%f%f%f%f%f%f|	%s \t %f \t %f \t %f \t %f \t %f \t %f
+[PIPES]|	%q%q%q%f%f%f%f%q|	%s \t %s \t %s \t %f \t %f \t %f \t %f \t %s
+[PUMPS]|	%q%q%q%q%q%q%q|	%s \t %s \t %s \t %s \t %s \t %s \t %s
+[VALVES]|	%q%q%q%q%q%q%q|	%s \t %s \t %s \t %s \t %s \t %s \t %s
+[EMITTERS]|	%q%f%f|	%s \t %f \t %f
+[CURVES]|	%q%f%f|	%s\t%f\t%f
+[PATTERNS]|	%q%f%f%f%f%f%f|	%s\t%f\t%f\t%f\t%f\t%f\t%f\t%f
+[ENERGY]|	%q%q%q%q|	%s\t%s\t%s\t%s
+[STATUS]|	%q%q|	%s\t%s
+[CONTROLS]|	%q%q%q%q%q%q%q%q|	%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t
+[RULES]|	%q|	%s
+[DEMANDS]|	%q%f%q|	%s \t %f \t%s
+[QUALITY]|	%q|	%s
+[REACTIONS]|	%q%q%f|	%s\t%s\t%f
+[SOURCES]|	%q|	%s
+[MIXING]|	%q%q%f|	%s \t %s \t %f
+[OPTIONS]|	%q%q%q|	%s \t %s \t %s
+[TIMES]|	%q%q%q|  %s \t %s \t %s
+[REPORT]|	%q%q%q|	%s \t %s \t %s
+[COORDINATES]|	%q%f%f|	%s \t %f \t %f
+[VERTICES]|	%q|	%s
+[LABELS]|	%q%q%q%q|	%s \t %s \t %s \t% s\t
+[BACKDROP]|	%q%q%q%q%q|	%s \t %s \t %s \t %s \t %s
+[TAGS]|	%q|	%s
+
