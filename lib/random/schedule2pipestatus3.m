@@ -21,6 +21,7 @@ BreakPipe_InspectResult=BreakPipe_result(1:n/2,:);
 BreakPipe_RepairResult=BreakPipe_result(n/2+1:end,:);
 nB=numel(BreakPipe_RepairResult(:,1));%破坏管道个数
 PipeStatus_original=2*ones(nB,1);%管道初始状态为破坏中
+PipeStatusChange_original = zeros(nB,1);
 endTime=ceil(max(cell2mat(BreakPipe_RepairResult(:,4))));%最大的修复完成时间为时间步终止
 PipeStatus_1=2*ones(nB,endTime);
 PipeStatusChange = zeros(nB,endTime);
@@ -33,7 +34,7 @@ for i=1:nB
         
     else
         if time_2~=time_1
-            PipeStatus_1(i,time_1:time_2)=1;
+            PipeStatus_1(i,time_1:time_2-1)=1;
             
         end
     end
@@ -41,8 +42,9 @@ for i=1:nB
     PipeStatusChange(i,time_1) =1;
     PipeStatusChange(i,time_2) =2;
 end
-% PipeStatus=[PipeStatus_original,PipeStatus_1];
-PipeStatus=PipeStatus_1;
+PipeStatus=[PipeStatus_original,PipeStatus_1];
+PipeStatusChange=[PipeStatusChange_original,PipeStatusChange];
+% PipeStatus=PipeStatus_1;
 if 0
     keyboard
 end

@@ -75,6 +75,15 @@ for i = 1:nB
     %     Record(i,J) = Dp_inspect_i;
     pipe_n3=pipe_n2;%将现有管道号赋予pipe_n3
 end
+% 统统推迟0.25h
+T_postpone = 0.25;
+T_postpone_mat = ones(nB,1)*T_postpone ;
+TD_I = TD_I + T_postpone_mat;
+TS_I = TS_I + T_postpone_mat;
+TE_I = TE_I + T_postpone_mat;
+TD_R = TD_R + T_postpone_mat;
+TS_R = TS_R + T_postpone_mat;
+TE_R = TE_R + T_postpone_mat;
 % 分配过程结束，生成输出
 [~,locb1]=ismember(BreakPipe_order_mat,BreakPipe_Priority_mat);%修复次序在原管道中
 [~,locb2]=ismember(BreakPipe_order_mat,BreakPipe_Priority_mat);
