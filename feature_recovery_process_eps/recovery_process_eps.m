@@ -10,10 +10,10 @@
 clear;clc;close all;tic;
 lib_name = 'EPANETx64PDD';
 h_name = 'toolkit.h';
-net_file = '..\materials\MOD_3.inp';
-damage_file = '..\materials\damage01.txt';
-% damage_file = '..\materials\damage02.txt';
-damage_net = '.\results\damage_net.inp';
+net_file = '..\materials\MOD.inp';
+% damage_file = '..\materials\damage01.txt';
+damage_file = '..\materials\damage02.txt';
+damage_net = '.\results\damage_net1.inp';
 out_dir = '.\results\';
 fid = 1;
 % process
@@ -90,7 +90,7 @@ index = libpointer('int32Ptr',0);
     [~,real_demand]=Get_EPANETx64PDD(lib_name,junction_num,9);%实际需水量
 durationSet = (duration_one-1)*3600;%(s)
 % durationSet = 24*7*3600;%(s)
-calllib(lib_name,'ENsettimeparam',0,durationSet);
+calllib(lib_name,'ENsettimeparam',0,0);
 calllib(lib_name,'ENsetoption',0,500);
 errcode2 = calllib(lib_name,'ENopenH');
 errcode3 = calllib(lib_name,'ENinitH',0);
