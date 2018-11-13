@@ -76,7 +76,7 @@ output_result_dir = out_dir;
 PipeStatus = PipeStatus2;
 duration_one = numel(PipeStatus(1,:));
 % pprocess_6 generate original inp file
-errcode1 = calllib(lib_name,'ENopen',damage_net,[out_dir,'damage.rpt'],'');% from 'EPANETx64PDD.dll'
+errcode1 = calllib(lib_name,'ENopen',damage_net,[out_dir,'temp_damage.rpt'],'');% from 'EPANETx64PDD.dll'
 if errcode1~=0
     keyboard
 end
@@ -89,14 +89,21 @@ errcode6_5 = calllib(lib_name,'ENclose');
 % process_7 single-period simulation
 timeStep_end=numel(PipeStatus(1,:));%时间步数
 for timeStep_i=1:timeStep_end
-    PipeStatus_timeStep=PipeStatus(:,timeStep_i);
-    [outdata]=timeStepNet(PipeStatus_timeStep,damage_pipe_info,net_data);%输出当前时间步的管道状态管网信息。
+
     output_net_filename_n =['.\results\','temp_',num2str(timeStep_i),'.inp'];
     output_net_rpt = ['.\results\','temp_',num2str(timeStep_i),'.rpt'];
     output_net_pdd_file_n = ['.\results\','temp_pdd_',num2str(timeStep_i),'.inp'];
-    errcode7_1=Write_Inpfile4(net_data,EPA_format,outdata,output_net_filename_n);% 写入新管网inp
+    PipeStatus_timeStep=PipeStatus(:,timeStep_i);
+    [damage_pipe_info_m,close_pipe_info]=timeStepdamage(PipeStatus_timeStep,damage_pipe_info);% 根据管道状态矩阵生成每个状态的管道破坏信息
+    try
+    [t3,pipe_relative] = damageNetInp2_GIRAFFE2(net_data,damage_pipe_info_m,EPA_format,output_net_filename_n);% from 'damageNet\
+    catch
+        timeStep_i
+        keyboard
+        [t3,pipe_relative] = damageNetInp2_GIRAFFE2(net_data,damage_pipe_info_m,EPA_format,output_net_filename_n);% from 'damageNet\
+    end
     inputdata=output_net_filename_n;
-    errcode7_2 = calllib(lib_name,'ENopen',damage_net,output_net_rpt ,'');% from 'EPANETx64PDD.dll'
+    errcode7_2 = calllib(lib_name,'ENopen',inputdata,output_net_rpt ,'');% from 'EPANETx64PDD.dll'
     for j_i = 1:numel(node_id)
         [errcode7_3,cstring,index]=calllib(lib_name,'ENgetnodeindex',node_id{j_i},index);
         errcode7_4 = calllib(lib_name,'ENsetnodevalue',index,120,Hminimum(j_i));
@@ -105,10 +112,12 @@ for timeStep_i=1:timeStep_end
     errcode7_6 = calllib(lib_name,'ENsaveinpfile',output_net_pdd_file_n);
     errcode7_7 = calllib(lib_name,'ENsolveH');
     calllib(lib_name,'ENsaveH');%保存
-    calllib(lib_name,'ENsetreport','NODES ALL'); % 设置输出报告的格式
+%     calllib(lib_name,'ENsetreport','NODES ALL'); % 设置输出报告的格式
     calllib(lib_name,'ENsetstatusreport',2);
     calllib(lib_name,'ENreport'); %输出计算报告
+    
     [real_pre_chosen_node,cal_demand_chosen_node,req_demand_chosen_node]=Get_chosen_node_value_EPANETx64PDD(lib_name,node_id);
+    calllib(lib_name,'ENclose');
     Pre{timeStep_i} = real_pre_chosen_node;
     Demand{timeStep_i}=req_demand_chosen_node;
     cal_Demand{timeStep_i}=cal_demand_chosen_node;
@@ -118,12 +127,7 @@ end
 system_serviceability_cell{1}
 system_serviceability_cell{end}
 % post-process
-calllib(lib_name,'ENcloseH');
-calllib(lib_name,'ENsaveH');%
-calllib(lib_name,'ENsetstatusreport',2);
-calllib(lib_name,'ENsetreport','NODE ALL'); %
-calllib(lib_name,'ENreport');
-calllib(lib_name,'ENclose');
+
 
 if false
     
@@ -142,3 +146,5 @@ if false
 end
 % fclose(fid);
 errcode =0;
+delete('s*');
+unloadlibrary(lib_name);
