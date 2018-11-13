@@ -6,4 +6,4 @@ temp_*
 epanet2.dll
 epanet2.h
 s*
-.\test\
+\test\
