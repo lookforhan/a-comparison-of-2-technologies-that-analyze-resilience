@@ -18,7 +18,7 @@
 % [BreakPipe_result,RepairCrew_result]=priorityList2schedule7({'1';'2';'3'},{'2';'3';'1'},{'a';'b'},{'3';'2';'1'},[2;3;5],[6;7;8],[0,2,3;2,0,2;3,2,0])
 function [BreakPipe_result,RepairCrew_result,Active_result]=priorityList2schedule7(isolate_priority,replacement_priority,RepairCrew,BreakPipe_order,...
     Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,out_dir)
-if isempty(BreakPipePriority)%没有进行修复
+if isempty(isolate_priority)%没有进行修复
     BreakPipe_result = [];
     RepairCrew_result =[];
     return
@@ -51,7 +51,7 @@ Repair_Record = zeros(nB,RN);%记录每个队伍修复哪个管道
 BreakPipe_order_mat=cell2mat(BreakPipe_order);
 % BreakPipe_Priority_mat=cell2mat(BreakPipePriority);
 isolate_priority_mat = cell2mat(isolate_priority);
-replacement_priorit_mat = cell2mat(replacement_priority);
+replacement_priority_mat = cell2mat(replacement_priority);
 Record = zeros(nB*2,RN);%记录每个队伍修复哪个管道
 % 检查过程
 for i = 1:nB
@@ -103,10 +103,10 @@ TD_R = TD_R + T_postpone_mat;
 TS_R = TS_R + T_postpone_mat;
 TE_R = TE_R + T_postpone_mat;
 % 分配过程结束，生成输出
-[~,locb1]=ismember(BreakPipe_order_mat,BreakPipe_Priority_mat);%修复次序在原管道中
-[~,locb2]=ismember(BreakPipe_order_mat,BreakPipe_Priority_mat);
-BreakPipe_result11=[num2cell(locb1),num2cell(BreakPipe_Priority_mat),num2cell(TD_I),num2cell(TS_I),num2cell(TE_I),Inspect_Record_pipe];%检查的记录
-BreakPipe_result21=[num2cell(locb2),num2cell(BreakPipe_Priority_mat),num2cell(TD_R),num2cell(TS_R),num2cell(TE_R),Repair_Record_pipe];%修复的记录
+[~,locb1]=ismember(BreakPipe_order_mat,isolate_priority_mat);%隔离次序在原管道中
+[~,locb2]=ismember(BreakPipe_order_mat,replacement_priority_mat);%修复次序在原管道中
+BreakPipe_result11=[num2cell(locb1),num2cell(isolate_priority_mat),num2cell(TD_I),num2cell(TS_I),num2cell(TE_I),Inspect_Record_pipe];%检查的记录
+BreakPipe_result21=[num2cell(locb2),num2cell(replacement_priority_mat),num2cell(TD_R),num2cell(TS_R),num2cell(TE_R),Repair_Record_pipe];%修复的记录
 BreakPipe_result1=sortrows(BreakPipe_result11);%按照BreakPipe_order_mat排序
 BreakPipe_result1(:,1)=[];
 BreakPipe_result2=sortrows(BreakPipe_result21);%按照BreakPipe_order_mat排序
@@ -127,9 +127,9 @@ end
 % keyboard
 %--------------------------------------------
 title2 = {'队伍','分配时刻（h）','工作（检查/修复）开始时刻（h）','管道编号','活动类型：0移动/1隔离/2修复'};
-Active_displacement=[[Inspect_Record_pipe,num2cell(TD_I),num2cell(TS_I),num2cell(BreakPipe_Priority_mat);Repair_Record_pipe,num2cell(TD_R),num2cell(TS_R),num2cell(BreakPipe_Priority_mat)],num2cell(displacement_mat)];
-Active_isolation = [Inspect_Record_pipe,num2cell(TS_I),num2cell(TE_I),num2cell(BreakPipe_Priority_mat),num2cell(isolate_mat)];
-Active_replacement =[Repair_Record_pipe,num2cell(TS_R),num2cell(TE_R),num2cell(BreakPipe_Priority_mat),num2cell(replacement_mat)];
+Active_displacement=[[Inspect_Record_pipe,num2cell(TD_I),num2cell(TS_I),num2cell(isolate_priority_mat);Repair_Record_pipe,num2cell(TD_R),num2cell(TS_R),num2cell(replacement_priority_mat)],num2cell(displacement_mat)];
+Active_isolation = [Inspect_Record_pipe,num2cell(TS_I),num2cell(TE_I),num2cell(isolate_priority_mat),num2cell(isolate_mat)];
+Active_replacement =[Repair_Record_pipe,num2cell(TS_R),num2cell(TE_R),num2cell(replacement_priority_mat),num2cell(replacement_mat)];
 Active_result =[title2; [Active_displacement;Active_isolation;Active_replacement]];
 
 xlswrite([out_dir,'\temp_修复队伍修复结果.xls'],Active_result)
