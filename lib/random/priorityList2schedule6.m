@@ -97,14 +97,14 @@ BreakPipe_result=[BreakPipe_result1;BreakPipe_result2];
 if false
     title = {'管道编号','分配时刻（h）','工作（检查/修复）开始时刻（h）','工作（检查/修复）结束时刻','修复队伍'};
     BreakPipe_result5=[title;BreakPipe_result];
-    xlswrite([out_dir,'\管道修复结果.xls'],BreakPipe_result5);
+    xlswrite([out_dir,'\temp_管道修复结果.xls'],BreakPipe_result5);
 end
 %--------------------------------------------
 theRepairNum_forCrew=sum(Repair_Record~=0,1);%队伍修复管道个数
 theMeanDuration=sum(Repair_Record,1)./theRepairNum_forCrew;%平均修复时间
 RepairCrew_result=[RepairCrew,num2cell(theRepairNum_forCrew'),num2cell(theMeanDuration')];
 if false
-    xlswrite([out_dir,'\修复队伍修复结果.xls'],RepairCrew_result);
+    xlswrite([out_dir,'\temp_修复队伍修复结果.xls'],RepairCrew_result);
 end
 % keyboard
 %--------------------------------------------
@@ -114,6 +114,6 @@ Active_isolation = [Inspect_Record_pipe,num2cell(TS_I),num2cell(TE_I),num2cell(B
 Active_replacement =[Repair_Record_pipe,num2cell(TS_R),num2cell(TE_R),num2cell(BreakPipe_Priority_mat),num2cell(replacement_mat)];
 Active_result =[title2; [Active_displacement;Active_isolation;Active_replacement]];
 
-xlswrite([out_dir,'\修复队伍修复结果.xls'],Active_result)
+xlswrite([out_dir,'\temp_修复队伍修复结果.xls'],Active_result)
 % Active_reparation
 end

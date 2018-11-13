@@ -35,6 +35,7 @@
 % [10]pipe_damage_num,double,管线上破坏点个数
 %%
 function [t,pipe_new_add,pipe_relative]=ND_Pipe5(damage_node_data,damage_pipe_info,pipe_data)
+
 pipe_new_add=struct('id',[],'N1',[],'N2',[],'Length',[],'Diameter',[],'Roughness',[],'MinorLoss',[],'Statues','Open'); 
 %pipe_new_add结构体，存放每1段新增破坏管段属性信息：管线编号(字符串),起点编号(字符串),终点编号(字符串),管线长度(m),管段直径(mm),沿程水头损失摩阻系数,局部水头损失摩阻系数
 M1=damage_pipe_info{1,1};%破坏管线的位置号(向量)
@@ -42,9 +43,16 @@ m1_ID = pipe_data(M1,1);
 D2=damage_pipe_info{1,2};
 %D2管线破坏点位置矩阵；第1列为第1个破坏点距管起点的长度与管线总长的比例，第2列为第2个破坏点距第1个破坏点的长度与管线总长的比例...；
 n1=numel(M1);%n1管网中破坏管线的数量；
+if isempty(damage_node_data)
+    t =0;
+    pipe_new_add = [];
+    pipe_relative = pipe_data(M1,1);
+    return
+end
 %% 在每条破坏管线上建立破坏管段属性信息；
 pipe_damage_num=zeros(n1,1); %在每条管线上应该分割成的管段数量；
 add_pipe_count=0; %新增加的管段计数器；
+m3_ID=cell(n1,1);
 for i=1:n1 %对破坏的管道添加新管段
     damage_pipe_loc=M1(i);%破坏点的所在管线在管网中所有管线信息矩阵中的行位置编号
     pipe_damage_num(i)=sum(D2(i,:)>0); %在每条管线上应该分割成的管段数量；

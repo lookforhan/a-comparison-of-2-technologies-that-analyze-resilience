@@ -36,7 +36,12 @@
 % [7]c1,cell,
 %
 function [t,all_add_node_data,pipe_new_add_new]=ND_P_Leak4_GIRAFFE2_R(damage_node_data,damage_pipe_info,pipe_new_add)
-
+if isempty(pipe_new_add)
+    t = 0;
+    all_add_node_data = [];
+    pipe_new_add_new = [];
+    return
+end
 M1=damage_pipe_info{1,1}; %破坏管线的位置号(向量)
 D2=damage_pipe_info{1,2};
 %D2管线破坏点位置矩阵；第1列为第1个破坏点距管起点的长度与管线总长的比例，第2列为第2个破坏点距第1个破坏点的长度与管线总长的比例...；
@@ -193,5 +198,6 @@ else
     pipe_new_add_2=[];
 end
 pipe_new_add_new = [pipe_new_add;pipe_new_add_3;pipe_new_add_2];
+
 t=0;
 end

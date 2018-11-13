@@ -18,9 +18,19 @@ for i = 1:numel(pipe_data(:,1))
         pipe_data{i,8}='Closed;';
     end
 end
+if isempty(pipe_new_add)
+   
+    all_pipe_data = pipe_data;
+else
 mid_data=(struct2cell(pipe_new_add))';
 all_pipe_data=[pipe_data;mid_data];%cell,初始管网中管线+破坏管线的属性信息：管线编号(字符串),起点编号(字符串),终点编号(字符串),管线长度(m),管段直径(mm),沿程水头损失摩阻系数,局部水头损失摩阻系数;
+end
+if isempty(all_add_node_data)
+    all_node_coordinate = net_data{23,2};
+else
 all_node_coordinate=[net_data{23,2};all_add_node_data(:,1:3)]; %所有节点坐标（包括水源、水池、用户节点）；
+
+end
 [~,outdata]=ND_Out_no_delete(all_pipe_data,all_add_node_data,all_node_coordinate,net_data);
 t_W=Write_Inpfile5(net_data,EPA_format,outdata,output_net_filename);% 写入新管网inp
 end

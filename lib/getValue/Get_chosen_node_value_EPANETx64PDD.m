@@ -13,6 +13,7 @@ function [pre,calculate_demand,demand]=Get_chosen_node_value_EPANETx64PDD(lib_na
      value_req_dem=libpointer('doublePtr',0);%指针参数--值
      value1=zeros(original_junction_num,1);
      value2=zeros(original_junction_num,1);
+     value3=zeros(original_junction_num,1);
     for k1=1:original_junction_num
         node_index_k1=libpointer('int32Ptr',0);
         node_id_k1=libpointer('cstring',node_id{k1,1});
