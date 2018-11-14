@@ -2,6 +2,8 @@
 *.[1~9]
 *.asv
 *.rpt
-tem_*
+temp_*
 epanet2.dll
 epanet2.h
+test\
+s*
