@@ -11,8 +11,8 @@
 clear;clc;close all;tic;
 lib_name = 'EPANETx64PDD';
 h_name = 'toolkit.h';
-net_file = '..\materials\MOD_5.inp';
-damage_file = '..\materials\damage06.txt';
+net_file = '..\materials\MOD_5_lowest.inp';
+damage_file = '..\materials\damage01.txt';
 % damage_file = '..\materials\damage02.txt';
 damage_net = '.\results\temp_damage_net.inp';
 pdd_file = '..\materials\PDD_parameter.txt';
