@@ -5,7 +5,7 @@
 temp_*
 epanet2.dll
 epanet2.h
-test\
+test
 s*
 results
 feature_recovery_process_eps\results
