@@ -107,8 +107,8 @@ TE_R = TE_R + T_postpone_mat_2;
 % 分配过程结束，生成输出
 [~,locb1]=ismember(BreakPipe_order_mat,isolate_priority_mat);%隔离次序在原管道中
 [~,locb2]=ismember(BreakPipe_order_mat,replacement_priority_mat);%修复次序在原管道中
-BreakPipe_result11=[num2cell(locb1(locb1~=0)),num2cell(isolate_priority_mat),num2cell(TD_I),num2cell(TS_I),num2cell(TE_I),Inspect_Record_pipe];%检查的记录
-BreakPipe_result21=[num2cell(locb2),num2cell(replacement_priority_mat),num2cell(TD_R),num2cell(TS_R),num2cell(TE_R),Repair_Record_pipe];%修复的记录
+BreakPipe_result11=[num2cell(locb1(locb1~=0)),num2cell(isolate_priority_mat),num2cell(TD_I),num2cell(TS_I),num2cell(TE_I),Inspect_Record_pipe,num2cell(ones(nB_isolation,1))];%检查的记录
+BreakPipe_result21=[num2cell(locb2),num2cell(replacement_priority_mat),num2cell(TD_R),num2cell(TS_R),num2cell(TE_R),Repair_Record_pipe,num2cell(ones(nB_replacement,1)*2)];%修复的记录
 BreakPipe_result1=sortrows(BreakPipe_result11);%按照BreakPipe_order_mat排序
 BreakPipe_result1(:,1)=[];
 BreakPipe_result2=sortrows(BreakPipe_result21);%按照BreakPipe_order_mat排序
