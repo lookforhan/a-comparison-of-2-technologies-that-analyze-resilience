@@ -1,5 +1,6 @@
 % name:recovery_process_eps.m
-% net: MOD_3.inp
+% net: MOD_5.inp
+% 经验教训：所有涉及调用动态链接库的函数和命令必须返回错误代码，并验证是否错误。
 % pro-process
 % process
 % process_1
@@ -69,15 +70,17 @@ Dp_Travel_mat=Dp_Travel_mat1*0;% 不考虑修复队伍移动时间的影响。
 BreakPipePriority = BreakPipe_order;% 修复次序
 RepairCrew = {'a'};
 output_result_dir = out_dir;
-[BreakPipe_result,RepairCrew_result]=priorityList2schedule6(BreakPipePriority,RepairCrew,BreakPipe_order,...
-    Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,output_result_dir);%根据修复次序生成时间表 from 'random\'
+% [BreakPipe_result,RepairCrew_result]=priorityList2schedule6(BreakPipePriority,RepairCrew,BreakPipe_order,...
+%     Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,output_result_dir);%根据修复次序生成时间表，隔离与修复合并的策略 from 'random\'
+[BreakPipe_result,RepairCrew_result]=priorityList2schedule7(BreakPipePriority,BreakPipePriority,RepairCrew,BreakPipe_order,...
+    Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,output_result_dir);%根据修复次序生成时间表，隔离与修复分开的策略 from 'random\'
 [PipeStatus2,PipeStatusChange]=schedule2pipestatus3(BreakPipe_result);%根据时间表生成管道状态矩阵 from 'random\'
 PipeStatus = PipeStatus2;
 duration_one = numel(PipeStatus(1,:));
 
 % process_6 eps simulation
-errcode1 = calllib(lib_name,'ENopen',damage_net,[out_dir,'damage.rpt'],'');% from 'EPANETx64PDD.dll'
-if errcode1~=0
+errcode6_1 = calllib(lib_name,'ENopen',damage_net,[out_dir,'damage.rpt'],'');% from 'EPANETx64PDD.dll'
+if errcode6_1~=0
     keyboard
 end
 node_id = pdd_data{1};
@@ -92,7 +95,7 @@ for j_i = 1:numel(node_id)
 end
 errcode6_4 = calllib(lib_name,'ENsaveinpfile',temp_inp_file);
 %
-durationSet = (duration_one)*3600;%(s)
+durationSet = (duration_one-1)*3600;%(s)
 % durationSet = 24*7*3600;%(s)
 calllib(lib_name,'ENsettimeparam',0,durationSet);
 calllib(lib_name,'ENsetoption',0,500);
@@ -108,18 +111,10 @@ time_step_n =0;
 errcode4 = 0;
 while (temp_tstep && ~errcode4)
     time_step_n = time_step_n+1;
-%     [errcode4,temp_t] = calllib(lib_name,'ENrunH',temp_t);
     
     if errcode4
         keyboard
     end
-    
-    
-%     [~,real_pre]=Get_EPANETx64PDD(lib_name,junction_num,11);%水压
-    
-    
-    
-    %
     disp(num2str(temp_t))
     disp(num2str(time_step_n))
     [lia,loc] = ismember(time_step_n,timeStepChose);%
@@ -192,12 +187,12 @@ end
 system_serviceability_cell{1}
 system_serviceability_cell{end}
 % post-process
-calllib(lib_name,'ENcloseH');
-calllib(lib_name,'ENsaveH');%
-calllib(lib_name,'ENsetstatusreport',2);
-calllib(lib_name,'ENsetreport','NODE ALL'); %
-calllib(lib_name,'ENreport');
-calllib(lib_name,'ENclose');
+errcode7_1 = calllib(lib_name,'ENcloseH');
+errcode7_2 = calllib(lib_name,'ENsaveH');%
+errcode7_3 = calllib(lib_name,'ENsetstatusreport',2);
+errcode7_4 = calllib(lib_name,'ENsetreport','NODE ALL'); %
+errcode7_5 = calllib(lib_name,'ENreport');
+errcode7_6 = calllib(lib_name,'ENclose');
 
 if false
     
