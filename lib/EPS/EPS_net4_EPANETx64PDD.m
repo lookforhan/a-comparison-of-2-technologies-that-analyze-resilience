@@ -29,8 +29,8 @@ temp_tstep = 1;
 time_step_n =0;
 % PipeStatus = [pipeStatus];
 % [newPipeStatus,temeStepChosen] = pipeStatusChange(PipeStatus);
-[newPipeStatus ,timeStepChose]= pipeStatusChange(PipeStatus);
-[newPipeStatusChange ,timeStepChangeChose]= pipeStatusChange(PipeStatusChange);
+[~ ,timeStepChose]= pipeStatusChange(PipeStatus);
+[newPipeStatusChange ,~]= pipeStatusChange(PipeStatusChange);
 errcode4 = 0;
 while (temp_tstep && ~errcode4)
     time_step_n = time_step_n+1;
