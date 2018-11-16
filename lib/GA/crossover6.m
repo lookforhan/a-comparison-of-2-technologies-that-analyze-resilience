@@ -25,11 +25,11 @@ pop{3}={58;42;52;8;34;60;7;11;34;52;7;8;42;11;58;60}
 pc=0.5
 [newpop]=crossover2(pop,pc)
 %}
-function [newpop,record]=crossover5(pop,pc)
-popsize=numel(pop);%种群大小
+function [newpop,record]=crossover6(pop,pc)
+popsize=numel(pop(:,1));%种群大小
 record=zeros(popsize,1);%记录个体交叉为1，不交叉为0
 newpop=pop;
-gen_length=numel(pop{1});%个体长度
+gen_length=numel(pop(1,:));%个体长度
 if mod(popsize,2)==0
     loop_n=popsize;
 else
@@ -40,29 +40,29 @@ for i=1:2:loop_n
     if r(i)<pc%小于交叉概率则交叉，
         record(i)=1;
         record(i+1)=1;
-        parent_1=pop{i};%组合的第一个个体
-        parent_2=pop{i+1};%组合的第二个个体   
+        parent_1=pop(i,:);%组合的第一个个体
+        parent_2=pop(i+1,:);%组合的第二个个体   
         cross_point=randperm(gen_length-1,1);%选择交叉点
-        pop_parents_i{1}=parent_1;
-        pop_parents_i{2}=parent_2;
+        pop_parents_i(1,:)=parent_1;
+        pop_parents_i(2,:)=parent_2;
         [children1,children2]=sub_crossover(pop_parents_i,cross_point);
-        newpop{i}=children1;
-        newpop{i+1}=children2;
+        newpop(i,:)=children1;
+        newpop(i+1,:)=children2;
     else%不交叉
-        newpop{i}=pop{i};
-        newpop{i+1}=pop{i+1};
+        newpop(i,:)=pop(i,:);
+        newpop(i+1,:)=pop(i+1,:);
     end
     
 end
 
 end
 function [children1,children2]=sub_crossover(pop_parents,cross_point)
-    parents1=cell2mat(pop_parents{1});
-    parents2=cell2mat(pop_parents{2});
+    parents1=pop_parents(1,:)';
+    parents2=pop_parents(2,:)';
 [~,lcob1]=ismember(parents1(cross_point+1:end),parents2);
     parents1_half=sortrows([lcob1,parents1(cross_point+1:end)]);
     [~,lcob2]=ismember(parents2(cross_point+1:end),parents1);
     parents2_half=sortrows([lcob2,parents2(cross_point+1:end)]);
-    children1=num2cell([parents1(1:cross_point);parents1_half(:,end)]);
-     children2=num2cell([parents2(1:cross_point);parents2_half(:,end)]);
+    children1=[parents1(1:cross_point);parents1_half(:,end)];
+     children2=[parents2(1:cross_point);parents2_half(:,end)];
 end
