@@ -61,12 +61,12 @@ while (temp_tstep && ~errcode4)
                         index =libpointer('int32Ptr',0);
                         [code,id,index]=calllib(lib_name,'ENgetlinkindex',id,index);
                         if code
-                            disp(nem2str(code));
+                            disp(num2str(code));
                             keyboard
                         end
                         code=calllib(lib_name,'ENsetlinkvalue',index,11,0);%管道id状态为关闭
                         if code
-                            disp(nem2str(code));
+                            disp(num2str(code));
                             fprintf(fid,'隔离管道:%s出错,代码%s\r\n',id,num2str(code) );
                             keyboard
                         end
