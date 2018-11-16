@@ -7,9 +7,9 @@ function [ newPop ] = ga_process( pop,fit,pm,pc )
 %   输出：新种群
 %   方法：选择、交叉、变异、精英保留
 Fitvalue=linear_normalized(fit,100,2.5);%归一化
- [newpop_section,best_indiv]=selection2(pop,Fitvalue);%% 选择
- [newpop_cross,record_cross]=crossover5(newpop_section,pc);%交配
- [newpop_mutation,record_mutation]=mutation2(newpop_cross,pm);%变异
- newPop = [newpop_mutation;best_indiv;best_indiv];
+ [newpop_section,best_indiv,second_best_indiv]=selection3(pop,Fitvalue);%% 选择
+ [newpop_cross,record_cross]=crossover6(newpop_section,pc);%交配
+ [newpop_mutation,record_mutation]=mutation3(newpop_cross,pm);%变异
+ newPop = [newpop_mutation;best_indiv;second_best_indiv];
 end
 
