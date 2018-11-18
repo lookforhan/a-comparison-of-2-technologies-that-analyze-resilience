@@ -93,3 +93,4 @@ errcode6_4 = calllib(lib_name,'ENsaveinpfile',temp_inp_file);
     EPA_format,...node_original_data,system_original_L,...EPA格式，节点原本数据，系统原本管道长度
     Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,...检查时间，修复时间，移动时间
    temp_inp_file)%
+toc
