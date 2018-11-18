@@ -10,10 +10,10 @@
 
 在主函数eps_different_crew_startTime.m中增加参数
 
-crewStartTime|记录每个队伍开始工作的时间（单位：小时）
-crewEfficiencyRecovery|记录每个队伍的修复效率系数
-crewEfficiencyIsolation|记录每个队伍的隔离效率系数
-crewEfficiencyTravel|记录每个队伍的移动效率系数
+|crewStartTime|记录每个队伍开始工作的时间（单位：小时）|
+|crewEfficiencyRecovery|记录每个队伍的修复效率系数|
+|crewEfficiencyIsolation|记录每个队伍的隔离效率系数|
+|crewEfficiencyTravel|记录每个队伍的移动效率系数|
 
 ## 功能函数中的修改
 
