@@ -2,6 +2,10 @@
 *.[1~9]
 *.asv
 *.rpt
-tem_*
+temp_*
 epanet2.dll
 epanet2.h
+!s*
+test
+results
+feature_recovery_process_eps\results
