@@ -17,8 +17,7 @@
 %% 应用案例
 % [BreakPipe_result,RepairCrew_result]=priorityList2schedule8({'1';'3'},{'2';'3';'1'},{'a';'b'},{'3';'2';'1'},[2;3;5],[6;7;8],[0,2,3;2,0,2;3,2,0],'.\')
 function [BreakPipe_result,RepairCrew_result,Active_result]=priorityList2schedule8(isolate_priority,replacement_priority,RepairCrew,BreakPipe_order,...
-    Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,out_dir,...
-    crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation)
+    Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,out_dir)
 if isempty(isolate_priority)%没有进行修复
     BreakPipe_result = [];
     RepairCrew_result =[];
@@ -44,7 +43,7 @@ TS_R = zeros(nB_replacement,1);%破坏管道**开始**修复时间
 TE_R = zeros(nB_replacement,1);%破坏管道**结束**修复时间
 Inspect_Record_pipe = cell(nB_isolation,1);%破坏管道被那个队伍检查
 Repair_Record_pipe= cell(nB_replacement,1);%破坏管道被那个队伍修复
-REneTime = zeros(1,RN);%维修队伍的修复结束时间（中间变量）
+RET = zeros(1,RN);%维修队伍的修复结束时间（中间变量）
 Inspect_Record = zeros(nB_isolation,RN);%记录每个队伍修复哪个管道
 Repair_Record = zeros(nB_replacement,RN);%记录每个队伍修复哪个管道
 % Record = zeros(nB,RN);%记录每个队伍修复哪个管道
@@ -61,7 +60,7 @@ for i = 1:nB_isolation
     pipe_n=isolate_priority{i};%第I个管道编号
     [pipe_n2]=find(BreakPipe_order_mat==pipe_n);%管道破坏信息中的管道号;更新pipe_n2
     Dp_inspect_i=Dp_Inspect_mat(pipe_n2);%检查该管道所需的时间
-    [TD_I(i),J] = min(REneTime);%分配任务给维修队伍：隔离
+    [TD_I(i),J] = min(RET);%分配任务给维修队伍：隔离
     if any(find(Record(1:i,J)~=0))
         Dp_travel_i=Dp_Travel_mat(pipe_n2,pipe_n3);%两个管道之间移动的时间
     else
@@ -69,7 +68,7 @@ for i = 1:nB_isolation
     end
     TS_I(i) = TD_I(i)+Dp_travel_i;%检查开始时间
     TE_I(i) = TS_I(i)+Dp_inspect_i;%检查结束时间
-    REneTime(J) = TE_I(i);%检查（隔离）结束后，队伍可以接收其他任务安排
+    RET(J) = TE_I(i);%检查（隔离）结束后，队伍可以接收其他任务安排
     Inspect_Record_pipe{i}=RepairCrew{J};
     Inspect_Record(i,J) = Dp_inspect_i;
     %     Record(i,J) = Dp_inspect_i;
@@ -81,7 +80,7 @@ for i = 1:nB_replacement
     pipe_n=replacement_priority{i};%第I个管道编号
     [pipe_n2]=find(BreakPipe_order_mat==pipe_n);%管道破坏信息中的管道号;更新pipe_n2
     Dp_repair_i=Dp_Repair_mat(pipe_n2);%修复该管道所需的时间
-    [TD_R(i),J] = min(REneTime);%分配任务给维修队伍:修复
+    [TD_R(i),J] = min(RET);%分配任务给维修队伍:修复
     if any(find(Record(1:i,J)~=0))
         Dp_travel_i=Dp_Travel_mat(pipe_n2,pipe_n3);%两个管道之间移动的时间
     else
@@ -89,7 +88,7 @@ for i = 1:nB_replacement
     end
     TS_R(i) = TD_R(i);%分配后，立即开始修复活动
     TE_R(i) = TS_R(i)+Dp_repair_i;%修复结束
-    REneTime(J) = TE_R(i);%修复结束后，队伍可以接收其他任务安排
+    RET(J) = TE_R(i);%修复结束后，队伍可以接收其他任务安排
     Repair_Record_pipe{i} = RepairCrew{J};
     Repair_Record(i,J) = Dp_repair_i;
     %     Record(i,J) = Dp_inspect_i;
