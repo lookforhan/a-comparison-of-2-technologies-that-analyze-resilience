@@ -84,7 +84,7 @@ for i = 1:nB_replacement
     pipe_n=replacement_priority{i};%第I个管道编号
     [pipe_n2]=find(BreakPipe_order_mat==pipe_n);%管道破坏信息中的管道号;更新pipe_n2
     [TD_R(i),J] = min(REneTime);%分配任务给维修队伍:修复
-    Dp_repair_i=Dp_Repair_mat(pipe_n2*crewEfficiencyRecovery);%修复该管道所需的时间
+    Dp_repair_i=Dp_Repair_mat(pipe_n2)*crewEfficiencyRecovery(J);%修复该管道所需的时间
     
     if any(find(Record(1:i,J)~=0))
         Dp_travel_i=Dp_Travel_mat(pipe_n2,pipe_n3);%两个管道之间移动的时间
