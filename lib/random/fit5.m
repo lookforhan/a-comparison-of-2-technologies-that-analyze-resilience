@@ -58,7 +58,7 @@ DamagePipePriority_cell = num2cell(BreakPipe_order);
 [BreakPipe_result,RepairCrew_result]=priorityList2schedule8(BreakPipePriority_cell,DamagePipePriority_cell,RepairCrew,DamagePipePriority_cell,...
     Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,output_result_dir);%根据修复次序生成时间表，隔离与修复分开的策略 from 'random\'
 
-[PipeStatus2,PipeStatusChange]=schedule2pipestatus3(BreakPipe_result);%根据时间表生成管道状态矩阵
+[PipeStatus2,PipeStatusChange]=schedule2pipestatus4(BreakPipe_result);%根据时间表生成管道状态矩阵
 if isempty(PipeStatus2)
     PipeStatus = ones(numel(BreakPipe_order),168*2)*2;%没有修复的延时模拟过程。
 else
