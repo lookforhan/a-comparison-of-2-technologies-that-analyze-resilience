@@ -1,3 +1,4 @@
+%% 2018-11-18，韩朝大修改，增加不同队伍的修复开始时间，修复效率、隔离效率以及移动速度参数
 %% 2018-11-13:韩朝，将管道隔离与管道修复工作分开。先将所有断开破坏管道完全隔离，然后逐个修复。本次修改为大修改。
 %% 因此，将原来输入参数BreakPipePriority改成两个变量，分别表示隔离次序（isolate_priority）和修复次序（replacement_priority）
 %% 2018-1-29:韩朝：由于次序发生变化，修改生成时间表
@@ -16,9 +17,10 @@
 % RepairCrew_result,(RN,3),记录：1维修队伍编号\2维修了管道个数\3平均修复时间
 %% 应用案例
 % [BreakPipe_result,RepairCrew_result]=priorityList2schedule8({'1';'3'},{'2';'3';'1'},{'a';'b'},{'3';'2';'1'},[2;3;5],[6;7;8],[0,2,3;2,0,2;3,2,0],'.\')
-function [BreakPipe_result,RepairCrew_result,Active_result]=priorityList2schedule8(isolate_priority,replacement_priority,RepairCrew,BreakPipe_order,...
+function [BreakPipe_result,RepairCrew_result,Active_result]=priorityList2schedule9(isolate_priority,replacement_priority,RepairCrew,BreakPipe_order,...
     Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,out_dir,...
-    crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation)
+    crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel...队伍开始工作时间，修复效率，隔离效率，移动效率
+    )
 if isempty(isolate_priority)%没有进行修复
     BreakPipe_result = [];
     RepairCrew_result =[];
@@ -44,7 +46,7 @@ TS_R = zeros(nB_replacement,1);%破坏管道**开始**修复时间
 TE_R = zeros(nB_replacement,1);%破坏管道**结束**修复时间
 Inspect_Record_pipe = cell(nB_isolation,1);%破坏管道被那个队伍检查
 Repair_Record_pipe= cell(nB_replacement,1);%破坏管道被那个队伍修复
-REneTime = zeros(1,RN);%维修队伍的修复结束时间（中间变量）
+REneTime = crewStartTime;%维修队伍的修复结束时间（中间变量）
 Inspect_Record = zeros(nB_isolation,RN);%记录每个队伍修复哪个管道
 Repair_Record = zeros(nB_replacement,RN);%记录每个队伍修复哪个管道
 % Record = zeros(nB,RN);%记录每个队伍修复哪个管道
@@ -60,14 +62,15 @@ for i = 1:nB_isolation
     
     pipe_n=isolate_priority{i};%第I个管道编号
     [pipe_n2]=find(BreakPipe_order_mat==pipe_n);%管道破坏信息中的管道号;更新pipe_n2
-    Dp_inspect_i=Dp_Inspect_mat(pipe_n2);%检查该管道所需的时间
     [TD_I(i),J] = min(REneTime);%分配任务给维修队伍：隔离
+    Dp_inspect_i=Dp_Inspect_mat(pipe_n2)*crewEfficiencyIsolation(J);%检查该管道所需的时间
+    
     if any(find(Record(1:i,J)~=0))
         Dp_travel_i=Dp_Travel_mat(pipe_n2,pipe_n3);%两个管道之间移动的时间
     else
         Dp_travel_i=0;
     end
-    TS_I(i) = TD_I(i)+Dp_travel_i;%检查开始时间
+    TS_I(i) = TD_I(i)+Dp_travel_i*crewEfficiencyTravel(J);%检查开始时间
     TE_I(i) = TS_I(i)+Dp_inspect_i;%检查结束时间
     REneTime(J) = TE_I(i);%检查（隔离）结束后，队伍可以接收其他任务安排
     Inspect_Record_pipe{i}=RepairCrew{J};
@@ -80,14 +83,15 @@ for i = 1:nB_replacement
     
     pipe_n=replacement_priority{i};%第I个管道编号
     [pipe_n2]=find(BreakPipe_order_mat==pipe_n);%管道破坏信息中的管道号;更新pipe_n2
-    Dp_repair_i=Dp_Repair_mat(pipe_n2);%修复该管道所需的时间
     [TD_R(i),J] = min(REneTime);%分配任务给维修队伍:修复
+    Dp_repair_i=Dp_Repair_mat(pipe_n2*crewEfficiencyRecovery);%修复该管道所需的时间
+    
     if any(find(Record(1:i,J)~=0))
         Dp_travel_i=Dp_Travel_mat(pipe_n2,pipe_n3);%两个管道之间移动的时间
     else
         Dp_travel_i=0;
     end
-    TS_R(i) = TD_R(i);%分配后，立即开始修复活动
+    TS_R(i) = TD_R(i)+Dp_travel_i*crewEfficiencyTravel(J);%分配后，立即开始修复活动
     TE_R(i) = TS_R(i)+Dp_repair_i;%修复结束
     REneTime(J) = TE_R(i);%修复结束后，队伍可以接收其他任务安排
     Repair_Record_pipe{i} = RepairCrew{J};
@@ -96,7 +100,7 @@ for i = 1:nB_replacement
     pipe_n3=pipe_n2;%将现有管道号赋予pipe_n3
 end
 % 统统推迟0.25h
-T_postpone = 0.25;
+T_postpone = 0;
 T_postpone_mat_1 = ones(nB_isolation,1)*T_postpone ;
 T_postpone_mat_2 = ones(nB_replacement,1)*T_postpone ;
 TD_I = TD_I + T_postpone_mat_1;
