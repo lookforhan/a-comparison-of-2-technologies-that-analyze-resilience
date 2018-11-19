@@ -89,7 +89,7 @@ end
 errcode6_4 = calllib(lib_name,'ENsaveinpfile',temp_inp_file);
 % process_7 genetic algorithm
 [pop_isolation_record,Fit_record_uniq]...
-    =ga_priority8_epanetx64pdd(popsize,generation_Nmax,probability_crossover,probability_mutation,...种群大小，进化代数，交叉概率，变异概率
+    =ga_priority9_epanetx64pdd(popsize,generation_Nmax,probability_crossover,probability_mutation,...种群大小，进化代数，交叉概率，变异概率
     out_dir,....输出目录
     RepairCrew,...修复队伍，
     damage_pipe_info,net_data,pipe_relative,...破坏信息，管网信息，破坏管道相关新建管道
