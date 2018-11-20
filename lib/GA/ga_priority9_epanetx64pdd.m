@@ -44,8 +44,8 @@ for generation_i = 1:generation_Nmax
         pop_isolation_old = newPop_isolation;
         % pop_uniq(lia1,:)
     end
-    Fit_isolation_max(generation_i,1) = max(Fit_isolation_uniq);
-    Fit_isolation_mean(generation_i,1) = mean(Fit_isolation_uniq);
+    Fit_isolation_max(generation_i,1) = max(Fit_init);
+    Fit_isolation_mean(generation_i,1) = mean(Fit_init);
     [ newPop_isolation ] = ga_process( pop_isolation_old,Fit_init,pm,pc );
     [ pop_uniq,pop_uniq_not,new_individual_record_mat ] = ga_unique_individual3( newPop_isolation,pop_isolation_record );
     [lia1,locb1] = ismember(pop_uniq,newPop_isolation,'rows');
@@ -60,10 +60,11 @@ x_isolation= 1:generation_Nmax;
 y1_isolation=Fit_isolation_max';
 y2_isolation=Fit_isolation_mean';
 y3_isolation = reshape(Fit_record,popsize,generation_Nmax);
+figure(1)
 plot(x_isolation,y1_isolation);
 hold on
 plot(x_isolation,y2_isolation);
-plot(repmat(x_isolation,popsize,1),y3_isolation)
+plot(repmat(x_isolation,popsize,1),y3_isolation,'*')
 hold off
 % process_2 the optimization of recovery reiority
 DamagePipe_order = damage_pipe_info{1};%需要修复的管道
@@ -84,10 +85,7 @@ for generation_i = 1:generation_Nmax
     EPA_format,...
     generation_dir_i,...
 output_net_filename_inp,pipe_relative);%,....
-    else
-        generation_i = generation_Nmax+1;
-        disp('haha')
-        break
+
     end
     if generation_i==1
         Fit_init = Fit_recovery_uniq;
@@ -100,8 +98,8 @@ output_net_filename_inp,pipe_relative);%,....
         pop_recovery_old = newPop_recovery;
         % pop_uniq(lia1,:)
     end
-    Fit_recovery_max(generation_i,1) = max(Fit_recovery_uniq);
-    Fit_recovery_mean(generation_i,1) = mean(Fit_recovery_uniq);
+    Fit_recovery_max(generation_i,1) = max(Fit_init);
+    Fit_recovery_mean(generation_i,1) = mean(Fit_init);
     [ newPop_recovery ] = ga_process( pop_recovery_old,Fit_init,pm,pc );
     [ pop_uniq_recovery,pop_uniq_not_recovery,new_individual_record_mat_recovery ] = ga_unique_individual3( newPop_recovery,pop_recovery_record );
     [lia1,locb1_re] = ismember(pop_uniq_recovery,newPop_recovery,'rows');
@@ -114,12 +112,14 @@ x_recovery= 1:generation_Nmax;
 y1_recovery=Fit_recovery_max';
 y2_recovery=Fit_recovery_mean';
 y3_recovery = reshape(Fit_recovery_record,popsize,generation_Nmax);
+figure(2)
 plot(x_recovery,y1_recovery);
 hold on
 plot(x_recovery,y2_recovery);
-plot(repmat(x_recovery,popsize,1),y3_recovery)
+plot(repmat(x_recovery,popsize,1),y3_recovery,'o')
 hold off
 % process 3
+
 end
 function [Fit,fitvalue]=calfitvalue4_isolation(pop,BreakPipe_order,RepairCrew,...
     Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,...
@@ -218,6 +218,7 @@ for individual_i=1:popsize
         crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel)%评价种群个体适应度
 end
 Fit = Fitness;
+fitvalue{1,1} = system_serviceability_cell;
 end
 function [Fitness,...
     BreakPipe_result,...
