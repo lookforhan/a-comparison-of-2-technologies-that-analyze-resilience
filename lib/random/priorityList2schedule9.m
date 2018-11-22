@@ -46,7 +46,8 @@ TS_R = zeros(nB_replacement,1);%破坏管道**开始**修复时间
 TE_R = zeros(nB_replacement,1);%破坏管道**结束**修复时间
 Inspect_Record_pipe = cell(nB_isolation,1);%破坏管道被那个队伍检查
 Repair_Record_pipe= cell(nB_replacement,1);%破坏管道被那个队伍修复
-REneTime = crewStartTime;%维修队伍的修复结束时间（中间变量）
+REndTime = crewStartTime;%维修队伍的修复结束时间（中间变量）
+PipeEndTime = zeros(nB_replacement,1);%管道结束工作的时间。
 Inspect_Record = zeros(nB_isolation,RN);%记录每个队伍修复哪个管道
 Repair_Record = zeros(nB_replacement,RN);%记录每个队伍修复哪个管道
 % Record = zeros(nB,RN);%记录每个队伍修复哪个管道
@@ -62,7 +63,7 @@ for i = 1:nB_isolation
     
     pipe_n=isolate_priority{i};%第I个管道编号
     [pipe_n2]=find(BreakPipe_order_mat==pipe_n);%管道破坏信息中的管道号;更新pipe_n2
-    [TD_I(i),J] = min(REneTime);%分配任务给维修队伍：隔离
+    [TD_I(i),J] = min(REndTime);%分配任务给维修队伍：隔离
     Dp_inspect_i=Dp_Inspect_mat(pipe_n2)*crewEfficiencyIsolation(J);%检查该管道所需的时间
     
     if any(find(Record(1:i,J)~=0))
@@ -72,7 +73,8 @@ for i = 1:nB_isolation
     end
     TS_I(i) = TD_I(i)+Dp_travel_i*crewEfficiencyTravel(J);%检查开始时间
     TE_I(i) = TS_I(i)+Dp_inspect_i;%检查结束时间
-    REneTime(J) = TE_I(i);%检查（隔离）结束后，队伍可以接收其他任务安排
+    REndTime(J) = TE_I(i);%检查（隔离）结束后，队伍可以接收其他任务安排
+    PipeEndTime(pipe_n2) = TE_I(i);%检查（隔离）结束后，管道可以进行修复
     Inspect_Record_pipe{i}=RepairCrew{J};
     Inspect_Record(i,J) = Dp_inspect_i;
     %     Record(i,J) = Dp_inspect_i;
@@ -83,7 +85,9 @@ for i = 1:nB_replacement
     
     pipe_n=replacement_priority{i};%第I个管道编号
     [pipe_n2]=find(BreakPipe_order_mat==pipe_n);%管道破坏信息中的管道号;更新pipe_n2
-    [TD_R(i),J] = min(REneTime);%分配任务给维修队伍:修复
+    [R_1,J] = min(REndTime);%分配任务给维修队伍:修复
+    R_2 = PipeEndTime(pipe_n2);% 管道结束隔离的时间
+    TD_R(i) = max([R_1,R_2]);
     Dp_repair_i=Dp_Repair_mat(pipe_n2)*crewEfficiencyRecovery(J);%修复该管道所需的时间
     
     if any(find(Record(1:i,J)~=0))
@@ -93,7 +97,7 @@ for i = 1:nB_replacement
     end
     TS_R(i) = TD_R(i)+Dp_travel_i*crewEfficiencyTravel(J);%分配后，立即开始修复活动
     TE_R(i) = TS_R(i)+Dp_repair_i;%修复结束
-    REneTime(J) = TE_R(i);%修复结束后，队伍可以接收其他任务安排
+    REndTime(J) = TE_R(i);%修复结束后，队伍可以接收其他任务安排
     Repair_Record_pipe{i} = RepairCrew{J};
     Repair_Record(i,J) = Dp_repair_i;
     %     Record(i,J) = Dp_inspect_i;
