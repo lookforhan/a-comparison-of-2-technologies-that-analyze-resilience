@@ -28,8 +28,8 @@ catch
     load  EPA_F
 end
 % process_2 the defintion of parameters
-popsize = 10;%30
-generation_Nmax = 10;%30
+popsize = 300;%30
+generation_Nmax = 100;%30
 probability_crossover = 0.9;
 probability_mutation = 0.1;
 selection_strategy = 'elitism selection';
