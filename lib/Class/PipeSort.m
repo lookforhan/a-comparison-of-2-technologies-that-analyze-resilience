@@ -9,6 +9,7 @@ classdef PipeSort < handle
         net_data
         sortPipeID
         sortPipeDiameter
+        sortPipeLocb
     end
     
     methods
@@ -22,10 +23,21 @@ classdef PipeSort < handle
             theChosenPipe = obj.chosenPipeID;
             [~,theLoc] = ismember(theChosenPipe,obj.ID);
             theChosenPipeDiameter = obj.diameter(theLoc);
-            theData = [theChosenPipe,theChosenPipeDiameter];
+            theData = [theChosenPipe,theChosenPipeDiameter,num2cell(theLoc)];
             theNewData = sortrows(theData,2);
             obj.sortPipeDiameter = flipud(theNewData (:,2));
             obj.sortPipeID = flipud(theNewData (:,1));
+            obj.sortPipeLocb = flipud(theNewData(:,3));
+        end
+        function SortNothing(obj)
+            theChosenPipe = obj.chosenPipeID;
+            [~,theLoc] = ismember(theChosenPipe,obj.ID);
+            theChosenPipeDiameter = obj.diameter(theLoc);
+            theData = [theChosenPipe,theChosenPipeDiameter,num2cell(theLoc)];
+            theNewData = theData;
+            obj.sortPipeDiameter = theNewData (:,2);
+            obj.sortPipeID = theNewData (:,1);
+            obj.sortPipeLocb = theNewData(:,3);
         end
     end
     
