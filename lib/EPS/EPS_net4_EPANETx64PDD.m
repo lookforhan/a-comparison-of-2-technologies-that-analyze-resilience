@@ -65,6 +65,7 @@ while (temp_tstep && ~errcode4)
                             keyboard
                         end
                         code=calllib(lib_name,'ENsetlinkvalue',index,11,0);%管道id状态为关闭
+                        code= calllib(lib_name,'ENsetlinkvalue',index,4,0);
                         if code
                             disp(num2str(code));
                             fprintf(fid,'隔离管道:%s出错,代码%s\r\n',id,num2str(code) );
@@ -72,6 +73,25 @@ while (temp_tstep && ~errcode4)
                         end
                     end
                 case 2
+                    %isolation
+                     str3 = [str3,'隔离管道',pipe_relative{i,1},';'];
+                    for j =1:numel(pipe_relative{i,2})% 隔离的管道为当前管道相关联的破坏管道。
+                        id = libpointer('cstring',pipe_relative{i,2}{1,j});
+                        fprintf(fid,'隔离管道:%s\r\n',pipe_relative{i,2}{1,j} );
+                        index =libpointer('int32Ptr',0);
+                        [code,id,index]=calllib(lib_name,'ENgetlinkindex',id,index);
+                        if code
+                            disp(num2str(code));
+                            keyboard
+                        end
+                        code=calllib(lib_name,'ENsetlinkvalue',index,11,0);%管道id状态为关闭
+                        code= calllib(lib_name,'ENsetlinkvalue',index,4,0);
+                        if code
+                            disp(num2str(code));
+                            fprintf(fid,'隔离管道:%s出错,代码%s\r\n',id,num2str(code) );
+                            keyboard
+                        end
+                    end
                     %reopen
                     str3 = [str3,'修复管道',pipe_relative{i,1},';'];
                     id=libpointer('cstring',pipe_relative{i,1});
@@ -83,6 +103,7 @@ while (temp_tstep && ~errcode4)
                         keyboard
                     end
                     code= calllib(lib_name,'ENsetlinkvalue',index,11,1);
+                    code= calllib(lib_name,'ENsetlinkvalue',index,4,1);
                     fprintf(fid,'reopen管道%s,\r\n',pipe_relative{i,1});
                     if code
                         disp(nem2str(code));
@@ -109,6 +130,7 @@ end
 
 
 % post-process
+errcode(12) = calllib(lib_name,'ENsaveinpfile','temp_end.inp');
 errcode(6) = calllib(lib_name,'ENcloseH');
 errcode(7) = calllib(lib_name,'ENsaveH');%
 errcode(8) = calllib(lib_name,'ENsetstatusreport',2);
