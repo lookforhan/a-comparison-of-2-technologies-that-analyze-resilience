@@ -16,6 +16,10 @@ system_serviceability_cell = cell(duration_one,1);
 activity_cell = cell(duration_one,1);
 fid=1;
 node_id = net_data{2,2}(:,1);
+pipe_id = net_data{5,2}(:,1);
+[ai,a2] = ismember(deblank(pipe_relative(:,1)),pipe_id);
+[b1,b2]= unique(a2);
+pipe_relative = pipe_relative(b2,:);
 % process
 errcode(1) = calllib(lib_name,'ENopen',output_net_filename_inp,[output_result_dir,'eps_net4.rpt'],'');
 durationSet = (duration_one-1)*3600;%(s)
