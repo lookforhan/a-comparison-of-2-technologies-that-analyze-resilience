@@ -19,7 +19,7 @@ classdef PipeSort < handle
             obj.net_data = net_data;
             obj.chosenPipeID = pipeID;
         end
-        function SortDiameter(obj)
+        function SortDiameter_high2low(obj)
             theChosenPipe = obj.chosenPipeID;
             [~,theLoc] = ismember(theChosenPipe,obj.ID);
             theChosenPipeDiameter = obj.diameter(theLoc);
@@ -28,6 +28,34 @@ classdef PipeSort < handle
             obj.sortPipeDiameter = flipud(theNewData (:,2));
             obj.sortPipeID = flipud(theNewData (:,1));
             obj.sortPipeLocb = flipud(theNewData(:,3));
+        end
+        function SortDiameter_low2high(obj)
+            theChosenPipe = obj.chosenPipeID;
+            [~,theLoc] = ismember(theChosenPipe,obj.ID);
+            theChosenPipeDiameter = obj.diameter(theLoc);
+            theData = [theChosenPipe,theChosenPipeDiameter,num2cell(theLoc)];
+            theNewData = sortrows(theData,2);
+            obj.sortPipeDiameter = theNewData (:,2);
+            obj.sortPipeID = theNewData (:,1);
+            obj.sortPipeLocb = theNewData(:,3);
+        end
+        function SortIndex_high2low(obj,theChosenIndex)
+            theChosenPipe = obj.chosenPipeID;
+            [~,theLoc] = ismember(theChosenPipe,obj.ID);
+            theData = [theChosenPipe,theChosenIndex,num2cell(theLoc)];
+            theNewData = sortrows(theData,2);
+            obj.sortPipeDiameter = flipud(theNewData (:,2));
+            obj.sortPipeID = flipud(theNewData (:,1));
+            obj.sortPipeLocb = flipud(theNewData(:,3));
+        end
+        function sortIndex_low2high(obj,theChosenIndex)
+             theChosenPipe = obj.chosenPipeID;
+            [~,theLoc] = ismember(theChosenPipe,obj.ID);
+            theData = [theChosenPipe,theChosenIndex,num2cell(theLoc)];
+            theNewData = sortrows(theData,2);
+            obj.sortPipeDiameter = theNewData (:,2);
+            obj.sortPipeID = theNewData (:,1);
+            obj.sortPipeLocb = theNewData(:,3);
         end
         function SortNothing(obj)
             theChosenPipe = obj.chosenPipeID;
