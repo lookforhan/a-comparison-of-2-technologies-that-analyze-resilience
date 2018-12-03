@@ -22,7 +22,8 @@ end
 for pipe_i=1:numel(BreakPipe_order)
     %     Dp_inspect(pipe_i)= triangular_distribution(0.5,1,0.5);%检查时间
      Dp_inspect(pipe_i) = 2*0.25;
-    D = net_data{5,2}{pipe_i,5};
+     pipe_loc_i = BreakPipe_order{pipe_i};
+    D = net_data{5,2}{pipe_loc_i,5};
     if find(damage_pipe_info{3}==2)%判断是断开/泄露
         %                     Dp_repair(pipe_i)=triangular_distribution(120,240,168);%干路-断开;
         
