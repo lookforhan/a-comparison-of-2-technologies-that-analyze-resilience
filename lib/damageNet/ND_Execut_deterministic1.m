@@ -88,7 +88,8 @@ for i=1:damage_num
     diameter=mid_D5(n_h,n_l)*0.001;
     mid_D6(n_h,n_l)=(damage_node_e(i)/((diameter)^2.435*(10.67^(-0.5))*1000))^(1/0.926);
 end
-M1=unique(mid_M1,'stable');
+% M1=unique(mid_M1,'stable');
+[M1,ia]=unique(mid_M1);
 damage_pipe_id_2=Pipe_id_data(M1);
 damage_pipe_num=numel(M1);
 mid2_D2=cumsum(mid_D2,2);
@@ -102,7 +103,7 @@ D3=mid_D3;
 D4=mid_D4;
 D5=mid_D5;
 D6 = mid_D6;
-damage_pipe_info=[{M1},{D2},{D3},{D4},{damage_pipe_id_2},{D5},{D6}];
+damage_pipe_info=[{M1},{D2(ia,:)},{D3(ia)},{D4(ia)},{damage_pipe_id_2},{D5(ia)},{D6(ia)}];
 disp('ND_Execut_deterministic:½áÊø');
 t=0;
 end
