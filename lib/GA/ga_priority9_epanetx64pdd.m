@@ -16,6 +16,7 @@ pop_isolation_record = pop_isolation_init;%记录个体
 Fit_isolation_max = zeros(generation_Nmax,1);
 Fit_isolation_mean = zeros(generation_Nmax,1);
 pop_isolation_uniq = pop_isolation_init;
+Fit_record = zeros(popsize*generation_Nmax,1);
 for generation_i = 1:generation_Nmax
     generation_dir_i=[out_dir,'process_1\','遗传第',num2str(generation_i),'代\'];
     mkdir(generation_dir_i);
@@ -29,18 +30,18 @@ for generation_i = 1:generation_Nmax
             generation_dir_i,...
             output_net_filename_inp,pipe_relative);%,...
     else
-        generation_i = generation_Nmax+1;
+        
         disp('haha')
-        break
+
     end
     if generation_i==1
         Fit_init = Fit_isolation_uniq;
-        Fit_record = Fit_init;
+        Fit_record((generation_i-1)*popsize+1:(generation_i-1)*popsize+popsize)= Fit_init;
         pop_isolation_old = pop_isolation_init;
     else
         Fit_init(locb1) = Fit_isolation_uniq;
         Fit_init(locb2) = Fit_record(locb3);
-        Fit_record = [Fit_record;Fit_init];
+        Fit_record((generation_i-1)*popsize+1:(generation_i-1)*popsize+popsize) = Fit_init;
         pop_isolation_old = newPop_isolation;
         % pop_uniq(lia1,:)
     end
@@ -59,7 +60,11 @@ best_indivi_isolation = pop_isolation_record(a2,:);
 x_isolation= 1:generation_Nmax;
 y1_isolation=Fit_isolation_max';
 y2_isolation=Fit_isolation_mean';
+try
 y3_isolation = reshape(Fit_record,popsize,generation_Nmax);
+catch 
+    keyboard
+end
 figure(1)
 plot(x_isolation,y1_isolation);
 hold on
@@ -73,6 +78,7 @@ pop_recovery_record = pop_recovery_init;%记录个体
 Fit_recovery_max = zeros(generation_Nmax,1);
 Fit_recovery_mean = zeros(generation_Nmax,1);
 pop_recovery_uniq = pop_recovery_init;
+Fit_recovery_record = zeros(popsize*generation_Nmax,1)
 for generation_i = 1:generation_Nmax
     generation_dir_i=[out_dir,'process_2\','遗传第',num2str(generation_i),'代\'];
     mkdir(generation_dir_i);
@@ -89,12 +95,12 @@ output_net_filename_inp,pipe_relative);%,....
     end
     if generation_i==1
         Fit_init = Fit_recovery_uniq;
-        Fit_recovery_record = Fit_init;
+        Fit_recovery_record((generation_i-1)*popsize+1:(generation_i-1)*popsize+popsize) = Fit_init;
         pop_recovery_old = pop_recovery_init;
     else
         Fit_init(locb1_re) = Fit_recovery_uniq;
         Fit_init(locb2_re) = Fit_recovery_record(locb3_re);
-        Fit_recovery_record = [Fit_recovery_record;Fit_init];
+        Fit_recovery_record((generation_i-1)*popsize+1:(generation_i-1)*popsize+popsize) = Fit_init;
         pop_recovery_old = newPop_recovery;
         % pop_uniq(lia1,:)
     end
@@ -122,6 +128,7 @@ plot(repmat(x_recovery,popsize,1),y3_recovery,'o')
 hold off
 % process 3
 individual_dir_i ='.\results';
+save('alldate.mat')
 try
 [Fitness_end,...
         BreakPipe_result,...
@@ -139,6 +146,9 @@ try
         pipe_relative,...
         crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel)%评价种群个体适应度
 catch
+    
+    
+    toc
     keyboard
 end
 end
