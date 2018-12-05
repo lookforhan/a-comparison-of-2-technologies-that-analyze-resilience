@@ -4,7 +4,7 @@ clear;clc;close all;tic;
 lib_name = 'EPANETx64PDD';
 h_name = 'toolkit.h';
 net_file = '..\materials\MOD_5_mean.inp';
-damage_info_file = '..\materials\damage09.txt';
+damage_info_file = '..\materials\damage_scenario_05.txt';
 damage_net = '.\results\temp_damage_net.inp';
 damage_rpt = '.\results\temp_damage_net.rpt';
 pdd_file = '..\materials\PDD_parameter.txt';
@@ -28,8 +28,8 @@ catch
     load  EPA_F
 end
 % process_2 the defintion of parameters
-popsize = 300;%30
-generation_Nmax = 100;%30
+popsize = 10;%30
+generation_Nmax = 5;%30
 probability_crossover = 0.9;
 probability_mutation = 0.1;
 selection_strategy = 'elitism selection';
