@@ -29,7 +29,7 @@ for i = 1:pipe_num
         data{damage_n_one,3} = num2str(j);%第三列：管道上的破坏次序
         data{damage_n_one,4} = num2str(damageInfo{1,2}(i,j));%第四列：管道上的破坏点与之前破坏点的距离与整个管道长度的比例
         data{damage_n_one,5} = num2str(damageInfo{1,3}(i,j));%第五列：破坏类型：1泄露，2断开
-        data{damage_n_one,6} = num2str(damageInfo{1,6}(i,j));%第五列：等效面积
+        data{damage_n_one,6} = num2str(damageInfo{1,6}(i,j));%第五列：等效直径
     end
 end 
 for n = 1:(damage_n+1)
