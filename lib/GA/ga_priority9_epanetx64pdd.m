@@ -128,7 +128,7 @@ plot(repmat(x_recovery,popsize,1),y3_recovery,'o')
 hold off
 % process 3
 individual_dir_i ='.\results';
-save('alldate.mat')
+
 try
 [Fitness_end,...
         BreakPipe_result,...
@@ -151,6 +151,7 @@ catch
     toc
     keyboard
 end
+save('alldate.mat')
 end
 function [Fit,fitvalue]=calfitvalue4_isolation(pop,BreakPipe_order,RepairCrew,...
     Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,...
