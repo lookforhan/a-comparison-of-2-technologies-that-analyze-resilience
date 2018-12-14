@@ -83,37 +83,13 @@ classdef PipeSort < handle
             
             obj.sortPipeLocb=[index_trunk_break_final;index_trunk_leak_final;index_distribution_break_final;index_distribution_leak_final];
         end
-        function SortLosAngelesPrinciple(obj,damage_pipe_info)
-            % LADWP报告中采用的修复管道破坏优先次序方法。
-            % 原则：先修复断开管道，后修复泄漏管道
-            % 原则：对于断开/泄露管道，先修复直线距离与水源近的管道。
-            % 修改为，隔离断开管道，然后开始修复管道。断开和修复的优先次序按照以上原则进行
-            % 输入，
-            % damage_pipe_info 破坏管道破坏信息
-            % net_data. 管网信息
-            % damage_pipe_info{1}%管道索引
-            % damage_pipe_info{2}%破坏点位置
-            % damage_pipe_info{3}%破坏类型
-            % damage_pipe_info{4}%泄露系数
-            %% 先断开，后渗漏。(需要破坏类型damage_pipe_info{3})
-            %% 配水管网先断开，后渗漏。(需要破坏类型damage_pipe_info{3})
-            netdata = obj.net_data;
-            % first 找到断开和泄露破坏
-            % 1.1干路断开和泄露
-            index_trunk_break=index_trunk(damage_pipe_info{3}(:,1)==2);
-            index_trunk_leak=index_trunk(damage_pipe_info{3}(:,1)==1); 
-            % second 距离水源的距离
-            index_trunk_break_final=reservoirs_distance(index_trunk_break,netdata);
-            index_trunk_leak_final=reservoirs_distance(index_trunk_leak,netdata);
-            obj.sortPipeLocb=[index_trunk_break_final;index_trunk_leak_final];
-        end
         function SortStraightLineDistance2Reservoirs(obj)
             % 输入管道到水源点的直线距离从小到大排序
-            pipeID = obj.chosenPipeID;
-            coordinate = obj.net_data{23,2};
-            pipe_info = obj.net_data{5,2};
-            [~,pipe_index] = ismember(pipeID,pipe_info(:,1));
-            n_pipe = numel(pipeID);
+            theChosenPipe = obj.chosenPipeID;
+            coordinate = obj.net_data{23,2};%节点坐标
+            pipe_info = obj.net_data{5,2};%管道与节点关系
+            [~,pipe_index] = ismember(theChosenPipe,pipe_info(:,1));
+            n_pipe = numel(theChosenPipe);
             StraightLineDistance = zeros(n_pipe,1);
             reservoirs_id = obj.net_data{3,2}(:,1);
             [~,reservoirs_index] = ismember(reservoirs_id,coordinate(:,1));
