@@ -18,7 +18,7 @@ classdef cal_resilience_index < handle
             obj.data = data;
         end
         function resilience_index_mean_serviceability = get.resilience_index_mean_serviceability(obj)
-            resilience_index_mean_serviceability = sum(obj.data)/(numel(obj.data)-1);
+            resilience_index_mean_serviceability = sum(obj.data)/numel(obj.data);
         end
         function resilience_index_mean_recovery_rate = get.resilience_index_mean_recovery_rate(obj)
             y1 = min(obj.data);
