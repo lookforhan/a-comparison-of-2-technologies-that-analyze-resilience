@@ -72,6 +72,7 @@ classdef EPS_net_EPANETx64PDD < handle
             cal_Demand = cell(obj.duration,1);
             node_serviceability_cell = cell(obj.duration,1);
             system_serviceability_cell = cell(obj.duration,1);
+            leakage_water_mat = zeros(obj.duration,1);
             activity_cell = cell(obj.duration,1);
             obj.errcode(1) = calllib(obj.lib_name,'ENopen',obj.out_inp,[obj.out_inp(1:end-3),'rpt'],'');
             obj.errcode(2) = calllib(obj.lib_name,'ENsettimeparam',0,obj.duration_set);% 设置模拟历时
@@ -203,7 +204,7 @@ classdef EPS_net_EPANETx64PDD < handle
                 node_serviceability_cell{time_step_n} =  cal_demand_chosen_node./req_demand_chosen_node;
                 reservoirs_supply_cell{time_step_n} = cal_demand_chosen_reservoirs;
                 activity_cell{time_step_n} = str;%记录每个时间步的行为
-                leakage_water_cell{time_step_n} = sum( cal_demand_chosen_reservoirs)+sum(cal_demand_chosen_node);
+                leakage_water_mat(time_step_n) = sum( cal_demand_chosen_reservoirs)+sum(cal_demand_chosen_node);
                 [errcode4,temp_tstep]=calllib(obj.lib_name,'ENnextH',temp_tstep);
             end
             fclose(fid);
@@ -214,7 +215,7 @@ classdef EPS_net_EPANETx64PDD < handle
             obj.time = time_timeStep;
             obj.node_serviceability = node_serviceability_cell;
             obj.reservoirs_supply = reservoirs_supply_cell;
-            obj.leakage.sum = leakage_water_cell;
+            obj.damage_leakage.sum = leakage_water_mat;
             disp('Run_debug结束运行')
         end
         
