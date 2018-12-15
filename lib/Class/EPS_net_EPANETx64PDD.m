@@ -203,6 +203,7 @@ classdef EPS_net_EPANETx64PDD < handle
                 node_serviceability_cell{time_step_n} =  cal_demand_chosen_node./req_demand_chosen_node;
                 reservoirs_supply_cell{time_step_n} = cal_demand_chosen_reservoirs;
                 activity_cell{time_step_n} = str;%记录每个时间步的行为
+                leakage_water_cell{time_step_n} = sum( cal_demand_chosen_reservoirs)+sum(cal_demand_chosen_node);
                 [errcode4,temp_tstep]=calllib(obj.lib_name,'ENnextH',temp_tstep);
             end
             fclose(fid);
@@ -213,6 +214,7 @@ classdef EPS_net_EPANETx64PDD < handle
             obj.time = time_timeStep;
             obj.node_serviceability = node_serviceability_cell;
             obj.reservoirs_supply = reservoirs_supply_cell;
+            obj.leakage.sum = leakage_water_cell;
             disp('Run_debug结束运行')
         end
         
