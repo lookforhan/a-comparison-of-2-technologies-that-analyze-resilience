@@ -190,7 +190,7 @@ classdef EPS_net_EPANETx64PDD < handle
                 end
                 [errcode4,temp_t] = calllib(obj.lib_name,'ENrunH',temp_t);
                 if errcode4
-                    disp(nem2str(code));
+                    disp(nem2str(errcode4));
                     fprintf(fid,'ENrunH³ö´í,´úÂë%s\r\n',num2str(errcode4) );
                     keyboard
                 end
