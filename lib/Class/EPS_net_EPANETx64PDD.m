@@ -96,10 +96,11 @@ classdef EPS_net_EPANETx64PDD < handle
                 if lia
                     fprintf(fid,'%s\r\n','开始修改管道状态');
                     mid_status = newPipeStatusChange(:,loc);
-                    str1 = '';
-                    str2 = '';
-                    str3 = '';
+                    str2 = blanks(200);
+                    str3 = blanks(200);
                     
+                    str2_n = 1;
+                    str3_n = 1;
                     for i = 1:numel(mid_status)
                         pipe_status_timeStep = mid_status(i);
                         switch  pipe_status_timeStep
@@ -108,7 +109,10 @@ classdef EPS_net_EPANETx64PDD < handle
                                 %                                 continue %
                             case 1
                                 % isolation
-                                str2 = [str2,'隔离管道',obj.pipe_relative{i,1},';'];
+                                mid_str = ['隔离管道',obj.pipe_relative{i,1},';'];
+                                str_length = length(mid_str);
+                                str2(str2_n:str2_n+str_length-1) = mid_str;
+                                str2_n = str2_n+str_length;
                                 for j =1:numel(obj.pipe_relative{i,2})% 隔离的管道为当前管道相关联的破坏管道。
                                     id = libpointer('cstring',obj.pipe_relative{i,2}{1,j});
                                     fprintf(fid,'隔离管道:%s\r\n',obj.pipe_relative{i,2}{1,j} );
@@ -133,7 +137,10 @@ classdef EPS_net_EPANETx64PDD < handle
                                 end
                             case 2
                                 %isolation
-                                str3 = [str3,'隔离管道',obj.pipe_relative{i,1},';'];
+                                mid_str_1 = ['隔离管道',obj.pipe_relative{i,1},';'];
+                                str_length = length(mid_str_1);
+                                str3(str3_n:str3_n+str_length-1) = mid_str_1;
+                                str3_n = str3_n+str_length;
                                 for j =1:numel(obj.pipe_relative{i,2})% 隔离的管道为当前管道相关联的破坏管道。
                                     id = libpointer('cstring',obj.pipe_relative{i,2}{1,j});
                                     fprintf(fid,'隔离管道:%s\r\n',obj.pipe_relative{i,2}{1,j} );
@@ -157,7 +164,10 @@ classdef EPS_net_EPANETx64PDD < handle
                                     end
                                 end
                                 %reopen
-                                str3 = [str3,'修复管道',obj.pipe_relative{i,1},';'];
+                                mid_str_2 = ['修复管道',obj.pipe_relative{i,1},';'];
+                                str_lenth = length(mid_str_2);
+                                str3(str3_n:str3_n+str_lenth-1) = mid_str_2;
+                                str3_n = str3_n+str_lenth;
                                 id=libpointer('cstring',obj.pipe_relative{i,1});
                                 index =libpointer('int32Ptr',0);
                                 [code,id,index]=calllib(obj.lib_name,'ENgetlinkindex',id,index);
@@ -182,7 +192,7 @@ classdef EPS_net_EPANETx64PDD < handle
                         end
                         
                     end
-                    str = [str1,str2,str3];
+                    str = [str1,deblank(str2),deblank(str3)];
                     fprintf(fid,'%s时刻,管道状态修改完毕\r\n',num2str(temp_t) );
                 else
                     str = '无动作';
