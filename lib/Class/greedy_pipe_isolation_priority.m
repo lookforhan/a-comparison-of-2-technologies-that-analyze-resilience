@@ -16,12 +16,12 @@ classdef greedy_pipe_isolation_priority < handle
         n_break_pipe % 破坏管道数量（隔离管道数量）
         current_system_serviceablity % 当前管网状态的系统供水满意率
         node_id % 管网所有用户节点id
+        pipe_id % 管网所有管道id
+        input_check % 检查输入参数是否匹配：1匹配；0不匹配，需要检查；
     end
     properties % 中间参数
     end
     properties % 输出参数
-        damage_isolation_inp
-        isolated_pipe_id
     end
     methods
         function obj = greedy_pipe_isolation_priority(inp_file,net_data,break_pipe_id,isolation_time_mat,pipe_relative)
@@ -48,24 +48,20 @@ classdef greedy_pipe_isolation_priority < handle
         function node_id = get.node_id(obj)
             node_id = obj.net_data{2,2}(:,1);
         end
+        function input_check = get.input_check(obj)
+            input_check.break_pipe_id_with_pipe_relative = all(ismember(obj.break_pipe_id,obj.pipe_relative(:,1)));
+            input_check.pipe_relative_with_pipe_id = all(ismember(obj.pipe_relative(:,1),obj.pipe_id));
+        end
+
+        function pipe_id = get.pipe_id(obj)
+            pipe_id = obj.net_data{5,2}(:,1);
+        end
+
         function current_system_serviceablity = get.current_system_serviceablity(obj)
             obj.errcode.ENopen = calllib(obj.lib_name,'ENopen',obj.inp_file,[obj.inp_file(1:end-4),'current','.rpt'],'');
             obj.errcode.ENsettimeparam = calllib(obj.lib_name,'ENsettimeparam',0,0);% 设置模拟历时
             obj.errcode.ENsetoption = calllib(obj.lib_name,'ENsetoption',0,500);% 动态链接库中迭代次数
             obj.errcode.ENsloveH = calllib(obj.lib_name,'ENsolveH');
-            %             obj.errcode.ENopenH = calllib(obj.lib_name,'ENopenH');
-            %             obj.errcode.ENinitH = calllib(obj.lib_name,'ENinitH',0);
-            %             temp_t = 0;
-            %             temp_tstep = 1;
-            %             time_step_n =0;
-            %             obj.errcode.ENrunH = 0;
-            %             obj.errcode.ENnextH = 0;
-            %             while (temp_tstep && ~obj.errcode.ENrunH && ~obj.errcode.ENnextH)
-            %                 [obj.errcode.ENrunH,temp_t] = calllib(obj.lib_name,'ENrunH',temp_t);
-            %                 [real_pre_chosen_node,cal_demand_chosen_node,req_demand_chosen_node]=Get_chosen_node_value_EPANETx64PDD(obj.lib_name,obj.node_id);
-            %                 current_system_serviceablity = sum(cal_demand_chosen_node)/sum(req_demand_chosen_node);
-            %                 [obj.errcode.ENnextH,temp_tstep]=calllib(obj.lib_name,'ENnextH',temp_tstep);
-            %             end
             [~,cal_demand_chosen_node,req_demand_chosen_node]=Get_chosen_node_value_EPANETx64PDD(obj.lib_name,obj.node_id);
             current_system_serviceablity = sum(cal_demand_chosen_node)/sum(req_demand_chosen_node);
             obj.errcode.ENreport = calllib(obj.lib_name,'ENreport');
