@@ -7,6 +7,11 @@ classdef unittestclassforgreedyIsolation < matlab.unittest.TestCase
             testCase.verifyEqual(testCase.obj_greedy_isolation.n_break_pipe,5);
             testCase.verifyEqual(roundn(testCase.obj_greedy_isolation.current_system_serviceablity,-4),0.4376);
         end
+        function test_input(testCase)
+            testCase.verifyTrue(testCase.obj_greedy_isolation.input_check.break_pipe_id_with_pipe_relative);
+            testCase.verifyTrue(testCase.obj_greedy_isolation.input_check.pipe_relative_with_pipe_id);
+
+        end
     end
     methods(TestClassSetup) % 在创建该类的时刻进行测试
         function creatGreedyIsolation(testCase)
