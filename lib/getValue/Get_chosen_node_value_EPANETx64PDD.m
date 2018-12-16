@@ -13,14 +13,16 @@ function [pre,calculate_demand,demand]=Get_chosen_node_value_EPANETx64PDD(lib_na
      value_req_dem=libpointer('doublePtr',0);%指针参数--值
      value1=zeros(original_junction_num,1);
      value2=zeros(original_junction_num,1);
+     value3=zeros(original_junction_num,1);
         node_index_k1=libpointer('int32Ptr',0);
     for k1=1:original_junction_num
         [code,node_id{k1,1},node_index_k1]=calllib(lib_name,'ENgetnodeindex',node_id{k1,1},node_index_k1);%指定节点id的index
-        if code~=0
+        if code>=100
            value1(k1,1)=0;
            value2(k1,1)=0;
-%            value3(k1,1)=0;
-           continue
+           value3(k1,1)=0;
+           
+           keyboard
         end
 
         [~,value_pre]=calllib(lib_name,'ENgetnodevalue',node_index_k1,11,value_pre);%index 的压力
