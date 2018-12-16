@@ -130,7 +130,7 @@ classdef EPS_net_EPANETx64PDD < handle
                                     end
                                     code= calllib(obj.lib_name,'ENsetlinkvalue',index,4,0);
                                     if code
-                                        disp(num2str(code));
+                                        disp(num2str(code))
                                         fprintf(fid,'隔离管道:%s出错,代码%s\r\n',id,num2str(code) );
                                         keyboard
                                     end
