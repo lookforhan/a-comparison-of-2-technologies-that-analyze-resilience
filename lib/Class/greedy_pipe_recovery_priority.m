@@ -10,6 +10,7 @@ classdef greedy_pipe_recovery_priority < handle
         break_pipe_id % 破坏管道信息
         inp_file % 破坏管网inp文件
         pipe_relative % 管道与新加管道关系
+        out_dir
     end
     properties(Dependent) % 中间参数
         n_break_pipe % 破坏管道数量（隔离管道数量）
@@ -43,7 +44,7 @@ classdef greedy_pipe_recovery_priority < handle
                 obj.errcode.Run.ENsettimeparam = calllib(obj.lib_name,'ENsettimeparam',0,0);% 设置模拟历时
                 obj.errcode.Run.ENsetoption = calllib(obj.lib_name,'ENsetoption',0,500);% 动态链接库中迭代次数
                 the_current_break_id = obj.break_pipe_id{i,1};
-                obj.output_inp_file{i} = [obj.inp_file(1:end-4),'_isolate_',the_current_break_id,'.inp'];
+                obj.output_inp_file{i} = [obj.out_dir,'_recovery_',the_current_break_id,'.inp'];
                 [~,the_current_break_id_loc] = ismember(the_current_break_id,obj.pipe_relative(:,1));
                 index =libpointer('int32Ptr',0);
                 for j = 1:numel(obj.pipe_relative{the_current_break_id_loc,2})
