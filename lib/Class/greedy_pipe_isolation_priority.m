@@ -38,7 +38,8 @@ classdef greedy_pipe_isolation_priority < handle
             end
         end
         function Run(obj)
-            fid = 1;         
+            fid = 1;
+            global n_ENrun
             for i = 1: obj.n_break_pipe
                 obj.errcode.Run.ENopen = calllib(obj.lib_name,'ENopen',obj.inp_file,[obj.inp_file(1:end-4),'_Run','.rpt'],[obj.inp_file(1:end-4),'_Run','.out']);
                 obj.errcode.Run.ENsettimeparam = calllib(obj.lib_name,'ENsettimeparam',0,0);% 设置模拟历时
@@ -69,6 +70,7 @@ classdef greedy_pipe_isolation_priority < handle
                     end
                 end
                 obj.errcode.Run.ENsolveH = calllib(obj.lib_name,'ENsolveH');
+                n_ENrun = n_ENrun +1;
                 obj.errcode.Run.ENsaveinpfile = calllib(obj.lib_name,'ENsaveinpfile',obj.output_inp_file{i});
                 [~,cal_demand_chosen_node,req_demand_chosen_node]=Get_chosen_node_value_EPANETx64PDD(obj.lib_name,obj.node_id);
                 obj.output_system_serviceablity(i,1) = sum(cal_demand_chosen_node)/sum(req_demand_chosen_node);
