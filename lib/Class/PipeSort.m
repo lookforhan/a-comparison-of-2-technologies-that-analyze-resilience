@@ -107,7 +107,7 @@ classdef PipeSort < handle
                 pipe_x = (N1_x+N2_x)/2;
                 pipe_y = (N1_y+N2_y)/2; 
                 for j = 1:numel(reservoirs_id)
-                    middle_distance(j) = sqrt((pipe_x-reservoirs_coordinate(j,1)^2+(pipe_y-reservoirs_coordinate(j,2))^2));
+                    middle_distance(j) = sqrt((pipe_x-reservoirs_coordinate(j,1))^2+(pipe_y-reservoirs_coordinate(j,2))^2);
                 end
                 StraightLineDistance(i) = min(middle_distance);
             end 
