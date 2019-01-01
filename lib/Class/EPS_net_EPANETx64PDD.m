@@ -23,6 +23,7 @@ classdef EPS_net_EPANETx64PDD < handle
         duration_set % 延时模拟历时
         timeStep_changePipeStatus % 发生变化的管道状态矩阵列号
         pipe_status_change_simple % 发生变化的管道状态矩阵简化
+        
     end
     properties % 基本输出参数
         damage_leakage % 每个时间步，每个破坏点的漏水量
@@ -37,6 +38,7 @@ classdef EPS_net_EPANETx64PDD < handle
     properties % 记录
         activity % 每个时间步的行为
         time % 每个时间步对应的时间
+        ENrun_num =0;
     end
     methods
         function obj = EPS_net_EPANETx64PDD( output_net_filename_inp,output_result_dir,PipeStatus,PipeStatusChange,pipe_relative,net_data,...
@@ -59,6 +61,7 @@ classdef EPS_net_EPANETx64PDD < handle
         end
         function Run_debug(obj)
             disp('Run_debug开始运行')
+            global n_ENrun
             log_file = [obj.out_inp(1:end-4),'_Run_debug_.','log'];
             fid = fopen(log_file,'w');
             if fid <=0
@@ -199,10 +202,16 @@ classdef EPS_net_EPANETx64PDD < handle
                     fprintf(fid,'%s时刻,管道状态无需修改完毕\r\n',num2str(temp_t) );
                 end
                 [errcode4,temp_t] = calllib(obj.lib_name,'ENrunH',temp_t);
+                obj.ENrun_num = obj.ENrun_num +1;
+                n_ENrun = n_ENrun +1;
                 if errcode4
                     disp(num2str(errcode4));
                     fprintf(fid,'ENrunH出错,代码%s\r\n',num2str(errcode4) );
+                    if errcode4 ==6
+                        disp(num2str(errcode4))
+                    else
                     keyboard
+                    end
                 end
                 time_timeStep{time_step_n} = temp_t;
                 [real_pre_chosen_node,cal_demand_chosen_node,req_demand_chosen_node]=Get_chosen_node_value_EPANETx64PDD(obj.lib_name,obj.node_id);
