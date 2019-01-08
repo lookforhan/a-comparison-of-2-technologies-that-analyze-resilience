@@ -207,7 +207,7 @@ classdef EPS_net_EPANETx64PDD < handle
                 if errcode4
                     disp(num2str(errcode4));
                     fprintf(fid,'ENrunH³ö´í,´úÂë%s\r\n',num2str(errcode4) );
-                    if errcode4 ==6
+                    if errcode4 <100
                         disp(num2str(errcode4))
                     else
                     keyboard
