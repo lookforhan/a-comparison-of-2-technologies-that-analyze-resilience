@@ -19,7 +19,6 @@ classdef Schedule < handle
             obj.pipe_schedule = BreakPipe_result;
         end
         function PipeStatus(obj)
-            BreakPipe_result = obj.pipe_schedule;
             n_isolation = sum((cell2mat(obj.pipe_schedule(:,6))==1));
             BreakPipe_InspectResult=obj.pipe_schedule(1:n_isolation,:);
             BreakPipe_RepairResult=obj.pipe_schedule(n_isolation+1:end,:);
@@ -60,22 +59,24 @@ classdef Schedule < handle
         end
         function CrewStatus(obj)
             obj.active_schedule;
-            obj.crew_origin
-            end_time = ceil(max(cell2mat(obj.active_schedule(2:end,3))));
-            time = (0:1:end_time)';
-            n_active = numel(obj.active_schedule(:,1))
+            obj.crew_origin;
+            end_time = ceil(max(cell2mat(obj.active_schedule(2:end,3))))+1;%第一行为0时刻，空行
+%             time = (0:1:end_time)';
+            n_active = numel(obj.active_schedule(:,1));
             crew_schedule_pipeId = cell(end_time,numel(obj.crew_origin));
             crew_schedule_activeType = cell(end_time,numel(obj.crew_origin));
-            for i = 2:n_active-1
+            for i = 2:n_active
                 try
                     [~,loc_crew] = ismember(obj.active_schedule(i,1),obj.crew_origin);
                 catch
                     keyboard
                 end
-                begin_loc = ceil(cell2mat(obj.active_schedule(i,2)));
-                stop_loc = ceil(cell2mat(obj.active_schedule(i,3)));
+                begin_loc = ceil(cell2mat(obj.active_schedule(i,2)))+1;%第一行为0时刻，
+                stop_loc = ceil(cell2mat(obj.active_schedule(i,3)))+1;%第一行为0时刻
+                
                 crew_schedule_activeType(begin_loc:stop_loc,loc_crew) = obj.active_schedule(i,5);
                 crew_schedule_pipeId(begin_loc:stop_loc,loc_crew) = obj.active_schedule(i,4);
+                obj.time_schedule_crew = crew_schedule_pipeId;
             end
         end
     end
