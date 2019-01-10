@@ -32,16 +32,20 @@ for generation_i = 1:generation_Nmax
             generation_dir_i,...
             output_net_filename_inp,pipe_relative);%,...
     else
-        
+        Fit_isolation_uniq = [];
         disp('haha')
-
     end
     if generation_i==1
         Fit_init = Fit_isolation_uniq;
         Fit_record((generation_i-1)*popsize+1:(generation_i-1)*popsize+popsize)= Fit_init;
         pop_isolation_old = pop_isolation_init;
     else
+        try
         Fit_init(locb1) = Fit_isolation_uniq;
+        catch
+            disp('hehe')
+            keyboard
+        end
         Fit_init(locb2) = Fit_record(locb3);
         Fit_record((generation_i-1)*popsize+1:(generation_i-1)*popsize+popsize) = Fit_init;
         pop_isolation_old = newPop_isolation;
@@ -83,6 +87,10 @@ for generation_i = 1:generation_Nmax
     EPA_format,...
     generation_dir_i,...
 output_net_filename_inp,pipe_relative);%,....
+    else
+        disp('haha')
+        Fit_recovery_uniq = [];
+        keyboard;
     end
     if generation_i==1
         Fit_init = Fit_recovery_uniq;
