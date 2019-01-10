@@ -7,5 +7,6 @@ epanet2.dll
 epanet2.h
 !s*
 test
+test*
 results
 feature_recovery_process_eps\results
