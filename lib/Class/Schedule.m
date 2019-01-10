@@ -9,7 +9,7 @@ classdef Schedule < handle
         pipe_origin % 管网信息中的管道顺序
         crew_origin % 修复队伍集合
     end
-    properties % 中间变量
+    properties(Access = private) % 中间变量
         time_schedule_crew
         time_schedule_pipe
     end
