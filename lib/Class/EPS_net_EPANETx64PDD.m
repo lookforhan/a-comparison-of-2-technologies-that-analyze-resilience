@@ -6,6 +6,7 @@ classdef EPS_net_EPANETx64PDD < handle
         lib_name = 'EPANETx64PDD' % 计算所用动态链接库名称
         errcode = 0; % 错误代码
         time_step = 3600 %(s) 时间步长；
+        calculate_code; % 判断每个时间步计算结果可靠度
     end
     properties % 输入参数
         out_inp % 输入参数：output_net_filename_inp
@@ -23,6 +24,7 @@ classdef EPS_net_EPANETx64PDD < handle
         duration_set % 延时模拟历时
         timeStep_changePipeStatus % 发生变化的管道状态矩阵列号
         pipe_status_change_simple % 发生变化的管道状态矩阵简化
+        
         
     end
     properties % 基本输出参数
@@ -50,6 +52,7 @@ classdef EPS_net_EPANETx64PDD < handle
             obj.pipe_relative = pipe_relative;
             obj.net_data = net_data;
             obj.duration = duration_one;
+            obj.calculate_code = zeros(duration_one,1);
             if libisloaded(obj.lib_name)
                 disp([obj.lib_name,'is loaded.'])
             else
@@ -204,6 +207,7 @@ classdef EPS_net_EPANETx64PDD < handle
                 [errcode4,temp_t] = calllib(obj.lib_name,'ENrunH',temp_t);
                 obj.ENrun_num = obj.ENrun_num +1;
                 n_ENrun = n_ENrun +1;
+                obj.calculate_code(time_step_n) = errcode4;
                 if errcode4
                     disp(num2str(errcode4));
                     fprintf(fid,'ENrunH出错,代码%s\r\n',num2str(errcode4) );
