@@ -18,7 +18,7 @@
 %% 应用案例
 % [BreakPipe_result,RepairCrew_result]=priorityList2schedule8({'1';'3'},{'2';'3';'1'},{'a';'b'},{'3';'2';'1'},[2;3;5],[6;7;8],[0,2,3;2,0,2;3,2,0],'.\')
 function [BreakPipe_result,RepairCrew_result,Active_result]=priorityList2schedule9(isolate_priority,replacement_priority,RepairCrew,BreakPipe_order,...
-    Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,out_dir,...
+    Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,~,...
     crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel...队伍开始工作时间，修复效率，隔离效率，移动效率
     )
 if isempty(isolate_priority)%没有进行修复
@@ -142,7 +142,8 @@ Active_displacement=[[Inspect_Record_pipe,num2cell(TD_I),num2cell(TS_I),num2cell
 Active_isolation = [Inspect_Record_pipe,num2cell(TS_I),num2cell(TE_I),num2cell(isolate_priority_mat),num2cell(isolate_mat)];
 Active_replacement =[Repair_Record_pipe,num2cell(TS_R),num2cell(TE_R),num2cell(replacement_priority_mat),num2cell(replacement_mat)];
 Active_result =[title2; [Active_displacement;Active_isolation;Active_replacement]];
-
-xlswrite([out_dir,'\temp_修复队伍修复结果.xls'],Active_result)
+if false
+    xlswrite([out_dir,'\temp_修复队伍修复结果.xls'],Active_result);
+end
 % Active_reparation
 end
