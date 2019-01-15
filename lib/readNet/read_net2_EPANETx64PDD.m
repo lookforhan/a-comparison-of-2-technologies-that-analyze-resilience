@@ -5,7 +5,7 @@ function [t, net_data ] = read_net2_EPANETx64PDD( input_net_filename,EPA_format)
 %   输出inp文件内容,输出为元胞数组。
 %   2018-8-1修改：增加line20-34.解决[PATTERNS]中可能出现的[NaN]问题。该问题出现，当管网为延时模拟，且模式数非6的倍数。
 %%
-funcName = 'read_net2_EPANETx64PDD';
+funcName = mfilename;
 disp([funcName,'开始读取：',input_net_filename]);
 Before_Earthq_rpt='temp_read_net_Before_Earthq.rpt';
 Before_Earthq_out='temp_read_net_Before_Earthq.out';
