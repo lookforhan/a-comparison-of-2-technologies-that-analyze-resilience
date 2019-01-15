@@ -81,6 +81,9 @@ classdef EPS_net_EPANETx64PDD < handle
             leakage_water_mat = zeros(obj.duration,1);
             activity_cell = cell(obj.duration,1);
             obj.errcode(1) = calllib(obj.lib_name,'ENopen',obj.out_inp,[obj.out_inp(1:end-3),'rpt'],'');
+            if obj.errcode(1) > 100
+                keyboard
+            end
             obj.errcode(2) = calllib(obj.lib_name,'ENsettimeparam',0,obj.duration_set);% 设置模拟历时
             obj.errcode(3) = calllib(obj.lib_name,'ENsetoption',0,500);% 动态链接库中迭代次数
             obj.errcode(4) = calllib(obj.lib_name,'ENopenH');
@@ -231,6 +234,7 @@ classdef EPS_net_EPANETx64PDD < handle
                 [errcode4,temp_tstep]=calllib(obj.lib_name,'ENnextH',temp_tstep);
             end
             fclose(fid);
+            obj.errcode(6) = calllib(obj.lib_name,'ENclose');
             obj.activity = activity_cell;
             obj.system_serviceability = system_serviceability_cell;
             obj.node_demand_calculate = cal_Demand;
