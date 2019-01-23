@@ -2,7 +2,7 @@
 % ‘§¥¶¿Ì
 clear;clc;close all;tic;
 net_file = '..\materials\MOD_5_mean.inp';
-damage_info_file_name = 'damage_scenario_case_05.txt';
+damage_info_file_name = 'damage_scenario_case_04.txt';
 pre_process
 global n_ENrun
 n_ENrun = 0 ;
@@ -44,5 +44,5 @@ priority_greedyImportance.ENrun_num = n_ENrun;
 priority_greedyImportance.crew_active = schedule.schedule_table_crew_pipeID;
 priority_greedyImportance.active_type = schedule.schedule_table_crew_activeType;
 priority_greedyImportance.calculate_code = results.calculate_code;
-save(['test_hydraulic_',damage_info_file_name(1:end-4)],'priority_greedyImportance');
+save(['test_greedy_',damage_info_file_name(1:end-4)],'priority_greedyImportance');
 delete .\results\_*
