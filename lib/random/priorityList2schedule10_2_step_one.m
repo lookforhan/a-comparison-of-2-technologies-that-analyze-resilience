@@ -84,6 +84,6 @@ title2 = {'队伍','分配时刻（h）','工作（检查/修复）开始时刻（h）','工作（检查/修
 Active_displacement=[[Inspect_Record_pipe,num2cell(TD_I),num2cell(TD_I),num2cell(TS_I),num2cell(isolate_priority_mat)],num2cell(displacement_mat)];
 Active_isolation = [Inspect_Record_pipe,num2cell(TD_I),num2cell(TS_I),num2cell(TE_I),num2cell(isolate_priority_mat),num2cell(isolate_mat)];
 Active_result =[title2; [Active_displacement;Active_isolation]];
-xlswrite([out_dir,'\temp_修复队伍修复结果.xls'],Active_result)
+% xlswrite([out_dir,'\temp_修复队伍修复结果.xls'],Active_result)
 % Active_reparation
 end
