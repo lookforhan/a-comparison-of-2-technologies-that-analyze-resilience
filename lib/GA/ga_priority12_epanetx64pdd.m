@@ -23,7 +23,8 @@ ENrun_number_init_isolation = zeros(popsize,generation_Nmax);
 for generation_i = 1:generation_Nmax
     generation_dir_i=[out_dir,'process_1\','遗传第',num2str(generation_i),'代\'];
     mkdir(generation_dir_i);
-    
+    timeCost = toc;
+    disp(['===========process 1:遗传第',num2str(generation_i),'代；耗时',num2str(timeCost),'S========']);
     if ~isempty(pop_isolation_uniq)
         [Fit_isolation_uniq,~,ENrun_number_isolation]=calfitvalue4_isolation(pop_isolation_uniq,damage_pipe_info{1},RepairCrew,...
             Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,...
@@ -35,7 +36,9 @@ for generation_i = 1:generation_Nmax
     else
         Fit_isolation_uniq = [];
         ENrun_number_isolation =[];
-        disp('haha')
+%         if obj.dispKeyWord ==1
+%             disp('haha:重复个体')
+%         end
     end
     
     if generation_i==1
@@ -115,6 +118,8 @@ ENrun_number_init_recovery = zeros(popsize,generation_Nmax);
 for generation_i = 1:generation_Nmax
     generation_dir_i=[out_dir,'process_2\','遗传第',num2str(generation_i),'代\'];
     mkdir(generation_dir_i);
+    timeCost = toc;
+    disp(['===========process 2:遗传第',num2str(generation_i),'代；耗时',num2str(timeCost),'S========']);
     if ~isempty(pop_recovery_uniq)
         [Fit_recovery_uniq,~,ENrun_number_recovery]=calfitvalue4_recovery(best_indivi_isolation,pop_recovery_uniq,DamagePipe_order,RepairCrew,...
      Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,...
@@ -124,7 +129,9 @@ for generation_i = 1:generation_Nmax
     generation_dir_i,...
 output_net_filename_inp,pipe_relative);%,....
     else
-        disp('haha')
+%         if obj.dispKeyWord ==1
+%             disp('haha')
+%         end
         Fit_recovery_uniq = [];
         ENrun_number_recovery=[];
         
