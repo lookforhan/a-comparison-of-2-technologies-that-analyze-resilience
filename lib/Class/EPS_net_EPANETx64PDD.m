@@ -7,6 +7,7 @@ classdef EPS_net_EPANETx64PDD < handle
         errcode = 0; % 错误代码
         time_step = 3600 %(s) 时间步长；
         calculate_code; % 判断每个时间步计算结果可靠度
+        dispKeyWord = 0; % 输出显示关键词，调试用。0不输出，1输出。
     end
     properties % 输入参数
         out_inp % 输入参数：output_net_filename_inp
@@ -24,8 +25,6 @@ classdef EPS_net_EPANETx64PDD < handle
         duration_set % 延时模拟历时
         timeStep_changePipeStatus % 发生变化的管道状态矩阵列号
         pipe_status_change_simple % 发生变化的管道状态矩阵简化
-        
-        
     end
     properties % 基本输出参数
         damage_leakage % 每个时间步，每个破坏点的漏水量
@@ -54,16 +53,21 @@ classdef EPS_net_EPANETx64PDD < handle
             obj.duration = duration_one;
             obj.calculate_code = zeros(duration_one,1);
             if libisloaded(obj.lib_name)
-                disp([obj.lib_name,'is loaded.'])
+                if obj.dispKeyWord == 1
+                    disp([obj.lib_name,' is loaded.'])
+                end
             else
-                disp([obj.lib_name,'is NOT loaded!!'])
+                disp([obj.lib_name,' is NOT loaded!!'])
+                keyboard
             end
         end
         function Run(obj)
             obj.errcode(1) = calllib(obj.lib_name,'ENopen',obj.out_inp,[obj.out_inp(1:end-3),'rpt'],'');
         end
         function Run_debug(obj)
-            disp('Run_debug开始运行')
+            if obj.dispKeyWord == 1
+                disp('Run_debug开始运行')
+            end
             global n_ENrun
             log_file = [obj.out_inp(1:end-4),'_Run_debug_.','log'];
             fid = fopen(log_file,'w');
@@ -71,7 +75,9 @@ classdef EPS_net_EPANETx64PDD < handle
                 disp([log_file,'文件打开失败'])
                 keyboard
             end
-            disp(['计算过程请看：',log_file])
+            if obj.dispKeyWord ==1
+                disp(['计算过程请看：',log_file])
+            end
             reservoirs_supply_cell = cell(obj.duration,1);
             time_timeStep = cell(obj.duration,1);
             Pre = cell(obj.duration,1);
@@ -107,7 +113,6 @@ classdef EPS_net_EPANETx64PDD < handle
                     mid_status = newPipeStatusChange(:,loc);
                     str2 = blanks(200);
                     str3 = blanks(200);
-                    
                     str2_n = 1;
                     str3_n = 1;
                     for i = 1:numel(mid_status)
@@ -212,12 +217,12 @@ classdef EPS_net_EPANETx64PDD < handle
                 n_ENrun = n_ENrun +1;
                 obj.calculate_code(time_step_n) = errcode4;
                 if errcode4
-                    disp(num2str(errcode4));
+                    %                     disp(num2str(errcode4));
                     fprintf(fid,'ENrunH出错,代码%s\r\n',num2str(errcode4) );
                     if errcode4 <100
-                        disp(num2str(errcode4))
+                        %                         disp(num2str(errcode4))
                     else
-                    keyboard
+                        keyboard
                     end
                 end
                 time_timeStep{time_step_n} = temp_t;
@@ -243,7 +248,9 @@ classdef EPS_net_EPANETx64PDD < handle
             obj.node_serviceability = node_serviceability_cell;
             obj.reservoirs_supply = reservoirs_supply_cell;
             obj.damage_leakage.sum = leakage_water_mat;
-            disp('Run_debug结束运行')
+            if obj.dispKeyWord ==1
+                disp('Run_debug结束运行')
+            end
         end
         
     end
