@@ -70,8 +70,8 @@ classdef EPS_net_EPANETx64PDD < handle
             end
             global n_ENrun
             log_file = [obj.out_inp(1:end-4),'_Run_debug_.','log'];
-            fid = fopen(log_file,'w');
-            if fid <=0
+            fid_log_file = fopen(log_file,'w');
+            if fid_log_file <=0
                 disp([log_file,'文件打开失败'])
                 keyboard
             end
@@ -105,11 +105,11 @@ classdef EPS_net_EPANETx64PDD < handle
                 if errcode4
                     keyboard
                 end
-                fprintf(fid,'%s\r\n',num2str(temp_t));
-                fprintf(fid,'%s\r\n',num2str(time_step_n));
+                fprintf(fid_log_file,'%s\r\n',num2str(temp_t));
+                fprintf(fid_log_file,'%s\r\n',num2str(time_step_n));
                 [lia,loc] = ismember(time_step_n,timeStepChose);%
                 if lia
-                    fprintf(fid,'%s\r\n','开始修改管道状态');
+                    fprintf(fid_log_file,'%s\r\n','开始修改管道状态');
                     mid_status = newPipeStatusChange(:,loc);
                     str2 = blanks(200);
                     str3 = blanks(200);
@@ -129,7 +129,7 @@ classdef EPS_net_EPANETx64PDD < handle
                                 str2_n = str2_n+str_length;
                                 for j =1:numel(obj.pipe_relative{i,2})% 隔离的管道为当前管道相关联的破坏管道。
                                     id = libpointer('cstring',obj.pipe_relative{i,2}{1,j});
-                                    fprintf(fid,'隔离管道:%s\r\n',obj.pipe_relative{i,2}{1,j} );
+                                    fprintf(fid_log_file,'隔离管道:%s\r\n',obj.pipe_relative{i,2}{1,j} );
                                     index =libpointer('int32Ptr',0);
                                     [code,id,index]=calllib(obj.lib_name,'ENgetlinkindex',id,index);
                                     if code
@@ -139,13 +139,13 @@ classdef EPS_net_EPANETx64PDD < handle
                                     code=calllib(obj.lib_name,'ENsetlinkvalue',index,11,0);%管道id状态为关闭
                                     if code
                                         disp(num2str(code));
-                                        fprintf(fid,'隔离管道:%s出错,代码%s\r\n',id,num2str(code) );
+                                        fprintf(fid_log_file,'隔离管道:%s出错,代码%s\r\n',id,num2str(code) );
                                         keyboard
                                     end
                                     code= calllib(obj.lib_name,'ENsetlinkvalue',index,4,0);
                                     if code
                                         disp(num2str(code))
-                                        fprintf(fid,'隔离管道:%s出错,代码%s\r\n',id,num2str(code) );
+                                        fprintf(fid_log_file,'隔离管道:%s出错,代码%s\r\n',id,num2str(code) );
                                         keyboard
                                     end
                                 end
@@ -157,7 +157,7 @@ classdef EPS_net_EPANETx64PDD < handle
                                 str3_n = str3_n+str_length;
                                 for j =1:numel(obj.pipe_relative{i,2})% 隔离的管道为当前管道相关联的破坏管道。
                                     id = libpointer('cstring',obj.pipe_relative{i,2}{1,j});
-                                    fprintf(fid,'隔离管道:%s\r\n',obj.pipe_relative{i,2}{1,j} );
+                                    fprintf(fid_log_file,'隔离管道:%s\r\n',obj.pipe_relative{i,2}{1,j} );
                                     index =libpointer('int32Ptr',0);
                                     [code,id,index]=calllib(obj.lib_name,'ENgetlinkindex',id,index);
                                     if code
@@ -167,13 +167,13 @@ classdef EPS_net_EPANETx64PDD < handle
                                     code=calllib(obj.lib_name,'ENsetlinkvalue',index,11,0);%管道id状态为关闭
                                     if code
                                         disp(num2str(code));
-                                        fprintf(fid,'隔离管道:%s出错,代码%s\r\n',id,num2str(code) );
+                                        fprintf(fid_log_file,'隔离管道:%s出错,代码%s\r\n',id,num2str(code) );
                                         keyboard
                                     end
                                     code= calllib(obj.lib_name,'ENsetlinkvalue',index,4,0);
                                     if code
                                         disp(num2str(code));
-                                        fprintf(fid,'隔离管道:%s出错,代码%s\r\n',id,num2str(code) );
+                                        fprintf(fid_log_file,'隔离管道:%s出错,代码%s\r\n',id,num2str(code) );
                                         keyboard
                                     end
                                 end
@@ -193,24 +193,24 @@ classdef EPS_net_EPANETx64PDD < handle
                                 code= calllib(obj.lib_name,'ENsetlinkvalue',index,11,1);
                                 if code
                                     disp(nem2str(code));
-                                    fprintf(fid,'reopen管道:%s出错,代码%s\r\n',id,num2str(code) );
+                                    fprintf(fid_log_file,'reopen管道:%s出错,代码%s\r\n',id,num2str(code) );
                                     keyboard
                                 end
                                 code= calllib(obj.lib_name,'ENsetlinkvalue',index,4,1);
-                                fprintf(fid,'reopen管道%s,\r\n',obj.pipe_relative{i,1});
+                                fprintf(fid_log_file,'reopen管道%s,\r\n',obj.pipe_relative{i,1});
                                 if code
                                     disp(nem2str(code));
-                                    fprintf(fid,'reopen管道:%s出错,代码%s\r\n',id,num2str(code) );
+                                    fprintf(fid_log_file,'reopen管道:%s出错,代码%s\r\n',id,num2str(code) );
                                     keyboard
                                 end
                         end
                         
                     end
                     str = [str1,deblank(str2),deblank(str3)];
-                    fprintf(fid,'%s时刻,管道状态修改完毕\r\n',num2str(temp_t) );
+                    fprintf(fid_log_file,'%s时刻,管道状态修改完毕\r\n',num2str(temp_t) );
                 else
                     str = '无动作';
-                    fprintf(fid,'%s时刻,管道状态无需修改完毕\r\n',num2str(temp_t) );
+                    fprintf(fid_log_file,'%s时刻,管道状态无需修改完毕\r\n',num2str(temp_t) );
                 end
                 [errcode4,temp_t] = calllib(obj.lib_name,'ENrunH',temp_t);
                 obj.ENrun_num = obj.ENrun_num +1;
@@ -218,7 +218,7 @@ classdef EPS_net_EPANETx64PDD < handle
                 obj.calculate_code(time_step_n) = errcode4;
                 if errcode4
                     %                     disp(num2str(errcode4));
-                    fprintf(fid,'ENrunH出错,代码%s\r\n',num2str(errcode4) );
+                    fprintf(fid_log_file,'ENrunH出错,代码%s\r\n',num2str(errcode4) );
                     if errcode4 <100
                         %                         disp(num2str(errcode4))
                     else
@@ -238,7 +238,7 @@ classdef EPS_net_EPANETx64PDD < handle
                 leakage_water_mat(time_step_n) = sum( cal_demand_chosen_reservoirs)+sum(cal_demand_chosen_node);
                 [errcode4,temp_tstep]=calllib(obj.lib_name,'ENnextH',temp_tstep);
             end
-            fclose(fid);
+            fclose(fid_log_file);
             obj.errcode(6) = calllib(obj.lib_name,'ENclose');
             obj.activity = activity_cell;
             obj.system_serviceability = system_serviceability_cell;
