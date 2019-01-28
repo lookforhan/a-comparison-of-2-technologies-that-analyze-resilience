@@ -4,6 +4,7 @@ classdef greedy_pipe_isolation_priority < handle
     properties
         lib_name = 'EPANETx64PDD' % 计算所用动态链接库名称
         errcode
+        disp_key_word = 1; % 关键字：1不输出，0输出。
     end
     properties % 输入参数
         net_data % 管网信息
@@ -29,10 +30,13 @@ classdef greedy_pipe_isolation_priority < handle
         function obj = greedy_pipe_isolation_priority(inp_file,net_data,break_pipe_id,pipe_relative)
             obj.inp_file = inp_file;
             obj.net_data = net_data;
-            obj.break_pipe_id = break_pipe_id;  
+            obj.break_pipe_id = break_pipe_id;
             obj.pipe_relative = pipe_relative;
             if libisloaded(obj.lib_name)
-                disp([obj.lib_name,'is loaded.'])
+                if obj.disp_key_word == 0
+                    
+                    disp([obj.lib_name,'is loaded.'])
+                end
             else
                 disp([obj.lib_name,'is NOT loaded!!'])
             end
@@ -49,7 +53,9 @@ classdef greedy_pipe_isolation_priority < handle
                 [~,the_current_break_id_loc] = ismember(the_current_break_id,obj.pipe_relative(:,1));
                 for j = 1:numel(obj.pipe_relative{the_current_break_id_loc,2})
                     id = libpointer('cstring',obj.pipe_relative{the_current_break_id_loc,2}{1,j});
-                    fprintf(fid,'隔离管道:%s\r\n',obj.pipe_relative{the_current_break_id_loc,2}{1,j} );
+                    if obj.disp_key_word == 0
+                        fprintf(fid,'隔离管道:%s\r\n',obj.pipe_relative{the_current_break_id_loc,2}{1,j} );
+                    end
                     index =libpointer('int32Ptr',0);
                     [code,id,index]=calllib(obj.lib_name,'ENgetlinkindex',id,index);
                     if code
