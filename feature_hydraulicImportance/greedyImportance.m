@@ -1,18 +1,22 @@
-% hydraulicImportance.m
+% greedyImportance.m
 % 预处理
 clear;clc;close all;tic;
 net_file = '..\materials\MOD_5_mean.inp';
-damage_info_file_name = 'damage_scenario_case_04.txt';
+damage_info_file_name = 'damage_scenario_case_06.txt';
 pre_process
 global n_ENrun
 n_ENrun = 0 ;
 n1 = n_ENrun;
+pre_time_calculate = (numel(damage_pipe_info{5}(damage_pipe_info{3}==2))*(numel(damage_pipe_info{5}(damage_pipe_info{3}==2))+1)/2 ...
++numel(damage_pipe_info{5}(damage_pipe_info{3}))*(numel(damage_pipe_info{5}(damage_pipe_info{3}))+1)/2)*0.4;
+disp(['预计需要时间：',num2str(pre_time_calculate)])
 % process_7
 priority = struct('serviceability',[],'resilience_mean_serviceability',[],'resilience_mean_recovery_rate',[],'ENrun_num',[]);
 
 % 确定次序
 [ best_indivi_isolation_1,best_indivi_recovery_1,best_indivi_isolation_1_id,best_indivi_recovery_1_id ] =greedyImportance_priority( damage_pipe_info,net_data,Dp_Inspect_mat,Dp_Repair_mat,temp_inp_file,pipe_relative );
 DamagePipe_order = unique(damage_pipe_info{1});
+delete .\results\_*
 % 水力模拟
 [Fitness,...
     BreakPipe_result,...
