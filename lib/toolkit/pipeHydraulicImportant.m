@@ -50,6 +50,7 @@ I(1,i) = sum(node_original_pre-pre)/double(original_junction_num);
 calllib('epanet2','ENsetlinkvalue',i,4,1);
 end
 output_args = I;
+calllib('epanet2','ENclose');
 unloadlibrary epanet2
 
 end
