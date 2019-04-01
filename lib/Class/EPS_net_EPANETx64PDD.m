@@ -8,6 +8,7 @@ classdef EPS_net_EPANETx64PDD < handle
         time_step = 3600 %(s) 时间步长；
         calculate_code; % 判断每个时间步计算结果可靠度
         dispKeyWord = 0; % 输出显示关键词，调试用。0不输出，1输出。
+        setIterationNumber = 5000;% 水力计算迭代次数
     end
     properties % 输入参数
         out_inp % 输入参数：output_net_filename_inp
@@ -91,7 +92,7 @@ classdef EPS_net_EPANETx64PDD < handle
                 keyboard
             end
             obj.errcode(2) = calllib(obj.lib_name,'ENsettimeparam',0,obj.duration_set);% 设置模拟历时
-            obj.errcode(3) = calllib(obj.lib_name,'ENsetoption',0,500);% 动态链接库中迭代次数
+            obj.errcode(3) = calllib(obj.lib_name,'ENsetoption',0,obj.setIterationNumber);% 动态链接库中迭代次数
             obj.errcode(4) = calllib(obj.lib_name,'ENopenH');
             obj.errcode(5) = calllib(obj.lib_name,'ENinitH',0);
             temp_t = 0;
