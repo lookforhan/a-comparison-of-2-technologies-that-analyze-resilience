@@ -7,11 +7,12 @@ classdef Dynamic_AM < handle
         
     end
     properties % input
-        
+        pipe_status % 管道状态
         net_data % 初始管网数据
     end
     properties
         init_adj_mat % 初始管网邻接矩阵
+        damage_net_adj_mat % 破坏后管网邻接矩阵
     end
     properties(Dependent,SetAccess = private) % 中间变量
         
@@ -24,8 +25,9 @@ classdef Dynamic_AM < handle
         isol_node % isolated node 孤立节点
     end
     methods
-        function obj = Dynamic_AM(Net_data)
+        function obj = Dynamic_AM(Net_data,PipeStatus)
             obj.net_data = Net_data;
+            obj.pipe_status = PipeStatus;
         end
         function Run(obj)
         end
