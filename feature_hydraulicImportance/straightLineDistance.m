@@ -58,5 +58,5 @@ priority_straighLineDistance.calculate_code = results.calculate_code;
 save(['test_LosAngeles_',damage_info_file_name(1:end-4)],'priority_straighLineDistance');
 delete .\results\_*
 toc
-clearvars -EXCEPT priority_straighLineDistance schedule results
+clearvars -EXCEPT priority_straighLineDistance schedule results net_data
 
