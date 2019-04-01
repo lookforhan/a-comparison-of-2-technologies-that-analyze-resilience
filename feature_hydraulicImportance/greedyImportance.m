@@ -50,3 +50,4 @@ priority_greedyImportance.active_type = schedule.schedule_table_crew_activeType;
 priority_greedyImportance.calculate_code = results.calculate_code;
 save(['test_greedy_',damage_info_file_name(1:end-4),'_5000'],'priority_greedyImportance');
 delete .\results\_*
+toc
