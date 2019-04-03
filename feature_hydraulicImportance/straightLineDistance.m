@@ -1,7 +1,7 @@
 % straightLineDistance.m
 clear;clc;close all;tic;
 net_file = '..\materials\MOD_5_mean.inp';
-damage_info_file_name = 'damage_scenario_case_09.txt';
+damage_info_file_name = 'damage_scenario_case_03_1.txt';
 pre_process
 global n_ENrun
 n_ENrun = 0 ;
