@@ -31,6 +31,7 @@ classdef Create_damage_info < handle
             disp([mfilename,':Run']);
             damage_equ_diameter = zeros(obj.damage_pipe_num,1);
             randnum = randperm(numel(obj.pipe_id));
+            randnum(1:10) %检查每次随机数生成情况
             obj.damage_pipe_id = obj.pipe_id(randnum(1:obj.damage_pipe_num));% 破坏管道id
             damage_pipe_diameter = obj.pipe_diameter(randnum(1:obj.damage_pipe_num));
             damage_pipe_class_1 = ones(numel(obj.damage_pipe_id),1);
@@ -45,6 +46,7 @@ classdef Create_damage_info < handle
             damage_data = {damage_node_priority,obj.damage_pipe_id,damage_node_num,damage_node_distance,damage_pipe_class_1,damage_equ_diameter};
             [obj.errcode.ND_Execut_deterministic1,damage_pipe_info] = ND_Execut_deterministic1(obj.net_data,damage_data);            
             [ obj.errcode.write_Damagefile ] = write_Damagefile( damage_pipe_info, obj.out_file );%生成破坏文件
+            disp(['create file:',obj.out_file]);
         end
     end
     methods
