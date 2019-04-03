@@ -7,7 +7,7 @@ global n_ENrun
 n_ENrun = 0 ;
 n1 = n_ENrun;
 % 计算可能的时间
-
+disp(damage_info_file_name);
 priority = struct('serviceability',[],'resilience_mean_serviceability',[],'resilience_mean_recovery_rate',[]);
 % 确定次序
 best_indivi_isolation_1_cell =damage_pipe_info{5}(damage_pipe_info{3}==2);
