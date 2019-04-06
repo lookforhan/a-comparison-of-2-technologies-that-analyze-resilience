@@ -101,9 +101,10 @@ classdef EPS_net_EPANETx64PDD < handle
             temp_tstep = 1;
             time_step_n =0;
             errcode4 = 0;
+            code_break = 1;
             timeStepChose = obj.timeStep_changePipeStatus; %
             newPipeStatusChange = obj.pipe_status_change_simple;
-            while (temp_tstep && ~errcode4 && 0)
+            while (temp_tstep && ~errcode4 && code_break)
                 time_step_n = time_step_n+1;
                 if errcode4
                     keyboard
@@ -240,6 +241,7 @@ classdef EPS_net_EPANETx64PDD < handle
                 activity_cell{time_step_n} = str;%记录每个时间步的行为
                 leakage_water_mat(time_step_n) = sum( cal_demand_chosen_reservoirs)+sum(cal_demand_chosen_node);
                 [errcode4,temp_tstep]=calllib(obj.lib_name,'ENnextH',temp_tstep);
+                code_break = 0;
             end
             fclose(fid_log_file);
             obj.errcode(6) = calllib(obj.lib_name,'ENclose');
