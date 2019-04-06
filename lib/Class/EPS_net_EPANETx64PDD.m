@@ -65,7 +65,201 @@ classdef EPS_net_EPANETx64PDD < handle
         function Run(obj)
             obj.errcode(1) = calllib(obj.lib_name,'ENopen',obj.out_inp,[obj.out_inp(1:end-3),'rpt'],'');
         end
-        function Run_debug(obj)
+    end
+    methods %
+        function Run_single(obj) %仅计算初始时刻
+            if obj.dispKeyWord == 1
+                disp('Run_single开始运行')
+            end
+            global n_ENrun
+            log_file = [obj.out_inp(1:end-4),'_Run_single_.','log'];
+            fid_log_file = fopen(log_file,'w');
+            if fid_log_file <=0
+                disp([log_file,'文件打开失败'])
+                keyboard
+            end
+            if obj.dispKeyWord ==1
+                disp(['计算过程请看：',log_file])
+            end
+            reservoirs_supply_cell = cell(obj.duration,1);
+            time_timeStep = cell(obj.duration,1);
+            Pre = cell(obj.duration,1);
+            cal_Demand = cell(obj.duration,1);
+            node_serviceability_cell = cell(obj.duration,1);
+            system_serviceability_cell = cell(obj.duration,1);
+            leakage_water_mat = zeros(obj.duration,1);
+            activity_cell = cell(obj.duration,1);
+            obj.errcode(1) = calllib(obj.lib_name,'ENopen',obj.out_inp,[obj.out_inp(1:end-3),'rpt'],'');
+            if obj.errcode(1) > 100
+                keyboard
+            end
+            obj.errcode(2) = calllib(obj.lib_name,'ENsettimeparam',0,obj.duration_set);% 设置模拟历时
+            obj.errcode(3) = calllib(obj.lib_name,'ENsetoption',0,obj.setIterationNumber);% 动态链接库中迭代次数
+            obj.errcode(4) = calllib(obj.lib_name,'ENopenH');
+            obj.errcode(5) = calllib(obj.lib_name,'ENinitH',0);
+            temp_t = 0;
+            temp_tstep = 1;
+            time_step_n =0;
+            errcode4 = 0;
+            timeStepChose = obj.timeStep_changePipeStatus; %
+            newPipeStatusChange = obj.pipe_status_change_simple;
+            while (temp_tstep && ~errcode4 && 0)
+                time_step_n = time_step_n+1;
+                if errcode4
+                    keyboard
+                end
+                fprintf(fid_log_file,'%s\r\n',num2str(temp_t));
+                fprintf(fid_log_file,'%s\r\n',num2str(time_step_n));
+                [lia,loc] = ismember(time_step_n,timeStepChose);%
+                if lia
+                    fprintf(fid_log_file,'%s\r\n','开始修改管道状态');
+                    mid_status = newPipeStatusChange(:,loc);
+                    str2 = blanks(200);
+                    str3 = blanks(200);
+                    str2_n = 1;
+                    str3_n = 1;
+                    for i = 1:numel(mid_status)
+                        pipe_status_timeStep = mid_status(i);
+                        switch  pipe_status_timeStep
+                            case 0
+                                str1 = '无动作;';
+                                %                                 continue %
+                            case 1
+                                % isolation
+                                mid_str = ['隔离管道',obj.pipe_relative{i,1},';'];
+                                str_length = length(mid_str);
+                                str2(str2_n:str2_n+str_length-1) = mid_str;
+                                str2_n = str2_n+str_length;
+                                for j =1:numel(obj.pipe_relative{i,2})% 隔离的管道为当前管道相关联的破坏管道。
+                                    id = libpointer('cstring',obj.pipe_relative{i,2}{1,j});
+                                    fprintf(fid_log_file,'隔离管道:%s\r\n',obj.pipe_relative{i,2}{1,j} );
+                                    index =libpointer('int32Ptr',0);
+                                    [code,id,index]=calllib(obj.lib_name,'ENgetlinkindex',id,index);
+                                    if code
+                                        disp(num2str(code));
+                                        keyboard
+                                    end
+                                    code=calllib(obj.lib_name,'ENsetlinkvalue',index,11,0);%管道id状态为关闭
+                                    if code
+                                        disp(num2str(code));
+                                        fprintf(fid_log_file,'隔离管道:%s出错,代码%s\r\n',id,num2str(code) );
+                                        keyboard
+                                    end
+                                    code= calllib(obj.lib_name,'ENsetlinkvalue',index,4,0);
+                                    if code
+                                        disp(num2str(code))
+                                        fprintf(fid_log_file,'隔离管道:%s出错,代码%s\r\n',id,num2str(code) );
+                                        keyboard
+                                    end
+                                end
+                            case 2
+                                %isolation
+                                mid_str_1 = ['隔离管道',obj.pipe_relative{i,1},';'];
+                                str_length = length(mid_str_1);
+                                str3(str3_n:str3_n+str_length-1) = mid_str_1;
+                                str3_n = str3_n+str_length;
+                                for j =1:numel(obj.pipe_relative{i,2})% 隔离的管道为当前管道相关联的破坏管道。
+                                    id = libpointer('cstring',obj.pipe_relative{i,2}{1,j});
+                                    fprintf(fid_log_file,'隔离管道:%s\r\n',obj.pipe_relative{i,2}{1,j} );
+                                    index =libpointer('int32Ptr',0);
+                                    [code,id,index]=calllib(obj.lib_name,'ENgetlinkindex',id,index);
+                                    if code
+                                        disp(num2str(code));
+                                        keyboard
+                                    end
+                                    code=calllib(obj.lib_name,'ENsetlinkvalue',index,11,0);%管道id状态为关闭
+                                    if code
+                                        disp(num2str(code));
+                                        fprintf(fid_log_file,'隔离管道:%s出错,代码%s\r\n',id,num2str(code) );
+                                        keyboard
+                                    end
+                                    code= calllib(obj.lib_name,'ENsetlinkvalue',index,4,0);
+                                    if code
+                                        disp(num2str(code));
+                                        fprintf(fid_log_file,'隔离管道:%s出错,代码%s\r\n',id,num2str(code) );
+                                        keyboard
+                                    end
+                                end
+                                %reopen
+                                mid_str_2 = ['修复管道',obj.pipe_relative{i,1},';'];
+                                str_lenth = length(mid_str_2);
+                                str3(str3_n:str3_n+str_lenth-1) = mid_str_2;
+                                str3_n = str3_n+str_lenth;
+                                id=libpointer('cstring',obj.pipe_relative{i,1});
+                                index =libpointer('int32Ptr',0);
+                                [code,id,index]=calllib(obj.lib_name,'ENgetlinkindex',id,index);
+                                
+                                if code
+                                    disp(nem2str(code));
+                                    keyboard
+                                end
+                                code= calllib(obj.lib_name,'ENsetlinkvalue',index,11,1);
+                                if code
+                                    disp(nem2str(code));
+                                    fprintf(fid_log_file,'reopen管道:%s出错,代码%s\r\n',id,num2str(code) );
+                                    keyboard
+                                end
+                                code= calllib(obj.lib_name,'ENsetlinkvalue',index,4,1);
+                                fprintf(fid_log_file,'reopen管道%s,\r\n',obj.pipe_relative{i,1});
+                                if code
+                                    disp(nem2str(code));
+                                    fprintf(fid_log_file,'reopen管道:%s出错,代码%s\r\n',id,num2str(code) );
+                                    keyboard
+                                end
+                        end
+                        
+                    end
+                    str = [str1,deblank(str2),deblank(str3)];
+                    fprintf(fid_log_file,'%s时刻,管道状态修改完毕\r\n',num2str(temp_t) );
+                else
+                    str = '无动作';
+                    fprintf(fid_log_file,'%s时刻,管道状态无需修改完毕\r\n',num2str(temp_t) );
+                end
+                [errcode4,temp_t] = calllib(obj.lib_name,'ENrunH',temp_t);
+                obj.ENrun_num = obj.ENrun_num +1;
+                n_ENrun = n_ENrun +1;
+                obj.calculate_code(time_step_n) = errcode4;
+                if errcode4
+                    %                     disp(num2str(errcode4));
+                    fprintf(fid_log_file,'ENrunH出错,代码%s\r\n',num2str(errcode4) );
+                    if errcode4 <100
+                        %                         disp(num2str(errcode4))
+                    else
+                        keyboard
+                    end
+                end
+                time_timeStep{time_step_n} = temp_t;
+                [real_pre_chosen_node,cal_demand_chosen_node,req_demand_chosen_node]=Get_chosen_node_value_EPANETx64PDD(obj.lib_name,obj.node_id);
+                [~,cal_demand_chosen_reservoirs,~]=Get_chosen_node_value_EPANETx64PDD(obj.lib_name,obj.reservoirs_id);
+                Pre{time_step_n} = real_pre_chosen_node;
+                %                 Demand{time_step_n}=req_demand_chosen_node;
+                cal_Demand{time_step_n}=cal_demand_chosen_node;
+                system_serviceability_cell{time_step_n}= sum(cal_demand_chosen_node)/sum(req_demand_chosen_node);
+                node_serviceability_cell{time_step_n} =  cal_demand_chosen_node./req_demand_chosen_node;
+                reservoirs_supply_cell{time_step_n} = cal_demand_chosen_reservoirs;
+                activity_cell{time_step_n} = str;%记录每个时间步的行为
+                leakage_water_mat(time_step_n) = sum( cal_demand_chosen_reservoirs)+sum(cal_demand_chosen_node);
+                [errcode4,temp_tstep]=calllib(obj.lib_name,'ENnextH',temp_tstep);
+            end
+            fclose(fid_log_file);
+            obj.errcode(6) = calllib(obj.lib_name,'ENclose');
+            obj.activity = activity_cell;
+            obj.system_serviceability = system_serviceability_cell;
+            obj.node_demand_calculate = cal_Demand;
+            obj.node_pressure_calculate = Pre;
+            obj.time = time_timeStep;
+            obj.node_serviceability = node_serviceability_cell;
+            obj.reservoirs_supply = reservoirs_supply_cell;
+            obj.damage_leakage.sum = leakage_water_mat;
+            if obj.dispKeyWord ==1
+                disp('Run_single结束运行')
+            end
+        end
+    end
+    
+    methods
+        
+        function Run_debug(obj) %延时模拟，计算时间段内所有时间步
             if obj.dispKeyWord == 1
                 disp('Run_debug开始运行')
             end
