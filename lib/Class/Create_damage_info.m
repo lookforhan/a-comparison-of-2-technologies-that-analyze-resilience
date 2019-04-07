@@ -31,7 +31,7 @@ classdef Create_damage_info < handle
             disp([mfilename,':Run']);
             damage_equ_diameter = zeros(obj.damage_pipe_num,1);
             randnum = randperm(numel(obj.pipe_id));
-            randnum(1:10) %检查每次随机数生成情况
+%             randnum(1:10) %检查每次随机数生成情况
             obj.damage_pipe_id = obj.pipe_id(randnum(1:obj.damage_pipe_num));% 破坏管道id
             damage_pipe_diameter = obj.pipe_diameter(randnum(1:obj.damage_pipe_num));
             damage_pipe_class_1 = ones(numel(obj.damage_pipe_id),1);
