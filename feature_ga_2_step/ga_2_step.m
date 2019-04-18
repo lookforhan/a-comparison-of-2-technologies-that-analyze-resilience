@@ -24,6 +24,7 @@ catch
     path('..\lib\eventTime',path);% ?
     path('..\lib\random',path);%
     path('..\lib\ga',path);%
+    path('..\lib\Class',path);%
     %     path('..\lib\random_singleTime',path);%
     load  EPA_F
 end
