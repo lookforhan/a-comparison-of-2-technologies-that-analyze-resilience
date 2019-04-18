@@ -17,7 +17,7 @@ if isempty(BreakPipe_result)
     return
 end
 %%初始化数据
-n=numel(BreakPipe_result(:,1));
+% n=numel(BreakPipe_result(:,1));
 n_isolation = sum((cell2mat(BreakPipe_result(:,6))==1));
 BreakPipe_InspectResult=BreakPipe_result(1:n_isolation,:);
 BreakPipe_RepairResult=BreakPipe_result(n_isolation+1:end,:);
@@ -54,7 +54,7 @@ end
 PipeStatus=[PipeStatus_original,PipeStatus_1];
 PipeStatusChange=[PipeStatusChange_original,PipeStatusChange];
 % PipeStatus=PipeStatus_1;
-if 0
-    keyboard
-end
+% if 0
+%     keyboard
+% end
 end
