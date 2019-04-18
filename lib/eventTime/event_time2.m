@@ -15,7 +15,8 @@ distance=zeros(pipe_n,pipe_n) ;
 for i=1:pipe_n
     for j=1:pipe_n
         distance(i,j)=((coordinate{i,2}-coordinate{j,2})^2+(coordinate{i,3}-coordinate{j,3})^2)^(0.5);
-        Dp_travel(i,j)=triangular_distribution(distance(i,j)/80,distance(i,j)/25,distance(i,j)/40);
+        Dp_travel(i,j) = 0;
+%         Dp_travel(i,j)=triangular_distribution(distance(i,j)/80,distance(i,j)/25,distance(i,j)/40);
     end
 end
 
