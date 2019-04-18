@@ -87,6 +87,7 @@ for j_i = 1:numel(node_id)
     errcode6_3 = calllib(lib_name,'ENsetnodevalue',index,121,Hcritical(j_i));
 end
 errcode6_4 = calllib(lib_name,'ENsaveinpfile',temp_inp_file);
+errcode6_5 = calllib(lib_name,'ENclose');
 % process_7 genetic algorithm
 [ga_results]...
     =ga_priority12_epanetx64pdd(popsize,generation_Nmax,probability_crossover,probability_mutation,...种群大小，进化代数，交叉概率，变异概率
