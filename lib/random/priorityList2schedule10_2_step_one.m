@@ -18,8 +18,8 @@
 %% 应用案例
 % [BreakPipe_result,RepairCrew_result,Active_result]=priorityList2schedule10_2_step_one({'1';'3'},{'a';'b'},{'3';'2';'1'},[2;3;5],[6;7;8],[0,2,3;2,0,2;3,2,0],'.\',[1;1],[1;1],[1;1],[1;1])
 function [BreakPipe_result,RepairCrew_result,Active_result]=priorityList2schedule10_2_step_one(isolate_priority,RepairCrew,BreakPipe_order,...
-    Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,out_dir,...
-    crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel...队伍开始工作时间，修复效率，隔离效率，移动效率
+    Dp_Inspect_mat,~,Dp_Travel_mat,~,...
+    crewStartTime,~,crewEfficiencyIsolation,crewEfficiencyTravel...队伍开始工作时间，修复效率，隔离效率，移动效率
     )
 if isempty(isolate_priority)%没有进行修复
     BreakPipe_result = [];
