@@ -3,11 +3,11 @@
 clear;clc;close all;tic;
 lib_name = 'EPANETx64PDD';
 h_name = 'toolkit.h';
-net_file = '..\materials\MOD_5_mean.inp';
-damage_info_file = '..\materials\damage_scenario_05.txt';
+net_file = '..\materials\MOD\MOD_5_mean.inp';
+damage_info_file = '..\materials\MOD\damage_scenario_05.txt';
 damage_net = '.\results\temp_damage_net.inp';
 damage_rpt = '.\results\temp_damage_net.rpt';
-pdd_file = '..\materials\PDD_parameter.txt';
+pdd_file = '..\materials\MOD\PDD_parameter2.txt';
 temp_inp_file = '.\results\temp_internal_net.inp';
 out_dir = '.\results\';
 fid = 1;
@@ -88,13 +88,13 @@ for j_i = 1:numel(node_id)
 end
 errcode6_4 = calllib(lib_name,'ENsaveinpfile',temp_inp_file);
 % process_7 genetic algorithm
-[pop_isolation_record,Fit_record_uniq]...
-    =ga_priority9_epanetx64pdd(popsize,generation_Nmax,probability_crossover,probability_mutation,...种群大小，进化代数，交叉概率，变异概率
+[ga_results]...
+    =ga_priority12_epanetx64pdd(popsize,generation_Nmax,probability_crossover,probability_mutation,...种群大小，进化代数，交叉概率，变异概率
     out_dir,....输出目录
     RepairCrew,...修复队伍，
     damage_pipe_info,net_data,pipe_relative,...破坏信息，管网信息，破坏管道相关新建管道
     EPA_format,...node_original_data,system_original_L,...EPA格式，节点原本数据，系统原本管道长度
     Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,...检查时间，修复时间，移动时间
     crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel,...
-   temp_inp_file)%
+   temp_inp_file);%
 toc
