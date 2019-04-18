@@ -1,6 +1,6 @@
 % name : ga_2_step.m
 % pre-process
-clear;clc;close all;tic;
+clear all;clc;close all;tic;
 lib_name = 'EPANETx64PDD';
 h_name = 'toolkit.h';
 net_file = '..\materials\MOD\MOD_5_mean.inp';
@@ -90,7 +90,7 @@ errcode6_4 = calllib(lib_name,'ENsaveinpfile',temp_inp_file);
 errcode6_5 = calllib(lib_name,'ENclose');
 % process_7 genetic algorithm
 [ga_results]...
-    =ga_priority12_epanetx64pdd(popsize,generation_Nmax,probability_crossover,probability_mutation,...种群大小，进化代数，交叉概率，变异概率
+    =ga_priority13_epanetx64pdd(popsize,generation_Nmax,probability_crossover,probability_mutation,...种群大小，进化代数，交叉概率，变异概率
     out_dir,....输出目录
     RepairCrew,...修复队伍，
     damage_pipe_info,net_data,pipe_relative,...破坏信息，管网信息，破坏管道相关新建管道
