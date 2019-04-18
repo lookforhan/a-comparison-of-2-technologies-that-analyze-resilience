@@ -11,7 +11,7 @@ function [ pop_uniq,pop_uniq_not,new_individual_record_mat ] = ga_unique_individ
 
 individual_mat = pop_init;
 
-[lia1,lib1] = ismember(individual_mat,individual_record_mat,'rows');
+[lia1,~] = ismember(individual_mat,individual_record_mat,'rows');
 pop_uniq = individual_mat(~lia1,:);% 新生成的个体
 pop_uniq_not = individual_mat(lia1,:);% 已经记录的个体
 new_individual_record_mat = [individual_record_mat;pop_init];
