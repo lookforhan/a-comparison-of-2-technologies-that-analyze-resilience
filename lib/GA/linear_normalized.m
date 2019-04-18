@@ -10,7 +10,7 @@ function Fitvalue=linear_normalized(fitvalue,a,b)
 
 n=numel(fitvalue);%适应度值个数（种群个数）
 fitvalue1=fitvalue;%转化为矩阵，fitvalue第一列为个体对应的适应度值
-order=[1:n]';%标记次序
+order=(1:n)';%标记次序
 % order=1:n;
 try
 fitvalue2=[fitvalue1,order];
