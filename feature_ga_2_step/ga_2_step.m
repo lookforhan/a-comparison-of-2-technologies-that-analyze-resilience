@@ -100,3 +100,4 @@ errcode6_5 = calllib(lib_name,'ENclose');
     crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel,...
    temp_inp_file);%
 toc
+% delete .\results\*.*
