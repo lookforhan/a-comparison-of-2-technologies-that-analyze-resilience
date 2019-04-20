@@ -22,7 +22,7 @@ Fit_record = zeros(popsize*generation_Nmax,1);
 ENrun_number_init_isolation = zeros(popsize,generation_Nmax);
 for generation_i = 1:generation_Nmax
     generation_dir_i=[out_dir,'process_1\','遗传第',num2str(generation_i),'代\'];
-    mkdir(generation_dir_i);
+%     mkdir(generation_dir_i);
     timeCost = toc;
     disp(['===========process 1:遗传第',num2str(generation_i),'代；耗时',num2str(timeCost),'S========']);
     if ~isempty(pop_isolation_uniq)
@@ -120,7 +120,7 @@ results_indiv_sch = cell(popsize,generation_Nmax);
 % keyboard
 for generation_i = 1:generation_Nmax
     generation_dir_i=[out_dir,'process_2\','遗传第',num2str(generation_i),'代\'];
-    mkdir(generation_dir_i);
+%     mkdir(generation_dir_i);
     timeCost = toc;
     disp(['===========process 2:遗传第',num2str(generation_i),'代；耗时',num2str(timeCost),'S========']);
     if ~isempty(pop_recovery_uniq)
@@ -195,8 +195,8 @@ results.recovery_fit_record = Fit_recovery_record;
 results.recovery_pop_record = pop_recovery_record(1:end-popsize,:);
 results.best_indivi_recovery = best_indivi_recovery;
 results.recovery_ENrun_num = ENrun_number_init_recovery;
-results.indivi_cal_result = results_indiv_cal;
-results.indivi_cal_schedule = results_indiv_sch;
+% results.indivi_cal_result = results_indiv_cal;
+% results.indivi_cal_schedule = results_indiv_sch;
 test2 = n_ENrun - (sum(sum(ENrun_number_init_recovery))+sum(sum(ENrun_number_init_isolation)));
 if test2~=test
     keyboard
