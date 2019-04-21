@@ -100,8 +100,10 @@ errcode6_5 = calllib(lib_name,'ENclose');
     crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel,...
    temp_inp_file);%
 toc
-ga.results.description = ['描述：管网文件为',net_file,';破坏文件为：',damage_info_file,';算法为：遗传算法，选择策略：',selection_strategy...
+ga_results.costTime = toc;
+ga_results.description = ['描述：管网文件为',net_file,';破坏文件为：',damage_info_file,';算法为：遗传算法，选择策略：',selection_strategy...
     ,'遗传算法参数，种群规模:',num2str(popsize),'进化代数：',num2str(generation_Nmax),'交叉概率：',num2str(probability_crossover),'变异概率：',num2str(probability_mutation)];
 [~,file_name,~] = fileparts(damage_info_file);
 save(file_name,'ga_results')
+exit
 % delete .\results\*.*
