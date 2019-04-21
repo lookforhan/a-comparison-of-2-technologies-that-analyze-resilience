@@ -7,7 +7,7 @@ net_file = '..\materials\MOD\MOD_5_mean.inp';
 damage_info_file = '..\materials\MOD\damage_scenario_case_09.txt';
 damage_net = '.\results\temp_damage_net.inp';
 damage_rpt = '.\results\temp_damage_net.rpt';
-pdd_file = '..\materials\MOD\PDD_parameter2.txt';
+pdd_file = '..\materials\MOD\PDD_parameter.txt';
 temp_inp_file = '.\results\temp_internal_net.inp';
 out_dir = '.\results\';
 fid = 1;
@@ -105,5 +105,5 @@ ga_results.description = ['描述：管网文件为',net_file,';破坏文件为：',damage_inf
     ,'遗传算法参数，种群规模:',num2str(popsize),'进化代数：',num2str(generation_Nmax),'交叉概率：',num2str(probability_crossover),'变异概率：',num2str(probability_mutation)];
 [~,file_name,~] = fileparts(damage_info_file);
 save(file_name,'ga_results')
-exit
+% exit
 % delete .\results\*.*
