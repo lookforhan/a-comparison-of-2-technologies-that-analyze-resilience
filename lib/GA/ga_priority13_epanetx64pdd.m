@@ -115,8 +115,8 @@ Fit_recovery_mean = zeros(generation_Nmax,1);
 pop_recovery_uniq = pop_recovery_init;
 Fit_recovery_record = zeros(popsize*generation_Nmax,1);
 ENrun_number_init_recovery = zeros(popsize,generation_Nmax);
-results_indiv_cal = cell(popsize,generation_Nmax);
-results_indiv_sch = cell(popsize,generation_Nmax);
+% results_indiv_cal = cell(popsize,generation_Nmax);
+% results_indiv_sch = cell(popsize,generation_Nmax);
 % keyboard
 for generation_i = 1:generation_Nmax
     generation_dir_i=[out_dir,'process_2\','遗传第',num2str(generation_i),'代\'];
@@ -124,7 +124,7 @@ for generation_i = 1:generation_Nmax
     timeCost = toc;
     disp(['===========process 2:遗传第',num2str(generation_i),'代；耗时',num2str(timeCost),'S========']);
     if ~isempty(pop_recovery_uniq)
-        [Fit_recovery_uniq,~,ENrun_number_recovery,result_uniq]=calfitvalue4_recovery(best_indivi_isolation,pop_recovery_uniq,DamagePipe_order,RepairCrew,...
+        [Fit_recovery_uniq,~,ENrun_number_recovery,~]=calfitvalue4_recovery(best_indivi_isolation,pop_recovery_uniq,DamagePipe_order,RepairCrew,...
      Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,...
      crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel,...
     damage_pipe_info,net_data,...
@@ -137,7 +137,7 @@ output_net_filename_inp,pipe_relative);%,....
 %         end
         Fit_recovery_uniq = [];
         ENrun_number_recovery=[];
-        result_uniq = [];
+%         result_uniq = [];
         
     end
     if generation_i==1
@@ -145,15 +145,15 @@ output_net_filename_inp,pipe_relative);%,....
         Fit_recovery_record((generation_i-1)*popsize+1:(generation_i-1)*popsize+popsize) = Fit_init;
         pop_recovery_old = pop_recovery_init;
         ENrun_number_init_recovery(:,generation_i) = ENrun_number_recovery;
-        results_indiv_cal(:,generation_i) = result_uniq(:,1);%所有计算结果
-        results_indiv_sch(:,generation_i) = result_uniq(:,2);%所有队伍任务计划表
+%         results_indiv_cal(:,generation_i) = result_uniq(:,1);%所有计算结果
+%         results_indiv_sch(:,generation_i) = result_uniq(:,2);%所有队伍任务计划表
     else
         Fit_init(:)=0;
         for i_new_indivi = 1:num_new_indivi
            Fit_init(logical(locb_recovery_new_indivi(:,i_new_indivi))) = Fit_recovery_uniq(i_new_indivi); 
            ENrun_number_init_recovery(find(locb_recovery_new_indivi(:,i_new_indivi)==1,1),generation_i) = ENrun_number_recovery(i_new_indivi);
-           results_indiv_cal(find(locb_recovery_new_indivi(:,i_new_indivi)==1,1),generation_i) = result_uniq(i_new_indivi,1);
-           results_indiv_sch(find(locb_recovery_new_indivi(:,i_new_indivi)==1,1),generation_i) = result_uniq(i_new_indivi,2);
+%            results_indiv_cal(find(locb_recovery_new_indivi(:,i_new_indivi)==1,1),generation_i) = result_uniq(i_new_indivi,1);
+%            results_indiv_sch(find(locb_recovery_new_indivi(:,i_new_indivi)==1,1),generation_i) = result_uniq(i_new_indivi,2);
         end
         for i_not_new_indivi = 1:num_not_new_indivi
             Fit_init(logical(locb_recovery_not_new_indivi(:,i_not_new_indivi))) = Fit_recovery_record(locb_recovery_not_new_indivi_fit(i_not_new_indivi));
