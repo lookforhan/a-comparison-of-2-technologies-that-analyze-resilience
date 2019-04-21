@@ -30,7 +30,7 @@ catch
 end
 % process_2 the defintion of parameters
 popsize = 10;%30
-generation_Nmax = 5;%30
+generation_Nmax = 3;%30
 probability_crossover = 0.9;
 probability_mutation = 0.1;
 selection_strategy = 'elitism selection';
@@ -101,7 +101,7 @@ errcode6_5 = calllib(lib_name,'ENclose');
    temp_inp_file);%
 toc
 ga.results.description = ['描述：管网文件为',net_file,';破坏文件为：',damage_info_file,';算法为：遗传算法，选择策略：',selection_strategy...
-    ,'遗传算法参数，种群规模:',num2str(popsize),'进化代数：',num2str(generation_Nmax),'交叉概率：',num2str(probability_crossove),'变异概率：',num2str(probability_mutation)];
+    ,'遗传算法参数，种群规模:',num2str(popsize),'进化代数：',num2str(generation_Nmax),'交叉概率：',num2str(probability_crossover),'变异概率：',num2str(probability_mutation)];
 [~,file_name,~] = fileparts(damage_info_file);
 save(file_name,'ga_results')
 % delete .\results\*.*
