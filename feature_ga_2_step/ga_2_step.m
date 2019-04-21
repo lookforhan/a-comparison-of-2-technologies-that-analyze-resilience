@@ -4,7 +4,7 @@ clear all;clc;close all;tic;
 lib_name = 'EPANETx64PDD';
 h_name = 'toolkit.h';
 net_file = '..\materials\MOD\MOD_5_mean.inp';
-damage_info_file = '..\materials\MOD\damage_scenario_05.txt';
+damage_info_file = '..\materials\MOD\damage_scenario_case_09.txt';
 damage_net = '.\results\temp_damage_net.inp';
 damage_rpt = '.\results\temp_damage_net.rpt';
 pdd_file = '..\materials\MOD\PDD_parameter2.txt';
@@ -100,4 +100,8 @@ errcode6_5 = calllib(lib_name,'ENclose');
     crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel,...
    temp_inp_file);%
 toc
+ga.results.description = ['描述：管网文件为',net_file,';破坏文件为：',damage_info_file,';算法为：遗传算法，选择策略：',selection_strategy...
+    ,'遗传算法参数，种群规模:',num2str(popsize),'进化代数：',num2str(generation_Nmax),'交叉概率：',num2str(probability_crossove),'变异概率：',num2str(probability_mutation)];
+[~,file_name,~] = fileparts(damage_info_file);
+save(file_name,'ga_results')
 % delete .\results\*.*
