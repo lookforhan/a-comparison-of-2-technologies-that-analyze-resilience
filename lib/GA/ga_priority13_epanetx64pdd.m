@@ -215,7 +215,7 @@ fitvalue=cell(popsize,15);
 ENrun_number = zeros(popsize,1);
 for individual_i=1:popsize
     individual_dir_i=[generation_dir_i,'\',num2str(individual_i),'\'];
-    mkdir(individual_dir_i)
+%     mkdir(individual_dir_i)
     BreakPipePriority=pop(individual_i,:);
     
     %fit5
@@ -289,7 +289,7 @@ ENrun_number_recovery = zeros(popsize,1);
 result_all = cell(popsize,2);
 for individual_i=1:popsize
     individual_dir_i=[generation_dir_i,'\',num2str(individual_i),'\'];
-    mkdir(individual_dir_i)
+%     mkdir(individual_dir_i)
     BreakPipePriority=pop(individual_i,:);
     %fit5
     [Fitness(individual_i),...
