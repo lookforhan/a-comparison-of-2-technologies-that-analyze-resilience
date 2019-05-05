@@ -32,6 +32,8 @@ schedule = t;
 duration_one = numel(PipeStatus(1,:));
 a = EPS_net_EPANETx64PDD( output_net_filename_inp,output_result_dir,PipeStatus,PipeStatusChange,pipe_relative,net_data,...
     duration_one);
+a.export_inp = 1;
+a.setIterationNumber = 5000;
 a.Run_debug;
 system_serviceability_cell = a.system_serviceability;
 activity_cell = a.activity;
