@@ -8,7 +8,8 @@ classdef EPS_net_EPANETx64PDD < handle
         time_step = 3600 %(s) 时间步长；
         calculate_code; % 判断每个时间步计算结果可靠度
         dispKeyWord = 0; % 输出显示关键词，调试用。0不输出，1输出。
-        setIterationNumber = 5000;% 水力计算迭代次数
+        export_inp = 0; % 是否输出每一次水力分析的Inp文件。0不输出，1输出。
+        setIterationNumber = 500;% 水力计算迭代次数
     end
     properties % 输入参数
         out_inp % 输入参数：output_net_filename_inp
@@ -408,6 +409,13 @@ classdef EPS_net_EPANETx64PDD < handle
                 else
                     str = '无动作';
                     fprintf(fid_log_file,'%s时刻,管道状态无需修改完毕\r\n',num2str(temp_t) );
+                end
+                if obj.export_inp == 1
+                    inpfile_name = ['time',num2str(time_step_n),'.inp'];
+                    err_out = calllib(obj.lib_name,'ENsaveinpfile',inpfile_name);
+                    if err_out ~=0
+                        keyboard
+                    end
                 end
                 [errcode4,temp_t] = calllib(obj.lib_name,'ENrunH',temp_t);
                 obj.ENrun_num = obj.ENrun_num +1;
