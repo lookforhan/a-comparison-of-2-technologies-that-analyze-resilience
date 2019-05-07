@@ -24,7 +24,8 @@ catch
     path('..\lib\random',path);%
     path('..\lib\ga',path);%
     path('..\lib\Class',path);% ¿‡
-    path('..\lib\toolkit',path);%
+    path('..\lib\toolkit',path);%\
+    path('C:\Users\hc042\Documents\GitHub\PlotPub\lib',path);
     %     path('..\lib\random_singleTime',path);%
     load  EPA_F
 end
