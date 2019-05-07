@@ -1,7 +1,7 @@
 % straightLineDistance.m
 clear;clc;close all;tic;
 net_file = '..\materials\MOD\MOD_5_mean.inp';
-damage_info_file_name = 'damage_scenario_case_09.txt';
+damage_info_file_name = 'damage_scenario_case_03.txt';
 pre_process
 global n_ENrun
 n_ENrun = 0 ;
@@ -60,4 +60,34 @@ delete .\results\_*
 toc
 clearvars -EXCEPT priority_straighLineDistance schedule results net_data
 % priority_straighLineDistance.calculate_code
+% 结果作图
+errcode = priority_straighLineDistance.calculate_code;
+Time = 1:numel(errcode);
+fig = Plot(Time,errcode);
+fig.XLabel = 'Time (h)';
+fig.YLabel = 'error code';
+fig.Title = ['damage scenario',num2str(n),' errcode in process'];
+fig.export(['test_straightLineDistance_damage_scenario_case_0',num2str(n),'errcode','.png']);
+fig.delete
 
+% 供水满意率曲线
+serviceability = priority_straighLineDistance.serviceability;
+fig = Plot(Time,serviceability);
+fig.XLabel = 'Time (h)';
+fig.YLabel = 'Serviceability';
+fig.Title = ['damage scenario',num2str(n),' serviceability v.s. Time'];
+fig.export(['test_straightLineDistance_damage_scenario_case_0',num2str(n),'serviceability','.png']);
+fig.delete
+
+% 修正作图
+errcode_loc = find(errcode~=0);
+reliable_code_loc  = find(errcode ==0); 
+err_serviceability = priority_straighLineDistance.serviceability(errcode_loc);
+reliable_time = Time(reliable_code_loc);
+reliable_serviceability = priority_straighLineDistance.serviceability(reliable_code_loc);
+fig = Plot(reliable_time,reliable_serviceability);
+fig.XLabel = 'Time (h)';
+fig.YLabel = 'Serviceability';
+fig.Title = ['damage scenario',num2str(n),' reliable serviceability v.s. Time'];
+fig.export(['test_straightLineDistance_damage_scenario_case_0',num2str(n),'reliable_serviceability','.png']);
+fig.delete;
