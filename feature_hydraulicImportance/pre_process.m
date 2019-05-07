@@ -3,10 +3,10 @@
 lib_name = 'EPANETx64PDD';
 h_name = 'toolkit.h';
 
-damage_info_file = ['..\materials\',damage_info_file_name];
+damage_info_file = ['..\materials\MOD\',damage_info_file_name];
 damage_net = '.\results\temp_damage_net.inp';
 damage_rpt = '.\results\temp_damage_net.rpt';
-pdd_file = '..\materials\PDD_parameter.txt';
+pdd_file = '..\materials\MOD\PDD_parameter2.txt';
 temp_inp_file = '.\results\temp_internal_net.inp';
 out_dir = '.\results\';
 fid = 1;
