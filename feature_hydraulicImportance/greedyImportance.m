@@ -1,7 +1,7 @@
 % greedyImportance.m
 % ‘§¥¶¿Ì
 clear;clc;close all;tic;
-net_file = '..\materials\MOD_5_mean.inp';
+net_file = '..\materials\MOD\MOD_5_mean.inp';
 damage_info_file_name = 'damage_scenario_case_09.txt';
 pre_process
 global n_ENrun
