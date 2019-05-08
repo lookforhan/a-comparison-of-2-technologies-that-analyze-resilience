@@ -285,7 +285,7 @@ classdef EPS_net_EPANETx64PDD < handle
             leakage_water_mat = zeros(obj.duration,1);
             activity_cell = cell(obj.duration,1);
             obj.errcode(1) = calllib(obj.lib_name,'ENopen',obj.out_inp,[obj.out_inp(1:end-3),'rpt'],'');
-            if obj.errcode(1) > 100
+            if obj.errcode(1) ~= 0
                 keyboard
             end
             obj.errcode(2) = calllib(obj.lib_name,'ENsettimeparam',0,obj.duration_set);% 设置模拟历时
@@ -422,6 +422,7 @@ classdef EPS_net_EPANETx64PDD < handle
                 n_ENrun = n_ENrun +1;
                 obj.calculate_code(time_step_n) = errcode4;
                 if errcode4
+%                     keyboard
                     %                     disp(num2str(errcode4));
                     fprintf(fid_log_file,'ENrunH出错,代码%s\r\n',num2str(errcode4) );
                     if errcode4 <100
@@ -434,6 +435,22 @@ classdef EPS_net_EPANETx64PDD < handle
                 [real_pre_chosen_node,cal_demand_chosen_node,req_demand_chosen_node]=Get_chosen_node_value_EPANETx64PDD(obj.lib_name,obj.node_id);
                 [~,cal_demand_chosen_reservoirs,~]=Get_chosen_node_value_EPANETx64PDD(obj.lib_name,obj.reservoirs_id);
                 Pre{time_step_n} = real_pre_chosen_node;
+                if errcode4 ~=0
+                    node = 1:numel(cal_demand_chosen_node);
+                    fig1 = Plot(node,cal_demand_chosen_node,node,req_demand_chosen_node);
+                    fig1.XLabel = 'Node';
+                    fig1.YLabel = 'Demand (LPS)';
+                    fig1.Legend = {'cal_demand','req_demand'};
+                    fig1.LegendBox = 'on';
+                    fig1.export([obj.out_dir,num2str(time_step_n),'demand.png']);
+                    fig1.delete
+                    fig2 = Plot(node,real_pre_chosen_node);
+                    fig2.XLabel = 'Node';
+                    fig2.YLabel = 'Pressure (m)';
+                    fig2.export([obj.out_dir,num2str(time_step_n),'pressure.png']);
+                    fig2.delete
+                end
+
                 %                 Demand{time_step_n}=req_demand_chosen_node;
                 cal_Demand{time_step_n}=cal_demand_chosen_node;
                 system_serviceability_cell{time_step_n}= sum(cal_demand_chosen_node)/sum(req_demand_chosen_node);
