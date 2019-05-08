@@ -11,3 +11,4 @@ test
 test*
 results
 feature_recovery_process_eps\results
+*.tmp
