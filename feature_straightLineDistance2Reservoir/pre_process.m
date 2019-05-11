@@ -88,4 +88,7 @@ for j_i = 1:numel(node_id)
     errcode6_2 = calllib(lib_name,'ENsetnodevalue',index,120,Hminimum(j_i));
     errcode6_3 = calllib(lib_name,'ENsetnodevalue',index,121,Hcritical(j_i));
 end
+% node_set_zeros = {'221';'12'};
+% node_set_value = zeros(numel(node_set_zeros),1);
+% [err5] = Set_chosen_node_value_EPANETx64PDD(lib_name,node_set_zeros,1,node_set_value);
 errcode6_4 = calllib(lib_name,'ENsaveinpfile',temp_inp_file);
