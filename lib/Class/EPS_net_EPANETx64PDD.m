@@ -435,21 +435,25 @@ classdef EPS_net_EPANETx64PDD < handle
                 [real_pre_chosen_node,cal_demand_chosen_node,req_demand_chosen_node]=Get_chosen_node_value_EPANETx64PDD(obj.lib_name,obj.node_id);
                 [~,cal_demand_chosen_reservoirs,~]=Get_chosen_node_value_EPANETx64PDD(obj.lib_name,obj.reservoirs_id);
                 Pre{time_step_n} = real_pre_chosen_node;
-                if errcode4 ~=0
-                    node = 1:numel(cal_demand_chosen_node);
-                    fig1 = Plot(node,cal_demand_chosen_node,node,req_demand_chosen_node);
-                    fig1.XLabel = 'Node';
-                    fig1.YLabel = 'Demand (LPS)';
-                    fig1.Legend = {'cal_demand','req_demand'};
-                    fig1.LegendBox = 'on';
-                    fig1.export([obj.out_dir,num2str(time_step_n),'demand.png']);
-                    fig1.delete
-                    fig2 = Plot(node,real_pre_chosen_node);
-                    fig2.XLabel = 'Node';
-                    fig2.YLabel = 'Pressure (m)';
-                    fig2.export([obj.out_dir,num2str(time_step_n),'pressure.png']);
-                    fig2.delete
-                end
+%                 if errcode4 ~=0
+%                     node = 1:numel(cal_demand_chosen_node);
+%                     fig1 = Plot(node,cal_demand_chosen_node,node,req_demand_chosen_node);
+%                     fig1.XLabel = 'Node';
+%                     fig1.YLabel = 'Demand (LPS)';
+%                     fig1.Legend = {'cal_demand','req_demand'};
+%                     fig1.LegendBox = 'on';
+%                     fig1.export([obj.out_dir,num2str(time_step_n),'demand.png']);
+%                     fig1.delete
+%                     try
+%                     fig2 = Plot(node,real_pre_chosen_node);
+%                     catch
+%                         keyboard
+%                     end
+%                     fig2.XLabel = 'Node';
+%                     fig2.YLabel = 'Pressure (m)';
+%                     fig2.export([obj.out_dir,num2str(time_step_n),'pressure.png']);
+%                     fig2.delete
+%                 end
 
                 %                 Demand{time_step_n}=req_demand_chosen_node;
                 cal_Demand{time_step_n}=cal_demand_chosen_node;
