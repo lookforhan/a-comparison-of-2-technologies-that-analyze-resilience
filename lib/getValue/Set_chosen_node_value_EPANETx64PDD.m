@@ -7,6 +7,7 @@ function [ output_args ] = Set_chosen_node_value_EPANETx64PDD(lib_name,node_id,k
 if numel(node_id)~=numel(Value)
    output_args = 1;
    disp([mfilename,'node_id与Value数量不一致！']);
+   keyboard
     return
 end
 num_node_needed_adjust = numel(node_id);
