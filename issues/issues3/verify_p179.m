@@ -6,7 +6,7 @@ lib_name = 'EPANETx64PDD';
 h_name = 'toolkit.h';
 root = 'C:\Users\hc042\Documents\GitHub\a-comparison-of-2-technologies-that-analyze-resilience\';
 try
-    libfunctions (lib_name);
+    
 catch
 loadlibrary([root,'materials\',lib_name],[root,'materials\',h_name]);
 end
@@ -31,9 +31,12 @@ origin_net_file =[root,'materials\MOD\','MOD_5_mean.inp'];
 node_id = net_data_origin{2,2}(:,1);
 
 origin_file = 'time1.inp';
-% the_chosen_pipe_id = {'addP-179-2';'addP-179-1';'addP-157-1';'addP-157-2' };
+% the_chosen_pipe_id = {'addP-179-2';'addP-179-1';'addP-157-1';'addP-157-2' ;'addP-178-1';'addP-178-2'};
+% the_chosen_pipe_id = {'addP-179-2';'addP-179-1';'addP-178-1';'addP-178-2'};
+the_chosen_pipe_id = {'addP-157-2';'addP-157-1';'addP-178-1';'addP-178-2'};
+% the_chosen_pipe_id = {'addP-179-2';'addP-179-1';'addP-157-1';'addP-157-2'};
 % the_chosen_pipe_id = {'addP-157-1';'addP-157-2' };
-the_chosen_pipe_id = {'addP-179-2';'addP-179-1' };
+% the_chosen_pipe_id = {'addP-179-2';'addP-179-1' };
 err_get_pipe_index = zeros(numel(the_chosen_pipe_id),1);
 err_close_pipe = zeros(numel(the_chosen_pipe_id),1);
 err_open_1 = calllib(lib_name,'ENopen',origin_file,[origin_file(1:end-3),'rpt'],'');
