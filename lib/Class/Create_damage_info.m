@@ -1,27 +1,29 @@
 classdef Create_damage_info < handle
-    %Create_damage_info 根据泄露点和断开点数量随机生成标准破坏信息文件
-    %   此处显示详细说明
+    %Create_damage_info 根据泄露点和断开点生成标准破坏信息文件
+    %   2019/5/16 每个管段生成一个破坏点，（断开/泄漏）
     
     properties % input
-        damage_pipe_num % 总破坏点数量
-        break_pipe_num % 断开点数量
+        
         out_file % 生成文件地址和名称
         net_data % 管网信息
     end
-    properties(SetAccess = private) % check
+    properties % check
         errcode
         break_pipe_id
-        damage_pipe_id
+        leak_pipe_id
+        damage_info;
+        out_data % 输出的数据，元胞数组。以后修改为table类型
     end
     properties(Dependent,SetAccess = private)
         pipe_id
         pipe_diameter
+        damage_pipe_id
+        damage_pipe_num % 总破坏点数量
+        break_pipe_num % 断开点数量
+        leak_pipe_num % 泄漏点数量
     end
     methods
-        function obj = Create_damage_info(Damage_pipe_num,Break_pipe_num,Out_file_name,Net_data)
-            obj.damage_pipe_num = Damage_pipe_num;
-            obj.break_pipe_num = Break_pipe_num;
-            obj.out_file = Out_file_name;
+        function obj = Create_damage_info(Net_data)
             obj.net_data = Net_data;
             obj.errcode.write_Damagefile = 0;
             obj.errcode.ND_Execut_deterministic1 =0;
@@ -29,24 +31,48 @@ classdef Create_damage_info < handle
         end
         function Run(obj)
             disp([mfilename,':Run']);
-            damage_equ_diameter = zeros(obj.damage_pipe_num,1);
-            randnum = randperm(numel(obj.pipe_id));
-%             randnum(1:10) %检查每次随机数生成情况
-            obj.damage_pipe_id = obj.pipe_id(randnum(1:obj.damage_pipe_num));% 破坏管道id
-            damage_pipe_diameter = obj.pipe_diameter(randnum(1:obj.damage_pipe_num));
-            damage_pipe_class_1 = ones(numel(obj.damage_pipe_id),1);
-            randnum_2 = randperm(numel(obj.damage_pipe_id));
-            obj.break_pipe_id = obj.damage_pipe_id(randnum_2(1:obj.break_pipe_num));
-            damage_pipe_class_1(randnum_2(1:obj.break_pipe_num)) =2;
-            damage_equ_diameter(damage_pipe_class_1==2) = cell2mat(damage_pipe_diameter(damage_pipe_class_1==2));
-            damage_equ_diameter(damage_pipe_class_1==1) = cell2mat(damage_pipe_diameter(damage_pipe_class_1==1))*0.25;
-            damage_node_num = ones(obj.damage_pipe_num,1);
-            damage_node_distance = ones(obj.damage_pipe_num,1)*0.5;
-            damage_node_priority = (1:obj.damage_pipe_num)';
-            damage_data = {damage_node_priority,obj.damage_pipe_id,damage_node_num,damage_node_distance,damage_pipe_class_1,damage_equ_diameter};
-            [obj.errcode.ND_Execut_deterministic1,damage_pipe_info] = ND_Execut_deterministic1(obj.net_data,damage_data);            
-            [ obj.errcode.write_Damagefile ] = write_Damagefile( damage_pipe_info, obj.out_file );%生成破坏文件
-            disp(['create file:',obj.out_file]);
+            
+            
+            obj.damageInfo2out_data;
+        end
+        function damageInfo2out_data(obj)
+            
+            obj.out_data = cell(obj.damage_pipe_num+1,6);
+            obj.out_data{1,1} = '破坏编号';
+            obj.out_data{1,2} = '所在管线编号';
+            obj.out_data{1,3} = '该管线上破坏破坏次序';
+            obj.out_data{1,4} = '破坏点与前点之间长度比例';
+            obj.out_data{1,5} = '破坏类型';
+            obj.out_data{1,6} = '渗漏面积等效直径（mm）';
+            
+            for i = 1:obj.damage_pipe_num
+                j = i+1;
+                obj.out_data{j,1} = num2str(i);
+                obj.out_data{j,2} = obj.damage_pipe_id{i};
+                %                 loc = ismember(obj.pipe_id,obj.damage_pipe_id{i})
+                %                 equationDiameter = obj.pipe_diameter(loc);
+%                 PIPE_ID = obj.pipe_id;
+                equationDiameter = obj.pipe_diameter(ismember(obj.pipe_id,obj.damage_pipe_id(i)));
+                obj.out_data{j,3} = num2str(1);
+                obj.out_data{j,4} = num2str(0.5);
+                if i<= obj.break_pipe_num
+                    obj.out_data{j,5} = num2str(2);%断开
+                    obj.out_data{j,6} = num2str(cell2mat(equationDiameter));
+                else
+                    obj.out_data{j,5} = num2str(1);%泄漏
+                    obj.out_data{j,6} = num2str(cell2mat(equationDiameter)*0.25);
+                end
+                
+            end
+           
+        end
+        function export(obj,out_file)
+            fid = fopen(out_file,'w');
+            for n = 1:(obj.damage_pipe_num+1)
+                fprintf(fid,'%s \t %s \t %s \t %s \t %s \t %s',obj.out_data{n,:});
+                fprintf(fid,'\r\n');
+            end
+            fclose(fid);
         end
     end
     methods
@@ -56,6 +82,18 @@ classdef Create_damage_info < handle
         function pipe_diameter = get.pipe_diameter(obj)
             pipe_diameter = obj.net_data{5,2}(:,5);
         end
-    end  
+        function damage_pipe_id = get.damage_pipe_id(obj)
+            damage_pipe_id = [obj.break_pipe_id;obj.leak_pipe_id];
+        end
+        function damage_pipe_num = get.damage_pipe_num(obj)
+            damage_pipe_num = numel(obj.damage_pipe_id);
+        end
+        function break_pipe_num = get.break_pipe_num(obj)
+            break_pipe_num = numel(obj.break_pipe_id);
+        end
+        function leak_pipe_num = get.leak_pipe_num(obj)
+            leak_pipe_num = numel(obj.leak_pipe_id);
+        end
+    end
 end
 
