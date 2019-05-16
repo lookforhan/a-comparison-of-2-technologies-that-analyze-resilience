@@ -21,7 +21,7 @@
 [TIMES]|	%q%q%q|  %s \t %s \t %s
 [REPORT]|	%q%q%q|	%s \t %s \t %s
 [COORDINATES]|	%q%f%f|	%s \t %f \t %f
-[VERTICES]|	%q|	%s
+[VERTICES]|	%q%f%f|	%s \t %f \t %f
 [LABELS]|	%q%q%q%q|	%s \t %s \t %s \t% s\t
 [BACKDROP]|	%q%q%q%q%q|	%s \t %s \t %s \t %s \t %s
 [TAGS]|	%q|	%s
