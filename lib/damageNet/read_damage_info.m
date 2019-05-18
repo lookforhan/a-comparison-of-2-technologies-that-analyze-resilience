@@ -6,6 +6,7 @@ fid=fopen(input_damage_filename,'r');
 if fid <0
     disp(['ND_Execut_deterministic:破坏信息文件出错',input_damage_filename]);
     t =1;
+    damage_data = 0;
     return
 end
 damage_data=textscan(fid,'%f%s%f%f%f%f','delimiter','\t','headerlines',1);%读取管线震害修复率数据pipe_num*5: 第1列管段号(字符),2管长(km),3平均震害率(处/km),4管材(字符)
