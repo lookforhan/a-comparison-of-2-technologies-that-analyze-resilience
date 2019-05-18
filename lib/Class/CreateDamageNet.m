@@ -12,6 +12,9 @@ classdef CreateDamageNet < handle
         temp_dll_inp
         temp_dll_rpt
         temp_rpt
+        
+    end
+    properties
         net_data
         damage_info
         epa_inp_format
@@ -21,22 +24,25 @@ classdef CreateDamageNet < handle
         lib_name = 'EPANETx64PDD';
         h_name = 'toolkit.h';
         err
-        damage_net
+        pipe_relative
+        write_data
+    end
+    properties ( Dependent)
+        check_err
     end
     methods
         function check_net_inp = get.check_net_inp(obj)
-            fileType = textscan(obj.net_inp,'%s','delimiter','.');
-            fileType = fileType(end);
-            if strcmpi(fileType,'inp')
+            [~,~,fileType] = fileparts(obj.net_inp);
+            if strcmpi(fileType,'.inp')
                 check_net_inp = 0;
             else
                 check_net_inp = 1;
             end
         end
         function check_damage_txt = get.check_damage_txt(obj)
-            fileType = textscan(obj.damage_txt,'%s','delimiter','.');
-            fileType = fileType(end);
-            if strcmpi(fileType,'inp')
+            [~,~,fileType] = fileparts(obj.damage_txt);
+            
+            if strcmpi(fileType,'.txt')
                 check_damage_txt = 0;
             else
                 check_damage_txt = 1;
@@ -54,31 +60,12 @@ classdef CreateDamageNet < handle
             [filePath,fileName,~] = fileparts(obj.net_inp);
             temp_rpt = fullfile(filePath,[fileName,'.rpt']);
         end
-        function net_data = get.net_data(obj)
-            obj.loadLibrary;
-            obj.err.openNet=calllib(obj.lib_name,'ENopen',obj.net_inp,obj.temp_rpt,'');% 打开管网数据文件
-            if code==0%判断Read_File读取input_net_filename文件数据是否成功
-                obj.err.saveinpfile = calllib(obj.lib_name,'ENsaveinpfile',obj.temp_dll_inp);
-                obj.err.closeNet = calllib(obj.lib_name,'ENclose'); %关闭计算
-                [obj.err.readNet,net_data]=Read_File_dll_inp4(obj.temp_dll_inp,obj.epa_inp_format);%读取水力模型inp文件的数据；
-                if obj.err.readNet ~=0
-                    disp([funcName,'读取错误：',obj.temp_dll_inp])
-                    keyboard
-                end
-            else
-                obj.err.closeNet = calllib(obj.lib_name,'ENclose'); %关闭计算
-                net_data=0;
-                return
+        function check_err = get.check_err(obj)
+            error = cell2mat(struct2cell(obj.err));
+            check_err = any(error);
+            if check_err
+                keyboard
             end
-            obj.unloadLibrary;
-        end
-        function damage_info = get.damage_info(obj)
-            [ obj.err.readDamageInfo,damage_data ] = read_damage_info( obj.damage_txt );% from 'damageNet\'
-            [obj.err.changeDamgeInfo,damage_info] = ND_Execut_deterministic1(obj.net_data,damage_data);% from 'damageNet\'
-        end
-        function epa_inp_format = get.epa_inp_format(obj)
-            load([obj.root,'lib\readNet\EPA_F.mat']);
-            epa_inp_format = EPA_format;
         end
     end
     
@@ -96,6 +83,36 @@ classdef CreateDamageNet < handle
                 disp([inputArg1,':error']);
             end
             obj.addLibPath;
+            obj.get_epa_inp_format;
+            obj.get_net_data;
+            obj.get_damage_info;
+            obj.delete_tempFile;
+        end
+        function get_net_data(obj)
+            obj.loadLibrary;
+            obj.err.openNet=calllib(obj.lib_name,'ENopen',obj.net_inp,obj.temp_rpt,'');% 打开管网数据文件
+            if obj.err.openNet==0%判断Read_File读取input_net_filename文件数据是否成功
+                obj.err.saveinpfile = calllib(obj.lib_name,'ENsaveinpfile',obj.temp_dll_inp);
+                obj.err.closeNet = calllib(obj.lib_name,'ENclose'); %关闭计算
+                [obj.err.readNet,obj.net_data]=Read_File_dll_inp4(obj.temp_dll_inp,obj.epa_inp_format);%读取水力模型inp文件的数据；
+                if obj.err.readNet ~=0
+                    disp([funcName,'读取错误：',obj.temp_dll_inp])
+                    keyboard
+                end
+            else
+                obj.err.closeNet = calllib(obj.lib_name,'ENclose'); %关闭计算
+                obj.net_data=0;
+                return
+            end
+            obj.unloadLibrary;
+        end
+        function  get_damage_info(obj)
+            [ obj.err.readDamageInfo,damage_data ] = read_damage_info( obj.damage_txt );% from 'damageNet\'
+            [obj.err.changeDamgeInfo,obj.damage_info] = ND_Execut_deterministic1(obj.net_data,damage_data);% from 'damageNet\'
+        end
+        function get_epa_inp_format(obj)
+            load([obj.root,'lib\readNet\EPA_F.mat']);
+            obj.epa_inp_format = EPA_format;
         end
         function loadLibrary(obj)
             if libisloaded(obj.lib_name)
@@ -113,16 +130,32 @@ classdef CreateDamageNet < handle
             end
         end
         function delete_tempFile(obj)
-            delete (obj.temp_dll_inp,obj.temp_dll_rpt,obj.temp_rpt);
+            if isfile(obj.temp_dll_inp)
+                delete (obj.temp_dll_inp);
+            end
+            if isfile(obj.temp_rpt)
+                delete (obj.temp_rpt);
+            end
         end
-        function outputArg = Run(obj)
+        function Run(obj)
             %METHOD1 此处显示有关此方法的摘要
             %   此处显示详细说明
-            [obj.err.damageFile,pipe_relative] = damageNetInp2_GIRAFFE2(obj.net_data,obj.damage_info,obj.epa_inp_format,obj.damage_net);% from 'damageNet\'
-            outputArg = pipe_relative;
+            [obj.err.ND_j,damage_node_data]=ND_Junction5(obj.net_data,obj.damage_info);%生成管线中的破坏点数据
+            [obj.err.ND_p,pipe_new_add,obj.pipe_relative]=ND_Pipe5(damage_node_data,obj.damage_info,obj.net_data{5,2});%生成管线破坏点的邻接管段数据
+            [obj.err.ND_g,all_add_node_data,pipe_new_add]=ND_P_Leak4_GIRAFFE2_R(damage_node_data,obj.damage_info,pipe_new_add);
+            pipe_data=obj.net_data{5,2}; %cell,初始管网中管线的属性信息：管线编号(字符串),起点编号(字符串),终点编号(字符串),管线长度(m),管段直径(mm),沿程水头损失摩阻系数,局部水头损失摩阻系数;
+            for i = 1:numel(obj.damage_info{1,1}) 
+                    pipe_data{obj.damage_info{1,1}(i),8}='Closed;' ;
+            end
+            mid_data=(struct2cell(pipe_new_add))';
+            all_pipe_data=[pipe_data;mid_data];%cell,初始管网中管线+破坏管线的属性信息：管线编号(字符串),起点编号(字符串),终点编号(字符串),管线长度(m),管段直径(mm),沿程水头损失摩阻系数,局部水头损失摩阻系数;
+            all_node_coordinate=[obj.net_data{23,2};all_add_node_data(:,1:3)]; %所有节点坐标（包括水源、水池、用户节点）；
+            [~,outdata]=ND_Out_no_delete(all_pipe_data,all_add_node_data,all_node_coordinate,obj.net_data);
+            obj.write_data = outdata; % 输出的数据格式 暂时，需要进一步优化
+            %             [obj.err.damageFile,obj.pipe_relative] = damageNetInp2_GIRAFFE2(obj.net_data,obj.damage_info,obj.epa_inp_format,obj.damage_net);% from 'damageNet\'
         end
         function export(obj,out_file)
-            obj.damage_net = out_file;
+            obj.err.write=Write_Inpfile5(obj.net_data,obj.epa_inp_format,obj.write_data,out_file);% 写入新管网inp
         end
     end
 end
