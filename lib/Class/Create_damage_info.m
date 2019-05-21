@@ -1,7 +1,11 @@
 classdef Create_damage_info < handle
     %Create_damage_info 根据泄露点和断开点生成标准破坏信息文件
     %   2019/5/16 每个管段生成一个破坏点，（断开/泄漏）
-    
+    % t = Create_damage_info(net_data)
+    % t.break_pipe_id = {'2';'5'};
+    % t.leak_pipe_id = {'6';'9';'13'};
+    % t.Run
+    % t.export_txt('damage_info.txt')
     properties % input
         net_data % 管网信息,本类中仅需要管段id和直径
     end
