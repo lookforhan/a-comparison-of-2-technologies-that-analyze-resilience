@@ -1,6 +1,10 @@
 classdef CreateDamageNet < handle
     %CreateDamageNet 生成破坏管网inp文件
     %   此处显示详细说明
+    % t = CreateDamageNet('net.inp','damage.txt')
+    % r.root = 'lib\';
+    % t.Run
+    % t.export('damage_net.inp')
     
     properties % input
         net_inp
@@ -12,7 +16,6 @@ classdef CreateDamageNet < handle
         temp_dll_inp
         temp_dll_rpt
         temp_rpt
-        
     end
     properties
         net_data
