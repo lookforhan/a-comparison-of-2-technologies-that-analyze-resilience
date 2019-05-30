@@ -435,29 +435,35 @@ classdef EPS_net_EPANETx64PDD < handle
                 [real_pre_chosen_node,cal_demand_chosen_node,req_demand_chosen_node]=Get_chosen_node_value_EPANETx64PDD(obj.lib_name,obj.node_id);
                 [~,cal_demand_chosen_reservoirs,~]=Get_chosen_node_value_EPANETx64PDD(obj.lib_name,obj.reservoirs_id);
                 Pre{time_step_n} = real_pre_chosen_node;
-%                 if errcode4 ~=0
-%                     node = 1:numel(cal_demand_chosen_node);
-%                     fig1 = Plot(node,cal_demand_chosen_node,node,req_demand_chosen_node);
-%                     fig1.XLabel = 'Node';
-%                     fig1.YLabel = 'Demand (LPS)';
-%                     fig1.Legend = {'cal_demand','req_demand'};
-%                     fig1.LegendBox = 'on';
-%                     fig1.export([obj.out_dir,num2str(time_step_n),'demand.png']);
-%                     fig1.delete
-%                     try
-%                     fig2 = Plot(node,real_pre_chosen_node);
-%                     catch
-%                         keyboard
-%                     end
-%                     fig2.XLabel = 'Node';
-%                     fig2.YLabel = 'Pressure (m)';
-%                     fig2.export([obj.out_dir,num2str(time_step_n),'pressure.png']);
-%                     fig2.delete
-%                 end
+                if obj.export_inp == 1
+                if errcode4 ~=0
+                    node = 1:numel(cal_demand_chosen_node);
+                    fig1 = Plot(node,cal_demand_chosen_node,node,req_demand_chosen_node);
+                    fig1.XLabel = 'Node';
+                    fig1.YLabel = 'Demand (LPS)';
+                    fig1.Legend = {'cal_demand','req_demand'};
+                    fig1.LegendBox = 'on';
+                    fig1.export([obj.out_dir,num2str(time_step_n),'demand.png']);
+                    fig1.delete
+                    try
+                    fig2 = Plot(node,real_pre_chosen_node);
+                    catch
+                        keyboard
+                    end
+                    fig2.XLabel = 'Node';
+                    fig2.YLabel = 'Pressure (m)';
+                    fig2.export([obj.out_dir,num2str(time_step_n),'pressure.png']);
+                    fig2.delete
+                end
+                end
 
                 %                 Demand{time_step_n}=req_demand_chosen_node;
-                cal_Demand{time_step_n}=cal_demand_chosen_node;
-                system_serviceability_cell{time_step_n}= sum(cal_demand_chosen_node)/sum(req_demand_chosen_node);
+                cal_Demand{time_step_n}=cal_demand_chosen_node;%
+                new_cal_demand_chose_node = cal_demand_chosen_node;%计算结果，需要将异常的节点需水量进行调整
+                new_cal_demand_chose_node(cal_demand_chosen_node<0) = 0; %计算需水量为负值时，将其需水量调整为0；
+                new_cal_demand_chose_node(cal_demand_chosen_node>req_demand_chosen_node) = 0;%若计算需水量大于需水量，则调整为0；
+                
+                system_serviceability_cell{time_step_n}= sum(new_cal_demand_chose_node)/sum(req_demand_chosen_node);%采用调整后的计算需水量，求系统供水满意率
                 node_serviceability_cell{time_step_n} =  cal_demand_chosen_node./req_demand_chosen_node;
                 reservoirs_supply_cell{time_step_n} = cal_demand_chosen_reservoirs;
                 activity_cell{time_step_n} = str;%记录每个时间步的行为
