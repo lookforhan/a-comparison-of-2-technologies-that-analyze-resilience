@@ -2,9 +2,9 @@
 clear;clc;close all;tic;
 lib_name = 'EPANETx64PDD';
 h_name = 'toolkit.h';
-net_file = '..\materials\MOD_5_mean.inp';
+net_file = '..\..\materials\MOD\MOD_5_mean.inp';
 out_dir = '.\results\';
-loadlibrary(['..\materials\',lib_name],['..\materials\',h_name]);
+loadlibrary(['..\..\materials\',lib_name],['..\..\materials\',h_name]);
 try
     load  EPA_F
 catch
@@ -28,8 +28,12 @@ end
 damage_pipe_num = 300;
 break_pipe_num =1;
 out_file = '..\materials\damage_scenario_case_03_1.txt';
-t = Create_damage_info(damage_pipe_num,break_pipe_num,out_file,net_data);
-t.Run
+t = Create_damage_info(net_data);
+t.break_pipe_id ={ '1'};
+t.leak_pipe_id = {'3';'5'};
+
+% t = Create_damage_info(damage_pipe_num,break_pipe_num,out_file,net_data);
+% t.Run
 % % 生成破坏信息
 % 
 % damage_equ_diameter = zeros(damage_pipe_num,1);

@@ -8,10 +8,10 @@ function [t, net_data ] = read_net2_EPANETx64PDD( input_net_filename,EPA_format)
 funcName = mfilename;
 disp([funcName,'开始读取：',input_net_filename]);
 Before_Earthq_rpt='temp_read_net_Before_Earthq.rpt';
-Before_Earthq_out='temp_read_net_Before_Earthq.out';
+% Before_Earthq_out='temp_read_net_Before_Earthq.out';
 internal_inpfile='temp_read_net_internal.inp';
 % loadlibrary('epanet2.dll','epanet2.h'); %加载EPA动态链接库
-code=calllib('EPANETx64PDD','ENopen',input_net_filename,Before_Earthq_rpt,Before_Earthq_out);% 打开管网数据文件
+code=calllib('EPANETx64PDD','ENopen',input_net_filename,Before_Earthq_rpt,'');% 打开管网数据文件
 if code==0%判断Read_File读取input_net_filename文件数据是否成功
     calllib('EPANETx64PDD','ENsaveinpfile',internal_inpfile);
     [t,net_data]=Read_File_dll_inp4(internal_inpfile,EPA_format);%读取水力模型inp文件的数据；

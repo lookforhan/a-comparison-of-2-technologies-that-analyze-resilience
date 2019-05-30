@@ -89,7 +89,6 @@ for i=1:length(damage_node_data_solo) %所有破坏点循环；
             end
         end
         %
-        
         break_node_data{n2,2}=damage_node_data_solo{i};%新生成2个节点
         break_node_data{n2,2}.type =2;
         break_node_data{n2,2}.id=[damage_node_data_solo{i}.id,'-',num2str(2),'-R','2-r'];%节点ID
