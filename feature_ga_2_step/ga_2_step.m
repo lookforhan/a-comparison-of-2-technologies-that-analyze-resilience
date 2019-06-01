@@ -4,7 +4,7 @@ clear all;clc;close all;tic;
 lib_name = 'EPANETx64PDD';
 h_name = 'toolkit.h';
 net_file = '..\materials\MOD\MOD_5_mean.inp';
-damage_info_file = '..\materials\MOD\damage_scenario_case_09.txt';
+damage_info_file = '..\materials\MOD\damage_scenario_case_01.txt';
 damage_net = '.\results\temp_damage_net.inp';
 damage_rpt = '.\results\temp_damage_net.rpt';
 pdd_file = '..\materials\MOD\PDD_parameter.txt';
@@ -30,7 +30,7 @@ catch
 end
 % process_2 the defintion of parameters
 popsize = 10;%30
-generation_Nmax = 3;%30
+generation_Nmax = 10;%30
 probability_crossover = 0.9;
 probability_mutation = 0.1;
 selection_strategy = 'elitism selection';
@@ -101,9 +101,24 @@ errcode6_5 = calllib(lib_name,'ENclose');
    temp_inp_file);%
 toc
 ga_results.costTime = toc;
-ga_results.description = ['描述：管网文件为',net_file,';破坏文件为：',damage_info_file,';算法为：遗传算法，选择策略：',selection_strategy...
-    ,'遗传算法参数，种群规模:',num2str(popsize),'进化代数：',num2str(generation_Nmax),'交叉概率：',num2str(probability_crossover),'变异概率：',num2str(probability_mutation)];
+ga_results.description = ['描述：管网文件为',net_file,'；破坏文件为：',damage_info_file,'；算法为：遗传算法，选择策略：',selection_strategy...
+    ,'；遗传算法参数，种群规模:',num2str(popsize),'；进化代数：',num2str(generation_Nmax),'；交叉概率：',num2str(probability_crossover),'；变异概率：',num2str(probability_mutation)];
 [~,file_name,~] = fileparts(damage_info_file);
+m = ga_results.system_serviceability;
+reshape(m,[numel(m),1])
+ga_results.system_serviceability_record = m;
 save(file_name,'ga_results')
+[max_V,max_Loc] = max(ga_results.recovery_fit_record);
+max_system_serviceability = ga_results.system_serviceability{max_Loc};
 % exit
 % delete .\results\*.*
+% post_process.m
+% 在遗传算法后，对最有解进行计算获得合适的解。
+% clear;clc;clear all;tic;
+% net_file = '..\materials\MOD\MOD_5_mean.inp';
+% damage_info_file = 'damage_scenario_case_03.txt';
+% out_dir = '.\results\';
+inputArg2 = [file_name,'.txt'];
+% load('damage_scenario_case_03.mat')
+inputArg4 = ga_results;
+[outputArg1] = resilienceAnalysis(net_file,inputArg2,out_dir,inputArg4);
