@@ -3,30 +3,30 @@
 clear;clc;close all;tic;
 lib_name = 'EPANETx64PDD';
 h_name = 'toolkit.h';
-net_file = '..\materials\MOD_5_mean.inp';
+net_file = '..\..\materials\MOD\MOD_5_mean.inp';
 scenario_n = 1;
 damage_info_file_name = ['damage_scenario_case_0',num2str(scenario_n),'.txt'];
-damage_info_file = ['..\materials\',damage_info_file_name];
+damage_info_file = ['..\..\materials\',damage_info_file_name];
 damage_net = '.\results\temp_damage_net.inp';
 damage_rpt = '.\results\temp_damage_net.rpt';
-pdd_file = '..\materials\PDD_parameter.txt';
+pdd_file = '..\..\materials\MOD\PDD_parameter.txt';
 temp_inp_file = '.\results\temp_internal_net.inp';
 out_dir = '.\results\';
 fid = 1;
 % process
 % process_1 load function lib
-loadlibrary(['..\materials\',lib_name],['..\materials\',h_name]);
+loadlibrary(['..\..\materials\',lib_name],['..\..\materials\',h_name]);
 try
     load  EPA_F
 catch
-    path('..\lib\readNet',path);%
-    path('..\lib\damageNet',path);%
-    path('..\lib\EPS',path);%
-    path('..\lib\getValue',path);%
-    path('..\lib\eventTime',path);% ?
-    path('..\lib\random',path);%
-    path('..\lib\ga',path);%
-    path('..\lib\Class',path);% ¿‡
+    path('..\readNet',path);%
+    path('..\damageNet',path);%
+    path('..\EPS',path);%
+    path('..\getValue',path);%
+    path('..\eventTime',path);% ?
+    path('..\random',path);%
+    path('..\ga',path);%
+    path('..\Class',path);% ¿‡
     %     path('..\lib\random_singleTime',path);%
     load  EPA_F
 end
@@ -46,7 +46,7 @@ end
 for i = 1:9
     scenario_n = i;
  damage_info_file_name = ['damage_scenario_case_0',num2str(scenario_n),'.txt'];  
- damage_info_file = ['..\materials\',damage_info_file_name];
+ damage_info_file = ['..\..\materials\MOD\',damage_info_file_name];
 [ t3_2,damage_data ] = read_damage_info( damage_info_file );% from 'damageNet\'
 if t3_2
     keyboard
