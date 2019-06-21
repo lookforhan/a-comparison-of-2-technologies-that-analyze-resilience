@@ -1,5 +1,6 @@
 % 新建一个变量，记录模拟过的个体，并比较
 % 当采用epanetx64pdd.dll时，改写的遗传府过程。在ga_priority6.m的基础上修改。
+% 增加输入初始种群，
 function [results]...
     =ga_priority13_epanetx64pdd(popsize,generation_Nmax,pc,pm,...种群大小，进化代数，交叉概率，变异概率
     out_dir,....输出目录
@@ -22,9 +23,9 @@ Fit_record = zeros(popsize*generation_Nmax,1);
 ENrun_number_init_isolation = zeros(popsize,generation_Nmax);
 for generation_i = 1:generation_Nmax
     generation_dir_i=[out_dir,'process_1\','遗传第',num2str(generation_i),'代\'];
-%     mkdir(generation_dir_i);
+    %     mkdir(generation_dir_i);
     timeCost = toc;
-    disp(['===========process 1:遗传第',num2str(generation_i),'代；耗时',num2str(timeCost),'S========']);
+%     disp(['===========process 1:遗传第',num2str(generation_i),'代；耗时',num2str(timeCost),'S========']);
     if ~isempty(pop_isolation_uniq)
         [Fit_isolation_uniq,~,ENrun_number_isolation]=calfitvalue4_isolation(pop_isolation_uniq,damage_pipe_info{1},RepairCrew,...
             Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,...
@@ -36,10 +37,10 @@ for generation_i = 1:generation_Nmax
     else
         Fit_isolation_uniq = [];
         ENrun_number_isolation =[];
-       
-%         if obj.dispKeyWord ==1
-%             disp('haha:重复个体')
-%         end
+        
+        %         if obj.dispKeyWord ==1
+        %             disp('haha:重复个体')
+        %         end
     end
     
     if generation_i==1
@@ -48,7 +49,7 @@ for generation_i = 1:generation_Nmax
         pop_isolation_old = pop_isolation_init;
         ENrun_number_init_isolation(:,generation_i) = ENrun_number_isolation;
     else
-%         keyboard
+        %         keyboard
         Fit_init(:) = 0;
         try
             for i_new_indivi = 1:num_new_indivi
@@ -66,19 +67,22 @@ for generation_i = 1:generation_Nmax
         pop_isolation_old = newPop_isolation;
         % pop_uniq(lia1,:)
     end
-%     keyboard
+    %     keyboard
     Fit_isolation_max(generation_i,1) = max(Fit_init);
     Fit_isolation_mean(generation_i,1) = mean(Fit_init);
+    
+%     disp(['适应度最大值：',num2str(Fit_isolation_max(generation_i,1)),'；==适应度平均值：',num2str(Fit_isolation_mean(generation_i,1))]);
     [ newPop_isolation ] = ga_process( pop_isolation_old,Fit_init,pm,pc );
     [ pop_new,pop_new_not,new_individual_record_mat ] = ga_unique_individual3( newPop_isolation,pop_isolation_record );
-%     [~,locb1] = ismember(pop_uniq,newPop_isolation,'rows');
-%     [~,locb1_1] = ismember(newPop_isolation,pop_uniq,'rows');
-%     [~,locb2] = ismember(pop_uniq_not,newPop_isolation,'rows');
-%      [~,locb2_1] = ismember(newPop_isolation,pop_uniq_not,'rows');
-%     [~,locb3] = ismember(pop_uniq_not,pop_isolation_record,'rows');
-%      [~,locb3_1] = ismember(pop_isolation_record,pop_uniq_not,'rows');
-[pop_new_uniq,~,~] = unique(pop_new,'rows','stable');% 对没有进行过水力分析的个体进行检查，剔除重复个体。
-[pop_new_not_uniq,~,~] = unique(pop_new_not,'rows','stable');% 
+    
+    %     [~,locb1] = ismember(pop_uniq,newPop_isolation,'rows');
+    %     [~,locb1_1] = ismember(newPop_isolation,pop_uniq,'rows');
+    %     [~,locb2] = ismember(pop_uniq_not,newPop_isolation,'rows');
+    %      [~,locb2_1] = ismember(newPop_isolation,pop_uniq_not,'rows');
+    %     [~,locb3] = ismember(pop_uniq_not,pop_isolation_record,'rows');
+    %      [~,locb3_1] = ismember(pop_isolation_record,pop_uniq_not,'rows');
+    [pop_new_uniq,~,~] = unique(pop_new,'rows','stable');% 对没有进行过水力分析的个体进行检查，剔除重复个体。
+    [pop_new_not_uniq,~,~] = unique(pop_new_not,'rows','stable');%
     pop_isolation_uniq = pop_new_uniq;
     pop_isolation_record=new_individual_record_mat;
     num_new_indivi = numel(pop_new_uniq(:,1));
@@ -93,9 +97,28 @@ for generation_i = 1:generation_Nmax
         [locb_not_new_indivi(:,i_not_new_indivi) ] = ismember(newPop_isolation,pop_new_not_uniq(i_not_new_indivi,:) ,'rows');
         [~,locb_not_new_indivi_fit(i_not_new_indivi)] = ismember(pop_new_not_uniq(i_not_new_indivi,:) ,pop_isolation_record(1:end-popsize,:),'rows');
     end
+    disp(['===========process 1:遗传第',num2str(generation_i),'代；耗时',num2str(timeCost),'S========','适应度最大值：',num2str(Fit_isolation_max(generation_i,1)),...
+        '；==适应度平均值：',num2str(Fit_isolation_mean(generation_i,1))]);
+    % 绘图
+%     if generation_i>1
+%         x1 = generation_i-1;
+%         y1 = Fit_isolation_max(generation_i-1);
+%         %     z1 = Fit_isolation_mean(generation_i-1);
+%         x2 = generation_i;
+%         y2 = Fit_isolation_max(generation_i);
+%         %     z2 = Fit_isolation_mean(generation_i);
+%         x = [x1,x2];
+%         y = [y1,y2];
+%         
+%         plot (x,y,'b')
+%         hold on
+%         
+%     end
+    %     z = [z1,z2];
+    %     plot (x,z)
 end
 
-[~,a2] = max(Fit_record); 
+[~,a2] = max(Fit_record);
 best_indivi_isolation = pop_isolation_record(a2,:);
 results.isolation_fit_record = Fit_record;
 results.isolation_pop_record = pop_isolation_record(1:end-popsize,:);
@@ -121,26 +144,26 @@ system_serviceability_init_record = cell(popsize,generation_Nmax); % 韧性曲线
 % keyboard
 for generation_i = 1:generation_Nmax
     generation_dir_i=[out_dir,'process_2\','遗传第',num2str(generation_i),'代\'];
-%     mkdir(generation_dir_i);
+    %     mkdir(generation_dir_i);
     timeCost = toc;
-    disp(['===========process 2:遗传第',num2str(generation_i),'代；耗时',num2str(timeCost),'S========']);
+%     disp(['===========process 2:遗传第',num2str(generation_i),'代；耗时',num2str(timeCost),'S========']);
     if ~isempty(pop_recovery_uniq)
         [Fit_recovery_uniq,system_serviceability_uniq,ENrun_number_recovery,~]=calfitvalue4_recovery(best_indivi_isolation,pop_recovery_uniq,DamagePipe_order,RepairCrew,...
-     Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,...
-     crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel,...
-    damage_pipe_info,net_data,...
-    EPA_format,...
-    generation_dir_i,...
-output_net_filename_inp,pipe_relative);%,....
-% system_serviceability_uniq = results_2{1}.system_serviceability;
+            Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,...
+            crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel,...
+            damage_pipe_info,net_data,...
+            EPA_format,...
+            generation_dir_i,...
+            output_net_filename_inp,pipe_relative);%,....
+        % system_serviceability_uniq = results_2{1}.system_serviceability;
     else
-%         if obj.dispKeyWord ==1
-%             disp('haha')
-%         end
+        %         if obj.dispKeyWord ==1
+        %             disp('haha')
+        %         end
         Fit_recovery_uniq = [];
         ENrun_number_recovery=[];
         system_serviceability_uniq = [];
-%         result_uniq = [];
+        %         result_uniq = [];
         
     end
     if generation_i==1
@@ -149,39 +172,40 @@ output_net_filename_inp,pipe_relative);%,....
         pop_recovery_old = pop_recovery_init;
         ENrun_number_init_recovery(:,generation_i) = ENrun_number_recovery;
         system_serviceability_init_record(:,generation_i) = system_serviceability_uniq;
-%         results_indiv_cal(:,generation_i) = result_uniq(:,1);%所有计算结果
-%         results_indiv_sch(:,generation_i) = result_uniq(:,2);%所有队伍任务计划表
+        %         results_indiv_cal(:,generation_i) = result_uniq(:,1);%所有计算结果
+        %         results_indiv_sch(:,generation_i) = result_uniq(:,2);%所有队伍任务计划表
     else
         Fit_init(:)=0;
         for i_new_indivi = 1:num_new_indivi
-           Fit_init(logical(locb_recovery_new_indivi(:,i_new_indivi))) = Fit_recovery_uniq(i_new_indivi); 
-           ENrun_number_init_recovery(find(locb_recovery_new_indivi(:,i_new_indivi)==1,1),generation_i) = ENrun_number_recovery(i_new_indivi);
-           system_serviceability_init_record(find(locb_recovery_new_indivi(:,i_new_indivi)==1,1),generation_i) = system_serviceability_uniq(i_new_indivi);
-%            results_indiv_cal(find(locb_recovery_new_indivi(:,i_new_indivi)==1,1),generation_i) = result_uniq(i_new_indivi,1);
-%            results_indiv_sch(find(locb_recovery_new_indivi(:,i_new_indivi)==1,1),generation_i) = result_uniq(i_new_indivi,2);
+            Fit_init(logical(locb_recovery_new_indivi(:,i_new_indivi))) = Fit_recovery_uniq(i_new_indivi);
+            ENrun_number_init_recovery(find(locb_recovery_new_indivi(:,i_new_indivi)==1,1),generation_i) = ENrun_number_recovery(i_new_indivi);
+            system_serviceability_init_record(find(locb_recovery_new_indivi(:,i_new_indivi)==1,1),generation_i) = system_serviceability_uniq(i_new_indivi);
+            %            results_indiv_cal(find(locb_recovery_new_indivi(:,i_new_indivi)==1,1),generation_i) = result_uniq(i_new_indivi,1);
+            %            results_indiv_sch(find(locb_recovery_new_indivi(:,i_new_indivi)==1,1),generation_i) = result_uniq(i_new_indivi,2);
         end
         for i_not_new_indivi = 1:num_not_new_indivi
             Fit_init(logical(locb_recovery_not_new_indivi(:,i_not_new_indivi))) = Fit_recovery_record(locb_recovery_not_new_indivi_fit(i_not_new_indivi));
         end
-%         Fit_init(locb1_re) = Fit_recovery_uniq;
-%         Fit_init(locb2_re) = Fit_recovery_record(locb3_re);
+        %         Fit_init(locb1_re) = Fit_recovery_uniq;
+        %         Fit_init(locb2_re) = Fit_recovery_record(locb3_re);
         Fit_recovery_record((generation_i-1)*popsize+1:(generation_i-1)*popsize+popsize) = Fit_init;
         pop_recovery_old = newPop_recovery;
-
+        
         % pop_uniq(lia1,:)
     end
     Fit_recovery_max(generation_i,1) = max(Fit_init);
     Fit_recovery_mean(generation_i,1) = mean(Fit_init);
+    
     [ newPop_recovery ] = ga_process( pop_recovery_old,Fit_init,pm,pc );
     [ pop_new_recovery,pop_new_not_recovery,new_individual_record_mat_recovery ] = ga_unique_individual3( newPop_recovery,pop_recovery_record );
-%     [~,locb1_re] = ismember(pop_uniq_recovery,newPop_recovery,'rows');
-%     [~,locb2_re] = ismember(pop_uniq_not_recovery,newPop_recovery,'rows');
-%     [~,locb3_re] = ismember(pop_uniq_not_recovery,pop_recovery_record,'rows');
-[pop_recovery_new_uniq,~,~] = unique(pop_new_recovery,'rows','stable');% 对没有进行过水力分析的个体进行检查，剔除重复个体。
-[pop_recovery_new_not_uniq,~,~] = unique(pop_new_not_recovery,'rows','stable');% 
+    %     [~,locb1_re] = ismember(pop_uniq_recovery,newPop_recovery,'rows');
+    %     [~,locb2_re] = ismember(pop_uniq_not_recovery,newPop_recovery,'rows');
+    %     [~,locb3_re] = ismember(pop_uniq_not_recovery,pop_recovery_record,'rows');
+    [pop_recovery_new_uniq,~,~] = unique(pop_new_recovery,'rows','stable');% 对没有进行过水力分析的个体进行检查，剔除重复个体。
+    [pop_recovery_new_not_uniq,~,~] = unique(pop_new_not_recovery,'rows','stable');%
     pop_recovery_uniq = pop_recovery_new_uniq;
     pop_recovery_record=new_individual_record_mat_recovery;
-     num_new_indivi = numel(pop_recovery_new_uniq(:,1));
+    num_new_indivi = numel(pop_recovery_new_uniq(:,1));
     locb_recovery_new_indivi = zeros(numel(newPop_recovery(:,1)),num_new_indivi);
     for i_new_indivi = 1:num_new_indivi
         [locb_recovery_new_indivi(:,i_new_indivi) ] = ismember(newPop_recovery,pop_recovery_new_uniq(i_new_indivi,:) ,'rows');
@@ -193,8 +217,24 @@ output_net_filename_inp,pipe_relative);%,....
         [locb_recovery_not_new_indivi(:,i_not_new_indivi) ] = ismember(newPop_recovery,pop_recovery_new_not_uniq(i_not_new_indivi,:) ,'rows');
         [~,locb_recovery_not_new_indivi_fit(i_not_new_indivi)] = ismember(pop_recovery_new_not_uniq(i_not_new_indivi,:) ,pop_recovery_record(1:end-popsize,:),'rows');
     end
+    disp(['===========process 2:遗传第',num2str(generation_i),'代；耗时',num2str(timeCost),'S========','适应度最大值：',num2str(Fit_recovery_max(generation_i,1)),...
+        '；==适应度平均值：',num2str(Fit_recovery_mean(generation_i,1))]);
+%     if generation_i>1
+%         x1 = generation_i-1;
+%         y1 = Fit_isolation_max(generation_i-1);
+%         %     z1 = Fit_isolation_mean(generation_i-1);
+%         x2 = generation_i;
+%         y2 = Fit_isolation_max(generation_i);
+%         %     z2 = Fit_isolation_mean(generation_i);
+%         x = [x1,x2];
+%         y = [y1,y2];
+%         
+%         plot (x,y,'b')
+%         hold on
+%         
+%     end
 end
-[~,b2] = max(Fit_recovery_record); 
+[~,b2] = max(Fit_recovery_record);
 best_indivi_recovery = pop_recovery_record(b2,:);
 results.recovery_fit_record = Fit_recovery_record;
 results.recovery_pop_record = pop_recovery_record(1:end-popsize,:);
@@ -221,7 +261,7 @@ fitvalue=cell(popsize,15);
 ENrun_number = zeros(popsize,1);
 for individual_i=1:popsize
     individual_dir_i=[generation_dir_i,'\',num2str(individual_i),'\'];
-%     mkdir(individual_dir_i)
+    %     mkdir(individual_dir_i)
     BreakPipePriority=pop(individual_i,:);
     
     %fit5
@@ -296,7 +336,7 @@ result_all = cell(popsize,2);
 system_serviceability_cell= cell(popsize,1);
 for individual_i=1:popsize
     individual_dir_i=[generation_dir_i,'\',num2str(individual_i),'\'];
-%     mkdir(individual_dir_i)
+    %     mkdir(individual_dir_i)
     BreakPipePriority=pop(individual_i,:);
     %fit5
     [Fitness(individual_i),...
