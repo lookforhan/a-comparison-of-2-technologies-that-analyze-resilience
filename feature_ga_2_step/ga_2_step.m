@@ -4,11 +4,11 @@ clear all;clc;close all;tic;
 lib_name = 'EPANETx64PDD';
 h_name = 'toolkit.h';
 net_file = '..\materials\MOD\MOD_5_mean.inp';
-damage_info_file = '..\materials\MOD\damage_scenario_case_01.txt';
+damage_info_file = '..\materials\MOD\damage_scenario_case_04.txt';
 damage_net = '.\results\temp_damage_net.inp';
 damage_rpt = '.\results\temp_damage_net.rpt';
 pdd_file = '..\materials\MOD\PDD_parameter.txt';
-temp_inp_file = '.\results\temp_internal_net.inp';
+temp_damage_pdd_inp_file = '.\results\temp_internal_net.inp';
 out_dir = '.\results\';
 fid = 1;
 % process
@@ -25,12 +25,13 @@ catch
     path('..\lib\random',path);%
     path('..\lib\ga',path);%
     path('..\lib\Class',path);%
+    path('..\lib\toolkit',path);
     %     path('..\lib\random_singleTime',path);%
     load  EPA_F
 end
 % process_2 the defintion of parameters
 popsize = 10;%30
-generation_Nmax = 10;%30
+generation_Nmax = 5;%30
 probability_crossover = 0.9;
 probability_mutation = 0.1;
 selection_strategy = 'elitism selection';
@@ -66,10 +67,10 @@ end
 [ Dp_Inspect_mat,Dp_Repair_mat ,Dp_Travel_mat1] = event_time2( damage_pipe_info,net_data);% from 'eventTime\'
 Dp_Travel_mat=Dp_Travel_mat1*0;% 不考虑修复队伍移动时间的影响。
 RepairCrew = {'a';'b';'c'};
-crewStartTime = [0.15;0.25;10^20];
+crewStartTime = [0.25;0.25;10^20];
 crewEfficiencyRecovery = [1;1;1];
-crewEfficiencyIsolation = [0.9;1;1.5];
-crewEfficiencyTravel = [1.5;1;0.6];
+crewEfficiencyIsolation = [1;1;1];
+crewEfficiencyTravel = [1;1;1];
 
 % process_6 damage inp file with pdd parameter
 
@@ -87,29 +88,57 @@ for j_i = 1:numel(node_id)
     errcode6_2 = calllib(lib_name,'ENsetnodevalue',index,120,Hminimum(j_i));
     errcode6_3 = calllib(lib_name,'ENsetnodevalue',index,121,Hcritical(j_i));
 end
-errcode6_4 = calllib(lib_name,'ENsaveinpfile',temp_inp_file);
+errcode6_4 = calllib(lib_name,'ENsaveinpfile',temp_damage_pdd_inp_file);
 errcode6_5 = calllib(lib_name,'ENclose');
 % process_7 genetic algorithm
-[ga_results]...
-    =ga_priority13_epanetx64pdd(popsize,generation_Nmax,probability_crossover,probability_mutation,...种群大小，进化代数，交叉概率，变异概率
-    out_dir,....输出目录
-    RepairCrew,...修复队伍，
-    damage_pipe_info,net_data,pipe_relative,...破坏信息，管网信息，破坏管道相关新建管道
-    EPA_format,...node_original_data,system_original_L,...EPA格式，节点原本数据，系统原本管道长度
-    Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,...检查时间，修复时间，移动时间
-    crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel,...
-   temp_inp_file);%
+% [ga_results]...
+%     =ga_priority13_epanetx64pdd(popsize,generation_Nmax,probability_crossover,probability_mutation,...种群大小，进化代数，交叉概率，变异概率
+%     out_dir,....输出目录
+%     RepairCrew,...修复队伍，
+%     damage_pipe_info,net_data,pipe_relative,...破坏信息，管网信息，破坏管道相关新建管道
+%     EPA_format,...node_original_data,system_original_L,...EPA格式，节点原本数据，系统原本管道长度
+%     Dp_Inspect_mat,Dp_Repair_mat,Dp_Travel_mat,...检查时间，修复时间，移动时间
+%     crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel,...
+%    temp_inp_file);%
+ga = ga_priority();
+ga.Out_dir = out_dir;
+ga.Net_inp = temp_damage_pdd_inp_file;
+ga.Damage_pipe_info = damage_pipe_info;
+ga.Net_data = net_data;
+ga.Pipe_relative = pipe_relative;
+ga.Epa_format = EPA_format;
+ga.Isolation_time_mat = Dp_Inspect_mat;
+ga.Replacement_time_mat = Dp_Repair_mat;
+ga.Displacement_time_mat = Dp_Travel_mat;
+%--
+ga.Crews = RepairCrew;
+ga.Crews_Start_Time = crewStartTime;
+ga.Crews_Replacement_Efficiency = crewEfficiencyRecovery;
+ga.Crews_Isolation_Efficiency = crewEfficiencyIsolation;
+ga.Crews_Displacement_Efficiency = crewEfficiencyTravel;
+%--
+ga.Popsize_process_isolation = popsize;
+ga.Generation_Nmax_process_isolation = generation_Nmax;
+ga.Probability_crossover_isolation = probability_crossover;
+ga.Probability_mutation_isolation = probability_mutation;
+ga.run_process_isolation
+ga.Popsize_process_replacement = popsize;
+ga.Generation_Nmax_process_replacement = generation_Nmax;
+ga.Probability_crossover_replacement = probability_crossover;
+ga.Probability_mutation_replacement = probability_mutation;
+ga.run_process_replacement
 toc
+ga_results = ga.Results;
 ga_results.costTime = toc;
 ga_results.description = ['描述：管网文件为',net_file,'；破坏文件为：',damage_info_file,'；算法为：遗传算法，选择策略：',selection_strategy...
     ,'；遗传算法参数，种群规模:',num2str(popsize),'；进化代数：',num2str(generation_Nmax),'；交叉概率：',num2str(probability_crossover),'；变异概率：',num2str(probability_mutation)];
 [~,file_name,~] = fileparts(damage_info_file);
 m = ga_results.system_serviceability;
-reshape(m,[numel(m),1])
-ga_results.system_serviceability_record = m;
-save(file_name,'ga_results')
-[max_V,max_Loc] = max(ga_results.recovery_fit_record);
-max_system_serviceability = ga_results.system_serviceability{max_Loc};
+% reshape(m,[numel(m),1]);
+% ga_results.system_serviceability_record = m;
+save(file_name,'ga_results');
+% [max_V,max_Loc] = max(ga_results.replacement_fit_record);
+% max_system_serviceability = ga_results.system_serviceability{max_Loc};
 % exit
 % delete .\results\*.*
 % post_process.m
@@ -118,7 +147,7 @@ max_system_serviceability = ga_results.system_serviceability{max_Loc};
 % net_file = '..\materials\MOD\MOD_5_mean.inp';
 % damage_info_file = 'damage_scenario_case_03.txt';
 % out_dir = '.\results\';
-inputArg2 = [file_name,'.txt'];
+% inputArg2 = [file_name,'.txt'];
 % load('damage_scenario_case_03.mat')
-inputArg4 = ga_results;
-[outputArg1] = resilienceAnalysis(net_file,inputArg2,out_dir,inputArg4);
+% inputArg4 = ga_results;
+% [outputArg1] = resilienceAnalysis(net_file,inputArg2,out_dir,inputArg4);
