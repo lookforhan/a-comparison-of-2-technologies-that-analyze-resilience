@@ -15,7 +15,7 @@ classdef greedy_pipe_recovery_priority < handle
     end
     properties(Dependent) % 中间参数
         n_break_pipe % 破坏管道数量（隔离管道数量）
-        current_system_serviceablity % 当前管网状态的系统供水满意率
+        current_system_serviceability % 当前管网状态的系统供水满意率
         node_id % 管网所有用户节点id
         pipe_id % 管网所有管道id
         input_check % 检查输入参数是否匹配：1匹配；0不匹配，需要检查；
@@ -24,7 +24,7 @@ classdef greedy_pipe_recovery_priority < handle
     end
     properties % 输出参数
         output_inp_file % 每个输出的，隔离一个管道及相关管道的管网
-        output_system_serviceablity % 输出的隔离一个管道对应的供水满足率
+        output_system_serviceability % 输出的隔离一个管道对应的供水满足率
     end
     methods
         function obj = greedy_pipe_recovery_priority(inp_file,net_data,break_pipe_id,pipe_relative)
@@ -96,7 +96,12 @@ classdef greedy_pipe_recovery_priority < handle
                 n_ENrun = n_ENrun +1;
                 obj.errcode.Run.ENsaveinpfile = calllib(obj.lib_name,'ENsaveinpfile',obj.output_inp_file{i});
                 [~,cal_demand_chosen_node,req_demand_chosen_node]=Get_chosen_node_value_EPANETx64PDD(obj.lib_name,obj.node_id);
-                obj.output_system_serviceablity(i,1) = sum(cal_demand_chosen_node)/sum(req_demand_chosen_node);
+                [outputArg1] = calculate_SSI(cal_demand_chosen_node,req_demand_chosen_node);
+%                              new_cal_demand_chosen_node = cal_demand_chosen_node;%计算结果，需要将异常的节点需水量进行调整
+%                 new_cal_demand_chosen_node(cal_demand_chosen_node<0) = 0; %计算需水量为负值时，将其需水量调整为0；
+%                 new_cal_demand_chosen_node(cal_demand_chosen_node>req_demand_chosen_node) = 0;%若计算需水量大于需水量，则调整为0；
+                 obj.output_system_serviceability(i,1) = outputArg1;
+%                 obj.output_system_serviceablity(i,1) = sum(cal_demand_chosen_node)/sum(req_demand_chosen_node);
                 obj.errcode.Run.ENclose = calllib(obj.lib_name,'ENclose');
             end
             
@@ -117,13 +122,14 @@ classdef greedy_pipe_recovery_priority < handle
         function pipe_id = get.pipe_id(obj)
             pipe_id = obj.net_data{5,2}(:,1);
         end
-        function current_system_serviceablity = get.current_system_serviceablity(obj)
+        function current_system_serviceablity = get.current_system_serviceability(obj)
             obj.errcode.CSS.ENopen = calllib(obj.lib_name,'ENopen',obj.inp_file,[obj.inp_file(1:end-4),'current','.rpt'],'');
             obj.errcode.CSS.ENsettimeparam = calllib(obj.lib_name,'ENsettimeparam',0,0);% 设置模拟历时
             obj.errcode.CSS.ENsetoption = calllib(obj.lib_name,'ENsetoption',0,500);% 动态链接库中迭代次数
             obj.errcode.CSS.ENsloveH = calllib(obj.lib_name,'ENsolveH');
             [~,cal_demand_chosen_node,req_demand_chosen_node]=Get_chosen_node_value_EPANETx64PDD(obj.lib_name,obj.node_id);
-            current_system_serviceablity = sum(cal_demand_chosen_node)/sum(req_demand_chosen_node);
+            [outputArg1] = calculate_SSI(cal_demand_chosen_node,req_demand_chosen_node);
+            current_system_serviceablity = outputArg1;
             obj.errcode.CSS.ENreport = calllib(obj.lib_name,'ENreport');
             obj.errcode.CSS.ENclose = calllib(obj.lib_name,'ENclose');
         end
