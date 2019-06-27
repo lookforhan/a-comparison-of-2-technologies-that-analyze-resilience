@@ -1,4 +1,4 @@
-function  [t_W,pipe_relative]=damageNetInp2_GIRAFFE2(net_data,damage_pipe_info,EPA_format,output_net_filename)
+function  [t_W,pipe_relative,node_relative_NewNode]=damageNetInp2_GIRAFFE2(net_data,damage_pipe_info,EPA_format,output_net_filename)
 %damageNetInp2 生成破坏后管网管网
 %   该函数需调用Read_File_dll_inp4.m；epanet2.dll；epanet2.h；EPA_F.mat等文件
 %   输入：[1]net_data-管网数据
@@ -7,10 +7,14 @@ function  [t_W,pipe_relative]=damageNetInp2_GIRAFFE2(net_data,damage_pipe_info,E
 %   输入：[4]output_net_filename-输出文件地址
 %   输出：[1]inp文件
 %   输出：[2]pipe_relative-新增管道与原管道联系
+%   输出：[2]pipe_relative-泄漏节点与原管道联系2019-06-16-完成，分两个变量存储结果，pipe_relative_NewNode对应破坏管道上的破坏点。node_relative_NewNode对应每个破坏点的对应的水库
 %%
-[t_j,damage_node_data]=ND_Junction5(net_data,damage_pipe_info);%生成管线中的破坏点数据
+[t_j,damage_node_data,pipe_relative_NewNode]=ND_Junction5(net_data,damage_pipe_info);%生成管线中的破坏点数据
 [t_p,pipe_new_add,pipe_relative]=ND_Pipe5(damage_node_data,damage_pipe_info,net_data{5,2});%生成管线破坏点的邻接管段数据
-[t,all_add_node_data,pipe_new_add]=ND_P_Leak4_GIRAFFE2_R(damage_node_data,damage_pipe_info,pipe_new_add);
+[t,all_add_node_data,pipe_new_add,node_relative_NewNode ]=ND_P_Leak4_GIRAFFE2_R(damage_node_data,damage_pipe_info,pipe_new_add);
+for num = 1:numel(pipe_relative(:,1))
+    pipe_relative{num,3} = pipe_relative_NewNode(num);
+end
 pipe_data=net_data{5,2}; %cell,初始管网中管线的属性信息：管线编号(字符串),起点编号(字符串),终点编号(字符串),管线长度(m),管段直径(mm),沿程水头损失摩阻系数,局部水头损失摩阻系数;
 %     pipe_data(damage_pipe_info{1,1},:)=[]; %删除破坏管线的原始管线信息,damage_pipe_info{1,1}是破坏管线在原始管线属性矩阵中的行位置号(向量)；
 for i = 1:numel(pipe_data(:,1))

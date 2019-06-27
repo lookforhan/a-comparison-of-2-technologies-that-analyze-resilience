@@ -8,6 +8,7 @@
 % 韩朝；2017-6-8 21：43；调整选择结构,switch 代替if；
 % 韩朝；2017-6-16 9：43；ismember代替findmatch；
 % 韩朝；2018-6-25 9：43；修改泄露点的模拟方法（采用节点和虚拟水库）；
+% 韩朝；2019-6-16 12：16； 增加管道与破坏点的管系--pipe_relative_node
 %% 4.正常运行需要调用的其他自编（自定义）程序（函数）或文件
 %% 4.1 程序
 %% 4.2 文件
@@ -41,7 +42,7 @@
 % [17]N2_x,double,破坏管线的终点的x坐标
 % [18]N2_y,double,破坏管线的终点的y坐标
 %%
-function [t,damage_node_data]=ND_Junction5(net_data,damage_pipe_info) 
+function [t,damage_node_data,pipe_relative_NewNode]=ND_Junction5(net_data,damage_pipe_info) 
 %% 数据准备
 M1=damage_pipe_info{1,1};%破坏管线编号的下标
 D2=damage_pipe_info{1,2};
@@ -67,12 +68,15 @@ pipe_data=net_data{5,2};%管线编号,起点编号,终点编号,长度(m),直径(mm),摩阻系数,局
 coordinate_data=net_data{23,2};%节点编号，x坐标，y坐标
 %% 变量预定义
 damage_node_character=struct('id',[],'x',[],'y',[],'Elve',[],'type',[],'pipe',{},'pipe_index',[],'order',[],'length',[],'Coefficient',[],'Diameter',[],'Roughness',[]);%存放新节点信息的结构体
+pipe_relative_NewNode = struct('pipe_loc',[],'pipe_id',{},'damage_node',{});
 [n1,n2]=size(D2);%n1管网中破坏管线的数量；n2管线的实际破坏点的数量最大值；
 pipe_damage_num=zeros(n1,1); %在每条管线上产生破坏点的数量；
 damage_node_data=cell(n1,n2-1); %存储管线中每个破坏点的属性信息,每个元素存储每个破坏点的属性信息结构体damage_node_character；
 %% 对所有含破坏点的管线，产生破坏点；
 for i=1:n1 %破坏管线的数量
     damage_pipe_loc=M1(i); %破坏管线在管网中所有管线数据矩阵的行位置号，非破坏管线的编号（字符型）；
+    pipe_relative_NewNode(i).pipe_loc = damage_pipe_loc;
+    pipe_relative_NewNode(i).pipe_id = pipe_data(damage_pipe_loc,1);
     pipe_damage_num(i)=sum(D2(i,:)>0)-1;
     %% 初始管线属性信息准备
     %管线起止点编号
@@ -111,6 +115,8 @@ for i=1:n1 %破坏管线的数量
         end
         %% 单个破坏点属性存储
         damage_node_data{i,j}=damage_node_character(1);%将破坏点的属性信息放入元胞数组中；
+        pipe_relative_NewNode(i).damage_node{j} = damage_node_character(1).id;
+        pipe_relative_NewNode(i).damage_node_detail{j} = damage_node_character(1);
     end
 end
 t=0;

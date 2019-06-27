@@ -10,6 +10,7 @@
 % 韩朝；2017-6-6 9：43；每行增加注释；
 % 韩朝；2018-6-25 9：43；修改模拟泄露破坏点的模拟方式。
 % 韩朝；2018-6-25 9：43；修改模拟断开破坏点的模拟方式。
+% 韩朝；2019-6-16 12：36；增加节点与新加节点的关系---ND_Junction5中生成的节点与本函数生成的节点之间的关系--node_relative_NewNode
 %% 4.正常运行需要调用的其他自编（自定义）程序（函数）或文件
 %% 4.1 程序
 % [1]
@@ -35,7 +36,7 @@
 % [6]c,cell,
 % [7]c1,cell,
 %
-function [t,all_add_node_data,pipe_new_add_new]=ND_P_Leak4_GIRAFFE2_R(damage_node_data,damage_pipe_info,pipe_new_add)
+function [t,all_add_node_data,pipe_new_add_new,node_relative_NewNode ]=ND_P_Leak4_GIRAFFE2_R(damage_node_data,damage_pipe_info,pipe_new_add)
 
 M1=damage_pipe_info{1,1}; %破坏管线的位置号(向量)
 D2=damage_pipe_info{1,2};
@@ -47,6 +48,7 @@ n1=numel(M1);%n1管网中破坏管线的数量；
 % D6=damage_pipe_info{1,7};
 pipe_new_add_2=struct('id',[],'N1',[],'N2',[],'Length',0.15,'Diameter',[],'Roughness',[],'MinorLoss',0,'Statues','CV');%渗漏破坏增加管道
 pipe_new_add_1=struct('id',[],'N1',[],'N2',[],'Length',0.15,'Diameter',[],'Roughness',[],'MinorLoss',0,'Statues','CV');%断开破坏增加管道
+node_relative_NewNode = struct('node_id_1',{},'new_node_id_2',{},'new_reservoir_1',{},'new_reservoir_2',{});%节点与节点之间的关系
 % 将破坏点的属性信息damage_node_data，从二维元胞数据转化为一维元胞数组damage_node_data_solo;
 damage_node_num=sum(sum(D2>0))-n1;%全部管线中全部破坏点的数量（不含断开点增加的另1节点）；
 damage_node_data_solo=cell(damage_node_num,1); %存储破坏点属性信息结构体的元胞数据向量，每个元素为该破坏点的属性信息结构体；
@@ -66,15 +68,17 @@ leak_node_data=cell(leak_node_num,1);
 n2=0; %为断开点新增的破坏点计数器；
 n3=0; %为泄露点新增的破坏点计数器；
 for i=1:length(damage_node_data_solo) %所有破坏点循环；
+    node_relative_NewNode(i).node_id_1 = damage_node_data_solo{i}.id;
     if damage_node_data_solo{i}.type==2 %发现断开节点
+        
         n2=n2+1;%增加破坏节点计数；
         %         n4 =
         damage_node_data_solo{i}.Coefficient =0;
         break_node_data{n2,1}=damage_node_data_solo{i};%新生成1个节点
-        damage_node_data_solo{i}.type =1;
-        break_node_data{n2,1}.type = 1;
-        break_node_data{n2,1}.id=[damage_node_data_solo{i}.id,'-b-',num2str(1),'2-r'];%节点ID
-        
+        damage_node_data_solo{i}.type =1;% type = 1,为普通节点
+        break_node_data{n2,1}.type = 1;% type = 1,为普通节点
+        break_node_data{n2,1}.id=[damage_node_data_solo{i}.id,'-2b-',num2str(1)];%节点ID
+        node_relative_NewNode(i).new_node_id_2 = break_node_data{n2,1}.id;
         %         m2_ID{1,j} = break_node_data{n2,1}.id;
         %         pipe_relative_2{i,2} = [pipe_relative{i,2},m2_ID];
         for j=1:length(pipe_new_add) %对所有增加的管段循环，查找哪个新增管段的起点为此节点；
@@ -90,8 +94,10 @@ for i=1:length(damage_node_data_solo) %所有破坏点循环；
         end
         %
         break_node_data{n2,2}=damage_node_data_solo{i};%新生成2个节点
-        break_node_data{n2,2}.type =2;
-        break_node_data{n2,2}.id=[damage_node_data_solo{i}.id,'-',num2str(2),'-R','2-r'];%节点ID
+        break_node_data{n2,2}.type =2;%水库节点
+        break_node_data{n2,2}.id=[damage_node_data_solo{i}.id,'-',num2str(2),'-R'];%节点ID
+        node_relative_NewNode(i).new_reservoir_1 =  break_node_data{n2,2}.id;
+        
         pipe_new_add_1(n2,1).id = [break_node_data{n2,2}.id,'-pipe','2-r'];%新加管道id
         pipe_new_add_1(n2,1).N1 =damage_node_data_solo{i}.id;
         pipe_new_add_1(n2,1).N2 =break_node_data{n2,2}.id;
@@ -102,8 +108,9 @@ for i=1:length(damage_node_data_solo) %所有破坏点循环；
         pipe_new_add_1(n2,1).Statues='CV';
         %=====================================================================
         break_node_data{n2,3}=damage_node_data_solo{i};%新生成3个节点
-        break_node_data{n2,3}.id=[break_node_data{n2,1}.id,'-',num2str(3),'-R','2-r'];%节点ID
-        break_node_data{n2,3}.type =2;
+        break_node_data{n2,3}.id=[break_node_data{n2,1}.id,'-',num2str(3),'-R'];%节点ID
+        node_relative_NewNode(i).new_reservoir_2 =  break_node_data{n2,3}.id;
+        break_node_data{n2,3}.type =2;%水库节点
         pipe_new_add_1(n2,2).id = [break_node_data{n2,3}.id,'-pipe-2','2-r'];%新加管道id
         pipe_new_add_1(n2,2).N1 =break_node_data{n2,1}.id;
         pipe_new_add_1(n2,2).N2 =break_node_data{n2,3}.id;
@@ -115,9 +122,11 @@ for i=1:length(damage_node_data_solo) %所有破坏点循环；
     else % 渗漏破坏
         n3 = n3+1;
         damage_node_data_solo{i}.Coefficient =0;
+        
         leak_node_data{n3,1}=damage_node_data_solo{i};
         leak_node_data{n3,1}.type = 2;%类型改为水源点
-        leak_node_data{n3,1}.id = [damage_node_data_solo{i}.id,'-R','2-r'];%类型改为水源点
+        leak_node_data{n3,1}.id = [damage_node_data_solo{i}.id,'-R'];%类型改为水源点
+        node_relative_NewNode(i).new_reservoir_1 = leak_node_data{n3,1}.id;
         pipe_new_add_2(n3,1).id = [damage_node_data_solo{i}.id,'leak-pipe','2-r'];%新加管道id
         pipe_new_add_2(n3,1).N1 =damage_node_data_solo{i}.id;
         pipe_new_add_2(n3,1).N2 =leak_node_data{n3,1}.id;
