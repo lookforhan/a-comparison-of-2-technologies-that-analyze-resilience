@@ -4,7 +4,7 @@
 %
 % 加载数据
 root = 'C:\Users\hc042\Documents\GitHub\a-comparison-of-2-technologies-that-analyze-resilience\feature_recoveryImportance\';
-n = 6;
+n = 5;
 data_file = ['test_greedy_damage_scenario_case_0',num2str(n),'_5000'];
 load([root,data_file]);
 % 绘制每一个个时间点的动态链接库返回值
