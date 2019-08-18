@@ -13,6 +13,7 @@
 % 韩朝；2017-6-6 21：43；删除PDD_main.m、PDD_Set.m、PDD_hydraulic.m、User_Number.m、PcR.m函数，原函数功能转移至主程序；
 % 韩朝；2017-07-26 14:49:30；将72行文件名改为变量parameter_pro_of_leak_area_filename由函数传递；
 % 韩朝；2018-06-25 14:49:30；增加等效直径；
+% 韩朝；2019-08-18 14:51:54；将输出参数改为table类型，方便理解每列数据的含义。
 %% 4.正常运行需要调用的其他自编（自定义）程序（函数）或文件
 %% 4.1 程序
 %% 4.2 文件
@@ -53,131 +54,81 @@
 % [17]mu1,随机数
 % [18]L1,破坏长度（m）
 %%
-function [t,output]=ND_Execut_probabilistic4(net_data,RR_data,probability,pipe_break_rate,pipe_damage_num_max,C,mu,par_data)
+function [t,output]=ND_Execut_probabilistic4(net_pipe_id,damage_data,pipe_damage_num_max,C,mu)
+pipe_damage_data = damage_data;
+% pipe_num = numel(net_pipe_id);% 管道数量
+damage_num=numel(pipe_damage_data{1}); %破坏点的数量；
+damage_pipe_id=deblank(pipe_damage_data{2}); %破坏所在管线编号；
+damage_pipe_num=numel(unique(damage_pipe_id));%含有破坏点的管道数量；
+damage_pipe_node=pipe_damage_data{3}; %破坏点在该管线上的破坏次序；
+damage_pipe_length=pipe_damage_data{4}; %破坏点与点之间的长度比例；
+damage_node_kind=pipe_damage_data{5}; %破坏点的类型；
+damage_node_diameter=pipe_damage_data{6}; %破坏点的等效直径
+damage_node_area=(pi*damage_node_diameter.^2)/4;%开口面积；
+damage_node_e=damage_node_area*C*mu; %破坏点的扩散器系数；
 
-
-MATERIAL={'CI','DI','RS','STL','CON'};%分别是：普通铸铁、球墨铸铁、钢管(铆接)、钢管(焊接)、混凝土管
-pipe_num=numel(RR_data{1}); %管线的数量；
-pipe_Length=RR_data{1,2}(:,1); %所有管线的长度(km)，pipe_num*1；
-pipe_RR=RR_data{1,3}(:,1); %所有管线的平均震害率(处/km)，pipe_num*1；
-D1=zeros(pipe_num,1); %管线是否存在破坏的判别矩阵：0无破坏; 1有破坏;
-D2=zeros(pipe_num,pipe_damage_num_max);
+% D1=zeros(pipe_num,1); %管线是否存在破坏的判别矩阵：0无破坏; 1有破坏;
+D1=cell(damage_pipe_num,1);%每个破坏管道的ID号；
+D2=zeros(damage_pipe_num,pipe_damage_num_max);
 %D2管线破坏点位置矩阵；第1列为第1个破坏点距管起点的长度与管线总长的比例，第2列为第2个破坏点距第1个破坏点的长度与管线总长的比例...；
-D3=zeros(pipe_num,pipe_damage_num_max);
+D3=zeros(damage_pipe_num,pipe_damage_num_max);
 %D3管线破坏点破坏类型矩阵；第1列为第1个破坏点的类型：1渗漏/2断开；第2列为第2个破坏点的类型：1渗漏/2断开...；
-D4=zeros(pipe_num,pipe_damage_num_max);
+D4=zeros(damage_pipe_num,pipe_damage_num_max);
 %D4管线泄漏点的扩散器系数矩阵：第1列为第1个破坏点的泄漏扩散器系数，若此点为断开点，则此例值为0；扩散器系数按照漏水量LPS单位计算；
-D5=zeros(pipe_num,pipe_damage_num_max);
+D5=zeros(damage_pipe_num,pipe_damage_num_max);
 %D5管线泄漏点的扩散器系数矩阵：第1列为第1个破坏点的泄漏扩散等效直径，若此点为断开点，则此例值为0；扩散器系数按照漏水量LPS单位计算；
-D6=zeros(pipe_num,pipe_damage_num_max);
+D6=zeros(damage_pipe_num,pipe_damage_num_max);
 %D6管线泄漏点的扩散器系数矩阵：第1列为第1个破坏点的粗糙度系数，若此点为断开点，则此例值为0；扩散器系数按照漏水量LPS单位计算；
 %-------------
-%-------------
-% fid=fopen(parameter_pro_of_leak_area_filename,'r');
-% par_data=textscan(fid,'%s%f','delimiter','\t','headerlines',1);%读
-% fclose(fid);
-t=par_data{1,2}(1);
-k=par_data{1,2}(2);
-thita1=par_data{1,2}(3);
-thita2=par_data{1,2}(4);
-l=par_data{1,2}(5);
-k1=par_data{1,2}(6);
-k2=par_data{1,2}(7);
-w=par_data{1,2}(8);
-%-------------
-for i=1:pipe_num %对所有管线进行循环
-    L=0; %遍历过的管线长度记录
-    j=0; %管线的破坏点数量记录
-    d=net_data{5,2}{i,5};%管线直径（mm）
-    %     A=(pi*d^2)/4;%管线截面积(m2)
-    while L<pipe_Length(i)
-        mu1=rand(1);
-        L1=-log(1-mu1)/pipe_RR(i);
-        L=L+L1;
-        j=j+1;
-        if L>pipe_Length(i)
-            D2(i,j)=1-sum(D2(i,1:j-1));
-            break;
-        else
-            D1(i)=1;%有破坏
-            D2(i,j)=L1/pipe_Length(i);
-            mu2=rand(1);
-            if mu2<pipe_break_rate
-                D3(i,j)=2;%断开
-                D4(i,j)=0;
-                AL= 0.25*pi*d^2;
-                D5(i,j) = d;
-                D6(i,j)=1e6;
-            else
-                D3(i,j)=1;%渗漏
-                mu3=rand(1);%随机数
-                [~,pipe_material]=ismember(RR_data{4}(i),MATERIAL);%管线管材
-                
-                type_sum=find(probability.data(pipe_material,:));%对应管材发生泄漏类型
-                mid_probabbility=probability.data(pipe_material,type_sum);%对应泄漏类型的发生概率
-                num_probability=numel(mid_probabbility);%泄漏类型的个数
-                sum_probability=cumsum(mid_probabbility);%对应泄漏类型的发生累加概率
-                for k_n=1:num_probability
-                    switch k_n
-                        case 1
-                            if mu3<sum_probability(k_n)
-                                leak_type=type_sum(k_n);
-                                break
-                            end
-                        otherwise
-                            if mu3>sum_probability(k_n-1)&&mu3<sum_probability(k_n)
-                                leak_type=type_sum(k_n);
-                                break
-                            end
-                    end
-                end
-                %----------------------------------------------
-                switch leak_type%不同泄漏类型的泄漏面积计算公式
-                    case 1
-                        %                         t=10;%(mm)
-                        %                         k=0.3;
-                        AL=t*k*d*pi;
-                    case 2
-                        thita=thita1*(2*pi/360);
-                        AL=0.5*thita*d^2*pi;
-                    case 3
-                        %                         l=13*1000;%(mm)
-                        thita=(thita2/360)*2*pi;
-                        AL=l*d*thita;
-                    case 4
-                        %                         k1=0.05;
-                        %                         k2=0.05;
-                        AL=k1*k2*d*d;
-                    case 5
-                        %                         w=12;
-                        AL=k*pi*d*w;
-                end
-            end
-            AL1=AL/1000000;
-            D4(i,j)=C*mu*AL1;%扩散器系数
-            D5(i,j)=sqrt(4*AL/pi);%泄露节点等效直径(mm)
-            if D5(i,j)==0
-                D6(i,j)=0;
-            else
-                D6(i,j)=D4(i,j)/(((D5(i,j)*0.001)^2.63)*(10.67)^(-0.54)*1000);%粗糙度系数
-            end
-        end
+% 输入参数一致性检查
+pipe_test = ismember(damage_pipe_id,net_pipe_id);%检查破坏文件与管网文件是否信息一致
+    if ~all(pipe_test)
+        disp('errors==================');
+        disp(mfilename)
+        disp('damage.txt中破坏管道编号与inp文件中不一致。');
+        t = 1;
+        output = l;
+        return
     end
+%--------------
+n_h = 0;%含有破坏点的管道计数；
+for i = 1:damage_num
+%     pipe_loc = ismember(net_pipe_id,damage_pipe_id{i});
+    if damage_pipe_node(i) == 1 %破坏次序
+        n_h = n_h + 1;
+        D1(n_h) = damage_pipe_id(i);
+    end
+    n_l=damage_pipe_node(i);
+    D2(n_h,n_l)=damage_pipe_length(i);
+    D3(n_h,n_l)=damage_node_kind(i);
+    D4(n_h,n_l)=damage_node_e(i);
+    D5(n_h,n_l)=damage_node_diameter(i);
+    diameter = damage_node_diameter(i)*0.001;%单位转换
+    D6(n_h,n_l) = (damage_node_e(i)/((diameter)^2.435*(10.67^(-0.5))*1000))^(1/0.926);% 粗糙度系数
+%     D6(n_h,n_l)=D4(i,j)/(((D5(i,j)*0.001)^2.63)*(10.67)^(-0.54)*1000);%粗糙度系数
 end
-M1=find(D1>0);
-pipe_damage_num=sum(sum(D2)>0); %sum(D2)为1*pipe_damage_num_max，为了判别管线的实际破坏点的数量最大值；
-pipe_id = net_data{5,2}(M1);
+%-------------
+%-------------
+
+[~,M1]=ismember(D1,net_pipe_id);%每个破坏管道ID号在所有管线中的排序号；
+mid_D2=1-sum(D2,2);
+for i=1:damage_pipe_num
+    damage_pipe_node_num=sum(D2(i,:)~=0,2);
+    D2(i,damage_pipe_node_num+1)=mid_D2(i); %破坏管道所在行的最后1个非零数值为最1个破坏点距管道终点的长度比例。
+end
+pipe_damage_node_num=sum(sum(D2)>0); %sum(D2)为1*pipe_damage_num_max，为了判别管线的实际破坏点的数量最大值；
+% pipe_id = net_pipe_id(M1);
 % damage_pipe_info=[{M1},{D2(M1,1:pipe_damage_num)},{D3(M1,1:pipe_damage_num)},{D4(M1,1:pipe_damage_num)},{pipe_id},{D5(M1,1:pipe_damage_num)},{D6(M1,1:pipe_damage_num)}];
 %damage_pipe_info,元胞数组,存放4类数据：1破坏管线的位置号(向量)；2管线破坏点之前的长度比例(矩阵)；3破坏点的破坏类型(矩阵)；4渗漏破坏点的扩散器系数(矩阵);
 %damage_pipe_info采用元胞数组存储，是为了方便调用D2~D4中每列的数据，这样不必计算每列的具体列号；
 t=0;
 damage_pipe_info.Pipe_loc = M1;
-damage_pipe_info.Interval_Length = D2(M1,1:pipe_damage_num);
-damage_pipe_info.Damage_Type = D3(M1,1:pipe_damage_num);
-damage_pipe_info.Emitter_Coeff = D4(M1,1:pipe_damage_num);
-damage_pipe_info.Pipe_ID = pipe_id;
-damage_pipe_info.Pipe_Diameter = D5(M1,1:pipe_damage_num);
-damage_pipe_info.Pipe_Roughness = D6(M1,1:pipe_damage_num);
+damage_pipe_info.Interval_Length = D2(:,1:pipe_damage_node_num);
+damage_pipe_info.Damage_Type = D3(:,1:pipe_damage_node_num-1);
+damage_pipe_info.Emitter_Coeff = D4(:,1:pipe_damage_node_num-1);
+damage_pipe_info.Pipe_ID = D1;% pipe_id
+damage_pipe_info.Pipe_Diameter = D5(:,1:pipe_damage_node_num-1);
+damage_pipe_info.Pipe_Roughness = D6(:,1:pipe_damage_node_num-1);
 damage_pipe_info_table = struct2table(damage_pipe_info);
 % 将计算结果改为table格式的变量，方便说明每列变量的含义。
 output = damage_pipe_info_table;
