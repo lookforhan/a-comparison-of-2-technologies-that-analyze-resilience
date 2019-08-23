@@ -145,5 +145,6 @@ Active_result =[title2; [Active_displacement;Active_isolation;Active_replacement
 if false
     xlswrite([out_dir,'\temp_修复队伍修复结果.xls'],Active_result);
 end
+%  xlswrite(['\temp_修复队伍修复结果.xls'],Active_result);
 % Active_reparation
 end
