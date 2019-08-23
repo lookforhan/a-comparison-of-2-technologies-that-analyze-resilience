@@ -63,8 +63,9 @@ damage_pipe_num=numel(unique(damage_pipe_id));%含有破坏点的管道数量；
 damage_pipe_node=pipe_damage_data{3}; %破坏点在该管线上的破坏次序；
 damage_pipe_length=pipe_damage_data{4}; %破坏点与点之间的长度比例；
 damage_node_kind=pipe_damage_data{5}; %破坏点的类型；
-damage_node_diameter=pipe_damage_data{6}; %破坏点的等效直径
-damage_node_area=(pi*damage_node_diameter.^2)/4;%开口面积；
+damage_node_area=pipe_damage_data{6}; %破坏点的开口面积（m2）
+% damage_node_area=(pi*damage_node_diameter.^2)/4;%开口面积(m)；
+damage_node_diameter = 2*(damage_node_area/pi).^0.5;%破坏点的等效直径(m)
 damage_node_e=damage_node_area*C*mu; %破坏点的扩散器系数；
 
 % D1=zeros(pipe_num,1); %管线是否存在破坏的判别矩阵：0无破坏; 1有破坏;
@@ -127,7 +128,7 @@ damage_pipe_info.Interval_Length = D2(:,1:pipe_damage_node_num);
 damage_pipe_info.Damage_Type = D3(:,1:pipe_damage_node_num-1);
 damage_pipe_info.Emitter_Coeff = D4(:,1:pipe_damage_node_num-1);
 damage_pipe_info.Pipe_ID = D1;% pipe_id
-damage_pipe_info.Pipe_Diameter = D5(:,1:pipe_damage_node_num-1);
+damage_pipe_info.Equal_Damage_Diameter_m_ = D5(:,1:pipe_damage_node_num-1);
 damage_pipe_info.Pipe_Roughness = D6(:,1:pipe_damage_node_num-1);
 damage_pipe_info_table = struct2table(damage_pipe_info);
 % 将计算结果改为table格式的变量，方便说明每列变量的含义。
