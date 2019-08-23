@@ -55,7 +55,7 @@ classdef ga_priority < handle
                 'replacement_fit_record',[],'replacement_pop_record',[],'best_indivi_replacement',[]);%输出参数用结构体表达
         end
         function run_process_isolation(obj)
-            disp('=====process isolatio=====')
+            disp('=====process isolation=====')
             damage_pipe_info = obj.Damage_pipe_info;
             popsize = obj.Popsize_process_isolation ;
             generation_Nmax = obj.Generation_Nmax_process_isolation;
@@ -77,6 +77,7 @@ classdef ga_priority < handle
             obj.Results.isolation_ENrun_num = result.ENrun_num;
         end
         function run_process_replacement(obj)
+            disp('=====process replacement=====')
             damage_pipe_info = obj.Damage_pipe_info;
             popsize = obj.Popsize_process_replacement ;
             generation_Nmax = obj.Generation_Nmax_process_replacement;
