@@ -462,16 +462,16 @@ classdef EPS_net_EPANETx64PDD < handle
                 %                 Demand{time_step_n}=req_demand_chosen_node;
                 cal_Demand{time_step_n}=cal_demand_chosen_node;%
                 
-                new_cal_demand_chose_node = cal_demand_chosen_node;%计算结果，需要将异常的节点需水量进行调整
-                new_cal_demand_chose_node(cal_demand_chosen_node<0) = 0; %计算需水量为负值时，将其需水量调整为0；
-                new_cal_demand_chose_node(cal_demand_chosen_node>req_demand_chosen_node) = 0;%若计算需水量大于需水量，则调整为0；
+                new_cal_demand_chosen_node = cal_demand_chosen_node;%计算结果，需要将异常的节点需水量进行调整
+                new_cal_demand_chosen_node(cal_demand_chosen_node<0) = 0; %计算需水量为负值时，将其需水量调整为0；
+                new_cal_demand_chosen_node(cal_demand_chosen_node>req_demand_chosen_node) = 0;%若计算需水量大于需水量，则调整为0；
                 if time_step_n > 2 % 为了修复问题：系统供水满足率出现下降的点。增加一条判断。若节点需水量小于上一时刻的节点需水量，则采用上一时刻的节点需水量
                     previous_cal_demand_chosen_node = adjust_Demand{time_step_n-1};
-                    loc = (new_cal_demand_chose_node<previous_cal_demand_chosen_node);
-                    new_cal_demand_chose_node(loc) = previous_cal_demand_chosen_node(loc);
+                    loc = (new_cal_demand_chosen_node<previous_cal_demand_chosen_node);
+                    new_cal_demand_chosen_node(loc) = previous_cal_demand_chosen_node(loc);
                 end
-                adjust_Demand{time_step_n} = new_cal_demand_chose_node;
-                system_serviceability_cell{time_step_n}= sum(new_cal_demand_chose_node)/sum(req_demand_chosen_node);%采用调整后的计算需水量，求系统供水满意率
+                adjust_Demand{time_step_n} = new_cal_demand_chosen_node;
+                system_serviceability_cell{time_step_n}= sum(new_cal_demand_chosen_node)/sum(req_demand_chosen_node);%采用调整后的计算需水量，求系统供水满意率
                 node_serviceability_cell{time_step_n} =  cal_demand_chosen_node./req_demand_chosen_node;
                 reservoirs_supply_cell{time_step_n} = cal_demand_chosen_reservoirs;
                 activity_cell{time_step_n} = str;%记录每个时间步的行为
