@@ -1,20 +1,21 @@
-function [outputArg1] = resilienceAnalysis(inputArg1,inputArg2,inputArg3,inputArg4)
+function [outputArg1] = resilienceAnalysis(inputArg1,inputArg2,inputArg3,inputArg4,inputArg5)
 %resilienceAnalysis 计算管网破坏后韧性
 %   此处显示详细说明
 net_file = inputArg1;
 damage_info_file_name = inputArg2;
 out_dir = inputArg3;
-ga_results = inputArg4;
+best_indivi_isolation = inputArg4;
+best_indivi_recovery = inputArg5;
 % pre_process begin
 lib_name = 'EPANETx64PDD';
-h_name = 'toolkit.h';
-damage_info_file = ['..\materials\MOD\',damage_info_file_name];
+% h_name = 'toolkit.h';
+damage_info_file = ['E:\hanzhao\a-comparison-of-2-technologies-that-analyze-resilience\materials\MOD\',damage_info_file_name];
 damage_net = '.\results\temp_damage_net.inp';
 damage_rpt = '.\results\temp_damage_net.rpt';
-pdd_file = '..\materials\MOD\PDD_parameter.txt';
+pdd_file = 'E:\hanzhao\a-comparison-of-2-technologies-that-analyze-resilience\materials\MOD\PDD_parameter.txt';
 temp_inp_file = '.\results\temp_internal_net.inp';
 % fid = 1;
-loadlibrary(['..\materials\',lib_name],['..\materials\',h_name]);
+% loadlibrary(['..\materials\',lib_name],['..\materials\',h_name]);
 try
     load  EPA_F
 catch
@@ -96,8 +97,8 @@ n_ENrun = 0 ;
 disp(damage_info_file_name);
 priority = struct('serviceability',[],'resilience_mean_serviceability',[],'resilience_mean_recovery_rate',[]);
 % 确定次序
-best_indivi_isolation_1 = ga_results.best_indivi_isolation;
-best_indivi_recovery_1 = ga_results.best_indivi_recovery;
+best_indivi_isolation_1 = best_indivi_isolation;
+best_indivi_recovery_1 = best_indivi_recovery;
 DamagePipe_order = unique(damage_pipe_info{1});
 % 开始计算
 [~,...

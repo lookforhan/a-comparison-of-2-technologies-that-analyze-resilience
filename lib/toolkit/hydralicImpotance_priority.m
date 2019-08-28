@@ -1,6 +1,6 @@
 function [ best_indivi_isolation_1,best_indivi_recovery_1,best_indivi_isolation_1_id,best_indivi_recovery_1_id ] = hydralicImpotance_priority( damage_pipe_info,net_data )
 %hydralicImpotance_priority 此处显示有关此函数的摘要
-%   此处显示详细说明
+%   data2.mat中保存的变量为hydraulicIndex，管道的水力重要度，按照管道编号排序。
 load('data2.mat')%
 best_indivi_isolation_1_cell =damage_pipe_info{5}(damage_pipe_info{3}==2);
 best_indivi_recovery_1_cell = damage_pipe_info{5};
