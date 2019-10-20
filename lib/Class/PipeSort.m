@@ -171,8 +171,8 @@ classdef PipeSort < handle
         function SortByParameters(obj)
             theChosenPipe = obj.chosenPipeID;
             [~,theLoc] = ismember(theChosenPipe,obj.ID);
-            theChosenPipeParameter = obj.Parameters(theLoc);
-            theData = [theChosenPipe, theChosenPipeParameter, num2cell(theLoc)];
+            theChosenPipeParameter = obj.Parameters(theLoc)';
+            theData = [theChosenPipe, num2cell(theChosenPipeParameter), num2cell(theLoc)];
             theNewData = flipud(sortrows(theData,2));
             obj.sortPipeParameter = theNewData(:,2);
             obj.sortPipeID = theNewData(:,1);
