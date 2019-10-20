@@ -8,8 +8,11 @@ classdef PipeSort < handle
         chosenPipeID
         net_data
         sortPipeID
-        sortPipeDiameter
+        sortPipeParameter
         sortPipeLocb
+    end
+    properties
+        Parameters
     end
     
     methods
@@ -123,7 +126,7 @@ classdef PipeSort < handle
             theChosenPipeDiameter = obj.diameter(theLoc);
             theData = [theChosenPipe,theChosenPipeDiameter,num2cell(theLoc)];
             theNewData = sortrows(theData,2);
-            obj.sortPipeDiameter = flipud(theNewData (:,2));
+            obj.sortPipeParameter = flipud(theNewData (:,2));
             obj.sortPipeID = flipud(theNewData (:,1));
             obj.sortPipeLocb = flipud(theNewData(:,3));
         end
@@ -133,7 +136,7 @@ classdef PipeSort < handle
             theChosenPipeDiameter = obj.diameter(theLoc);
             theData = [theChosenPipe,theChosenPipeDiameter,num2cell(theLoc)];
             theNewData = sortrows(theData,2);
-            obj.sortPipeDiameter = theNewData (:,2);
+            obj.sortPipeParameter = theNewData (:,2);
             obj.sortPipeID = theNewData (:,1);
             obj.sortPipeLocb = theNewData(:,3);
         end
@@ -142,7 +145,7 @@ classdef PipeSort < handle
             [~,theLoc] = ismember(theChosenPipe,obj.ID);
             theData = [theChosenPipe,theChosenIndex,num2cell(theLoc)];
             theNewData = sortrows(theData,2);
-            obj.sortPipeDiameter = flipud(theNewData (:,2));
+            obj.sortPipeParameter = flipud(theNewData (:,2));
             obj.sortPipeID = flipud(theNewData (:,1));
             obj.sortPipeLocb = flipud(theNewData(:,3));
         end
@@ -151,7 +154,7 @@ classdef PipeSort < handle
             [~,theLoc] = ismember(theChosenPipe,obj.ID);
             theData = [theChosenPipe,theChosenIndex,num2cell(theLoc)];
             theNewData = sortrows(theData,2);
-            obj.sortPipeDiameter = theNewData (:,2);
+            obj.sortPipeParameter = theNewData (:,2);
             obj.sortPipeID = theNewData (:,1);
             obj.sortPipeLocb = theNewData(:,3);
         end
@@ -161,8 +164,18 @@ classdef PipeSort < handle
             theChosenPipeDiameter = obj.diameter(theLoc);
             theData = [theChosenPipe,theChosenPipeDiameter,num2cell(theLoc)];
             theNewData = theData;
-            obj.sortPipeDiameter = theNewData (:,2);
+            obj.sortPipeParameter = theNewData (:,2);
             obj.sortPipeID = theNewData (:,1);
+            obj.sortPipeLocb = theNewData(:,3);
+        end
+        function SortByParameters(obj)
+            theChosenPipe = obj.chosenPipeID;
+            [~,theLoc] = ismember(theChosenPipe,obj.ID);
+            theChosenPipeParameter = obj.Parameters(theLoc);
+            theData = [theChosenPipe, theChosenPipeParameter, num2cell(theLoc)];
+            theNewData = flipud(sortrows(theData,2));
+            obj.sortPipeParameter = theNewData(:,2);
+            obj.sortPipeID = theNewData(:,1);
             obj.sortPipeLocb = theNewData(:,3);
         end
     end
