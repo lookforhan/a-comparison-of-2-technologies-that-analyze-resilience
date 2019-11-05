@@ -323,6 +323,7 @@ classdef EPS_net_EPANETx64PDD < handle
                                 %                                 continue %
                             case 1
                                 % isolation
+                                isolated_pipe{i,1} = obj.pipe_relative{i,1};
                                 mid_str = ['隔离管道',obj.pipe_relative{i,1},';'];
                                 str_length = length(mid_str);
                                 str2(str2_n:str2_n+str_length-1) = mid_str;
@@ -378,7 +379,12 @@ classdef EPS_net_EPANETx64PDD < handle
                                     end
                                 end
                                 %reopen
-                                mid_str_2 = ['修复管道',obj.pipe_relative{i,1},';'];
+                                isolated_pipe(cellfun(@isempty,isolated_pipe)) = [];
+                                if ismember(obj.pipe_relative{i,1},isolated_pipe)
+                                mid_str_2 = ['替换管道',obj.pipe_relative{i,1},';'];
+                                else
+                                    mid_str_2 = ['修复管道',obj.pipe_relative{i,1},';'];
+                                end
                                 str_lenth = length(mid_str_2);
                                 str3(str3_n:str3_n+str_lenth-1) = mid_str_2;
                                 str3_n = str3_n+str_lenth;
