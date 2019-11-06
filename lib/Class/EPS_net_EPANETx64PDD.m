@@ -415,7 +415,7 @@ classdef EPS_net_EPANETx64PDD < handle
                     str = [str1,deblank(str2),deblank(str3)];
                     fprintf(fid_log_file,'%s时刻,管道状态修改完毕\r\n',num2str(temp_t) );
                 else
-                    str = '无动作';
+                    str = 'No action;';
                     fprintf(fid_log_file,'%s时刻,管道状态无需修改完毕\r\n',num2str(temp_t) );
                 end
                 if obj.export_inp == 1
