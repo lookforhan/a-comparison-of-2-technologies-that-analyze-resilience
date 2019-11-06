@@ -319,12 +319,12 @@ classdef EPS_net_EPANETx64PDD < handle
                         pipe_status_timeStep = mid_status(i);
                         switch  pipe_status_timeStep
                             case 0
-                                str1 = '无动作;';
+                                str1 = 'No action;';
                                 %                                 continue %
                             case 1
                                 % isolation
                                 isolated_pipe{i,1} = obj.pipe_relative{i,1};
-                                mid_str = ['隔离管道',obj.pipe_relative{i,1},';'];
+                                mid_str = ['Isolated pipe',obj.pipe_relative{i,1},';'];
                                 str_length = length(mid_str);
                                 str2(str2_n:str2_n+str_length-1) = mid_str;
                                 str2_n = str2_n+str_length;
@@ -352,7 +352,7 @@ classdef EPS_net_EPANETx64PDD < handle
                                 end
                             case 2
                                 %isolation
-                                mid_str_1 = ['隔离管道',obj.pipe_relative{i,1},';'];
+                                mid_str_1 = ['-Isolated-pipe',obj.pipe_relative{i,1},';'];
                                 str_length = length(mid_str_1);
                                 str3(str3_n:str3_n+str_length-1) = mid_str_1;
                                 str3_n = str3_n+str_length;
@@ -381,9 +381,9 @@ classdef EPS_net_EPANETx64PDD < handle
                                 %reopen
                                 isolated_pipe(cellfun(@isempty,isolated_pipe)) = [];
                                 if ismember(obj.pipe_relative{i,1},isolated_pipe)
-                                mid_str_2 = ['替换管道',obj.pipe_relative{i,1},';'];
+                                mid_str_2 = ['Replaced pipe',obj.pipe_relative{i,1},';'];
                                 else
-                                    mid_str_2 = ['修复管道',obj.pipe_relative{i,1},';'];
+                                    mid_str_2 = ['Repaired pipe',obj.pipe_relative{i,1},';'];
                                 end
                                 str_lenth = length(mid_str_2);
                                 str3(str3_n:str3_n+str_lenth-1) = mid_str_2;
