@@ -2,7 +2,7 @@
 % 预处理
 clear;clc;close all;tic;
 net_file = '..\materials\MOD\MOD_5_mean.inp';
-damage_info_file_name = 'damage_scenario_case_03.txt';
+damage_info_file_name = 'damage_scenario_case_01.txt';
 pre_process
 global n_ENrun
 n_ENrun = 0 ;
@@ -32,7 +32,7 @@ delete .\results\_*
     out_dir,...
     temp_inp_file,...
     pipe_relative,...
-    crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel);%评价种群个体适应度
+    crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel,0);%评价种群个体适应度
 % 后处理，出来结果
 priority_greedyImportance = priority;
 priority_greedyImportance.activity = activity_cell;
