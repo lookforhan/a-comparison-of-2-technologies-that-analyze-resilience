@@ -2,7 +2,7 @@
 % 预处理
 clear;clc;close all;tic;
 net_file = '..\materials\MOD\MOD_5_mean.inp';
-damage_info_file_name = 'damage_scenario_case_05.txt';
+damage_info_file_name = 'damage_scenario_case_01.txt';
 pre_process
 hydraulic_importance = pipeHydraulicImportant(net_file);
 global n_ENrun
@@ -29,7 +29,7 @@ DamagePipe_order = unique(damage_pipe_info{1});
     out_dir,...
     temp_inp_file,...
     pipe_relative,...
-    crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel);%评价种群个体适应度
+    crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel,0);%评价种群个体适应度
 % 后处理，出来结果
 priority_hydraulicImportance = priority;
 priority_hydraulicImportance.activity = activity_cell;
@@ -45,4 +45,6 @@ priority_hydraulicImportance.ENrun_num = n_ENrun;
 priority_hydraulicImportance.crew_active = schedule.schedule_table_crew_pipeID;
 priority_hydraulicImportance.active_type = schedule.schedule_table_crew_activeType;
 priority_hydraulicImportance.calculate_code = results.calculate_code;
-save(['test_hydraulic_',damage_info_file_name(1:end-4)],'priority_hydraulicImportance');
+save(['test_hydraulic_pdd',damage_info_file_name(1:end-4)],'priority_hydraulicImportance');
+sum(priority_hydraulicImportance.calculate_code~=0)
+numel(priority_hydraulicImportance.calculate_code)
