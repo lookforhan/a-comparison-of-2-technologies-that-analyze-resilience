@@ -12,3 +12,6 @@ test*
 results
 feature_recovery_process_eps\results
 *.tmp
+*.mat
+*.out
+*.png
