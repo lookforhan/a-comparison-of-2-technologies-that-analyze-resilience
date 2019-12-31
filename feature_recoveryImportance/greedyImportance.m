@@ -2,7 +2,7 @@
 % 预处理
 clear;clc;close all;tic;
 net_file = '..\materials\MOD\MOD_5_mean.inp';
-damage_info_file_name = 'damage_scenario_case_01.txt';
+damage_info_file_name = 'damage_scenario_case_09.txt';
 pre_process
 global n_ENrun
 n_ENrun = 0 ;
@@ -15,6 +15,7 @@ priority = struct('serviceability',[],'resilience_mean_serviceability',[],'resil
 
 % 确定次序
 [ best_indivi_isolation_1,best_indivi_recovery_1,best_indivi_isolation_1_id,best_indivi_recovery_1_id ] =greedyImportance_priority( damage_pipe_info,net_data,Dp_Inspect_mat,Dp_Repair_mat,temp_inp_file,pipe_relative );
+priorityTime = toc;
 DamagePipe_order = unique(damage_pipe_info{1});
 delete .\results\_*
 % 水力模拟
@@ -49,6 +50,9 @@ priority_greedyImportance.crew_active = schedule.schedule_table_crew_pipeID;
 priority_greedyImportance.active_type = schedule.schedule_table_crew_activeType;
 priority_greedyImportance.calculate_code = results.calculate_code;
 priority_greedyImportance.result = results;
-save(['test_greedy_',damage_info_file_name(1:end-4),'_5000'],'priority_greedyImportance');
+priority_greedyImportance.priorityTime = priorityTime;
+priority_greedyImportance.allTime = toc;
+save(['test_greedy_2020_',damage_info_file_name(1:end-4),'_5000'],'priority_greedyImportance');
 delete .\results\_*
 toc
+priority_greedyImportance.priorityTime

@@ -1,7 +1,7 @@
 % straightLineDistance.m
 clear;clc;close all;tic;
 net_file = '..\materials\MOD\MOD_5_mean.inp';
-damage_info_file_name = 'damage_scenario_case_07.txt';
+damage_info_file_name = 'damage_scenario_case_09.txt';
 pre_process
 global n_ENrun
 n_ENrun = 0 ;
@@ -23,6 +23,7 @@ best_indivi_recovery_1_id = [best_indivi_isolation_1_id;mid.sortPipeID];
 best_indivi_recovery_1_2 = cell2mat(mid.sortPipeLocb)';
 best_indivi_recovery_1 = [best_indivi_isolation_1,best_indivi_recovery_1_2];
 mid.delete
+priorityTime = toc;
 DamagePipe_order = unique(damage_pipe_info{1});
 % 开始计算
 [Fitness,...
@@ -39,7 +40,7 @@ DamagePipe_order = unique(damage_pipe_info{1});
     out_dir,...
     temp_inp_file,...
     pipe_relative,...
-    crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel);%评价种群个体适应度
+    crewStartTime,crewEfficiencyRecovery,crewEfficiencyIsolation,crewEfficiencyTravel,0);%评价种群个体适应度
 % 后处理，出结果
 priority_straighLineDistance = priority;
 priority_straighLineDistance.activity = activity_cell;
@@ -57,41 +58,43 @@ priority_straighLineDistance.active_type = schedule.schedule_table_crew_activeTy
 priority_straighLineDistance.calculate_code = results.calculate_code;
 priority_straighLineDistance.results = results;
 priority_straighLineDistance.schedule = schedule;
-save(['test_straighLineDistance_01',damage_info_file_name(1:end-4)],'priority_straighLineDistance');
+priority_straighLineDistance.priorityTime = priorityTime;
+priority_straighLineDistance.allTime = toc;
+save(['test_straighLineDistance_01_2020_',damage_info_file_name(1:end-4)],'priority_straighLineDistance');
 delete .\results\_*
 toc
 clearvars -EXCEPT priority_straighLineDistance schedule results net_data damage_info_file_name
-% priority_straighLineDistance.calculate_code
-% 结果作图
-errcode = priority_straighLineDistance.calculate_code;
-Time = 1:numel(errcode);
-fig = Plot(Time,errcode);
-fig.XLabel = 'Time (h)';
-fig.YLabel = 'error code';
-fig.Title = [damage_info_file_name(1:end-4),' errcode in process'];
-fig.export(['test_straightLineDistance_',damage_info_file_name(1:end-4),'errcode','.png']);
-fig.delete
-
-% 供水满意率曲线
-serviceability = priority_straighLineDistance.serviceability;
-fig = Plot(Time,serviceability);
-fig.XLabel = 'Time (h)';
-fig.YLabel = 'Serviceability';
-fig.Title = [damage_info_file_name(1:end-4),' serviceability v.s. Time'];
-fig.export(['test_straightLineDistance_',damage_info_file_name(1:end-4),'serviceability','.png']);
-fig.delete
-
-% 修正作图
-errcode_loc = find(errcode~=0);
-reliable_code_loc  = find(errcode ==0); 
-err_serviceability = priority_straighLineDistance.serviceability(errcode_loc);
-reliable_time = Time(reliable_code_loc);
-reliable_serviceability = priority_straighLineDistance.serviceability(reliable_code_loc);
-fig = Plot(reliable_time,reliable_serviceability);
-fig.XLabel = 'Time (h)';
-fig.YLabel = 'Serviceability';
-fig.Title = [damage_info_file_name(1:end-4),' reliable serviceability v.s. Time'];
-fig.export(['test_straightLineDistance_',damage_info_file_name(1:end-4),'reliable_serviceability','.png']);
-fig.delete;
-toc
-delete time*
+% % priority_straighLineDistance.calculate_code
+% % 结果作图
+% errcode = priority_straighLineDistance.calculate_code;
+% Time = 1:numel(errcode);
+% fig = Plot(Time,errcode);
+% fig.XLabel = 'Time (h)';
+% fig.YLabel = 'error code';
+% fig.Title = [damage_info_file_name(1:end-4),' errcode in process'];
+% fig.export(['test_straightLineDistance_',damage_info_file_name(1:end-4),'errcode','.png']);
+% fig.delete
+% 
+% % 供水满意率曲线
+% serviceability = priority_straighLineDistance.serviceability;
+% fig = Plot(Time,serviceability);
+% fig.XLabel = 'Time (h)';
+% fig.YLabel = 'Serviceability';
+% fig.Title = [damage_info_file_name(1:end-4),' serviceability v.s. Time'];
+% fig.export(['test_straightLineDistance_',damage_info_file_name(1:end-4),'serviceability','.png']);
+% fig.delete
+% 
+% % 修正作图
+% errcode_loc = find(errcode~=0);
+% reliable_code_loc  = find(errcode ==0); 
+% err_serviceability = priority_straighLineDistance.serviceability(errcode_loc);
+% reliable_time = Time(reliable_code_loc);
+% reliable_serviceability = priority_straighLineDistance.serviceability(reliable_code_loc);
+% fig = Plot(reliable_time,reliable_serviceability);
+% fig.XLabel = 'Time (h)';
+% fig.YLabel = 'Serviceability';
+% fig.Title = [damage_info_file_name(1:end-4),' reliable serviceability v.s. Time'];
+% fig.export(['test_straightLineDistance_',damage_info_file_name(1:end-4),'reliable_serviceability','.png']);
+% fig.delete;
+% toc
+% delete time*

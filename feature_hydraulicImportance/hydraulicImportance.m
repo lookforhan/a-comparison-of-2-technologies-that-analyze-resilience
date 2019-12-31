@@ -13,6 +13,7 @@ priority = struct('serviceability',[],'resilience_mean_serviceability',[],'resil
 
 % 确定次序
 [ best_indivi_isolation_1,best_indivi_recovery_1,best_indivi_isolation_1_id,best_indivi_recovery_1_id ] = hydralicImpotance_priority( damage_pipe_info,net_data );
+priorityTime = toc;
 DamagePipe_order = unique(damage_pipe_info{1});
 % 水力模拟
 [Fitness,...
@@ -45,6 +46,8 @@ priority_hydraulicImportance.ENrun_num = n_ENrun;
 priority_hydraulicImportance.crew_active = schedule.schedule_table_crew_pipeID;
 priority_hydraulicImportance.active_type = schedule.schedule_table_crew_activeType;
 priority_hydraulicImportance.calculate_code = results.calculate_code;
-save(['test_hydraulic_pdd',damage_info_file_name(1:end-4)],'priority_hydraulicImportance');
+priority_hydraulicImportance.priorityTime = priorityTime;
+priority_hydraulicImportance.allTime = toc;
+save(['test_hydraulic_pdd_2020_',damage_info_file_name(1:end-4)],'priority_hydraulicImportance');
 sum(priority_hydraulicImportance.calculate_code~=0)
 numel(priority_hydraulicImportance.calculate_code)
