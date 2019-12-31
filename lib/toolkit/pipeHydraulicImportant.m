@@ -4,7 +4,7 @@ function [ output_args ] = pipeHydraulicImportant( file_in )
 
 t = libisloaded('epanet2');
 if t==0
-loadlibrary('C:\Users\hc042\Documents\toolbox\epanet2','C:\Users\hc042\Documents\toolbox\epanet2.h')
+loadlibrary('C:\Users\dell\Documents\toolbox\epanet2','C:\Users\dell\Documents\toolbox\epanet2.h')
 end
 % input_net_filename = 'C:\Users\hc042\Desktop\韧性\matlab代码\运算案例\GWSL_4.inp';
 input_net_filename = file_in;
