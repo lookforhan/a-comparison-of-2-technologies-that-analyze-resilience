@@ -52,12 +52,14 @@ MOD.inp是标准EPANET的inp文件，为了使用EPANETx64PDD.dll中的PDD计算
 * 增加考虑阀门位置形成分区的功能。
 * 分区数据保存在"\lib_valves\Class\mod_segment.mat"
 修改的函数及修改内容说明
+
 函数 |  位置  | 说明  | 修改位置
  :-:| :-: | :-: |
 EPS_net_EPANETx64PDD.m|\lib_valves\Class\ | 进行延时模拟 | 修改管道状态部分，加载分区信息。
 event_time2.m | \lib_valves\eventTime | 计算隔离管道与修复管道所需时间 | 修改隔离管道时间计算，加载分区信息
-greedy_pipe_isolation_priority | \lib_valves\Class\ | 贪心算法计算隔离管道的次序 | 加载分区信息，隔离破坏管道所在区域，同时修改管道的当前状态与初始状态
-greedy_pipe_recovery_priority | \lib_valves\Class\ | 贪心算法计算修复管道的次序|  加载分区信息，隔离破坏管道所在区域，同时修改管道的当前状态与初始状态
+greedy_pipe_isolation_priority.m | \lib_valves\Class\ | 遍历隔离每个断开管道 | 加载分区信息，隔离破坏管道所在区域，同时修改管道的当前状态与初始状态
+greedy_pipe_recovery_priority.m | \lib_valves\Class\ | 遍历修复每个破坏管道 |  加载分区信息，隔离破坏管道所在区域，同时修改管道的当前状态与初始状态
+greedyImportance_priority.m | \lib_valves\toolkit\ | 贪心算法排序 | 增加输出计算书，在命令行中显示，每一步的各个管道的计算结果。
 
 ## 讨论
 
