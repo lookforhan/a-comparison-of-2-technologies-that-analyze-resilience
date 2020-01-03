@@ -54,7 +54,7 @@ MOD.inp是标准EPANET的inp文件，为了使用EPANETx64PDD.dll中的PDD计算
 修改的函数及修改内容说明
 
 函数 |  位置  | 说明  | 修改位置
- :-:| :-: | :-: |
+ :---:| :---: | :-: | :-----
 EPS_net_EPANETx64PDD.m|\lib_valves\Class\ | 进行延时模拟 | 修改管道状态部分，加载分区信息。
 event_time2.m | \lib_valves\eventTime | 计算隔离管道与修复管道所需时间 | 修改隔离管道时间计算，加载分区信息
 greedy_pipe_isolation_priority.m | \lib_valves\Class\ | 遍历隔离每个断开管道 | 加载分区信息，隔离破坏管道所在区域，同时修改管道的当前状态与初始状态
