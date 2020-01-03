@@ -51,6 +51,7 @@ MOD.inp是标准EPANET的inp文件，为了使用EPANETx64PDD.dll中的PDD计算
 * 之前的记录并未保存。记录最近一段时间的修改记录。
 * 增加考虑阀门位置形成分区的功能。
 * 分区数据保存在"\lib_valves\Class\mod_segment.mat"
+
 修改的函数及修改内容说明
 
 函数 |  位置  | 说明  | 修改位置
