@@ -23,7 +23,7 @@
 采用matlab进行开发，当中涉及水力计算部分，调用上述动态链接库完成。
 
 
-1. **EPANETx64PDD.dll**中采用pdd分析时对标准epanet的inp文件需要做一定的修改。修改原则详见报告[《Technical Note 2008-02 Pressure Driven Demand Extension for EPANET》](https://ore.exeter.ac.uk/repository/bitstream/handle/10871/14721/Technical%20Note%202008-02%20Pressure%20Driven%20Demand%20Extension%20for%20EPANET.pdf?sequence=4&isAllowed=y)
+1. **EPANETx64PDD.dll** 中采用pdd分析时对标准epanet的inp文件需要做一定的修改。修改原则详见报告[《Technical Note 2008-02 Pressure Driven Demand Extension for EPANET》](https://ore.exeter.ac.uk/repository/bitstream/handle/10871/14721/Technical%20Note%202008-02%20Pressure%20Driven%20Demand%20Extension%20for%20EPANET.pdf?sequence=4&isAllowed=y)
 
 
 ### 理论
@@ -45,6 +45,19 @@ MOD.inp是标准EPANET的inp文件，为了使用EPANETx64PDD.dll中的PDD计算
 
 初步验证成功，详见test.m
 ### 结果
+
+## 修改记录
+### 2020/01/03
+* 之前的记录并未保存。记录最近一段时间的修改记录。
+* 增加考虑阀门位置形成分区的功能。
+* 分区数据保存在"\lib_valves\Class\mod_segment.mat"
+修改的函数及修改内容说明
+函数 |  位置  | 说明  | 修改位置
+ :-:| :-: | :-: |
+EPS_net_EPANETx64PDD.m|\lib_valves\Class\ | 进行延时模拟 | 修改管道状态部分，加载分区信息。
+event_time2.m | \lib_valves\eventTime | 计算隔离管道与修复管道所需时间 | 修改隔离管道时间计算，加载分区信息
+greedy_pipe_isolation_priority | \lib_valves\Class\ | 贪心算法计算隔离管道的次序 | 加载分区信息，隔离破坏管道所在区域，同时修改管道的当前状态与初始状态
+greedy_pipe_recovery_priority | \lib_valves\Class\ | 贪心算法计算修复管道的次序|  加载分区信息，隔离破坏管道所在区域，同时修改管道的当前状态与初始状态
 
 ## 讨论
 
